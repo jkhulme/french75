@@ -5,7 +5,7 @@ function prep(){
       alert('The File APIs are not fully supported in this browser.');
     }
     alert('fuck');
-    document.getElementById('csvbp').addEventListener('change', readFile, false);
+    //document.getElementById('csvbp').addEventListener('change', readFile, false);
     alert('fuck');
 }
 
