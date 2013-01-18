@@ -20,3 +20,5 @@ class BioPepaCsvParser():
             for i in range(1,len(self.keys)):
                 self.keys[i] = self.keys[i].strip()[1:-1]
                 self.results_dict[self.keys[i]] = []
+                
+    
