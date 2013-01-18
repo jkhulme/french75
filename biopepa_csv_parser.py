@@ -1,31 +1,22 @@
 class BioPepaCsvParser():
+    
+    def parseResults(self):
+        data = self.contents[8:]
+            
+        for row in data:
+            row = row.split(',')
+            for i in range(0,len(row)):
+                self.results_dict[self.keys[i]] += [row[i].strip()]
+        
+        
     def openCsv(self,csv):
         with open(csv, 'r') as f:
-            results_dict = {}
+            self.contents = f.readlines()
+            self.results_dict = {}
+            self.keys = self.contents[7].split(',')
+            self.keys[0] = self.keys[0][2:]
+            self.results_dict[self.keys[0]] = []
             
-            contents = f.readlines()
-            
-            keys = contents[7].split(',')
-            
-            keys[0] = keys[0][2:]
-            results_dict[keys[0]] = []
-            
-            for i in range(1,len(keys)):
-                keys[i] = keys[i].strip()[1:-1]
-                results_dict[keys[i]] = []
-            
-            print results_dict.keys()
-            
-            data = contents[8:]
-            
-            for row in data:
-                row = row.split(',')
-                for i in range(0,len(row)):
-                    results_dict[keys[i]] += [row[i].strip()]
-                    
-            print results_dict['Time']
-            print results_dict['R']
-            print results_dict['aSrc_total_MB']
-            
-x = BioPepaCsvParser()
-x.openCsv('r_asrc.csv')
+            for i in range(1,len(self.keys)):
+                self.keys[i] = self.keys[i].strip()[1:-1]
+                self.results_dict[self.keys[i]] = []
