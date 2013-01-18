@@ -1,4 +1,24 @@
+"""
+Parse results data from BioPEPA csv files
+
+Expected Structure
+#algorithm used
+#number of data points
+#number of replications
+#stop time
+#start time
+#line with "model paramaters" written
+#run time
+#column headings (Time needs to be first column)
+#actual data
+"""
 class BioPepaCsvParser():
+
+    #contents - entire file contents
+    #results_dict - the actual data indexed by column header, only for one csv
+    #keys - column headers, used to index the dictionary, time is included
+    #minx - start time
+    #maxx - stop time
     
     def parseResults(self):
         data = self.contents[8:]

@@ -1,6 +1,10 @@
 import matplotlib.pyplot as graph_plot
 from biopepa_csv_parser import BioPepaCsvParser
 
+"""
+Given the data, plot it on one graph
+Might be doing to much work in here - maybe make it more abstract
+"""
 class Plotter():
 
     def plot(self, results, parser):
