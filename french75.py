@@ -1,9 +1,15 @@
 from biopepa_csv_parser import BioPepaCsvParser
 from plotter import Plotter
+import sys
 
-parser = BioPepaCsvParser()
-parser.openCsv('r_asrc.csv')
-parser.parseResults()
+results = {}
+sys.argv = sys.argv[1:]
+for arg in sys.argv:
+    parser = BioPepaCsvParser()
+    parser.openCsv(arg)
+    parser.parseResults()
+    results[arg] = parser.results_dict
+    
 
 draw_plot = Plotter()
-draw_plot.plot(parser.results_dict)
+draw_plot.plot(results)
