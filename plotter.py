@@ -1,8 +1,9 @@
 import matplotlib.pyplot as graph_plot
+from biopepa_csv_parser import BioPepaCsvParser
 
 class Plotter():
 
-    def plot(self, results):
+    def plot(self, results, parser):
         for result in results:
             results_dict = results[result]
             for key in results_dict:
@@ -15,5 +16,5 @@ class Plotter():
         graph_plot.legend(loc=1)
         graph_plot.title('Active Src graph')
         xmin,xmax,ymin,ymax = graph_plot.axis()
-        graph_plot.axis((0,15000,ymin,ymax))
+        graph_plot.axis((parser.minx,parser.maxx,ymin,ymax))
         graph_plot.show()

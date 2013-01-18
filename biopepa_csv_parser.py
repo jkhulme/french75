@@ -21,4 +21,6 @@ class BioPepaCsvParser():
                 self.keys[i] = self.keys[i].strip()[1:-1]
                 self.results_dict[self.keys[i]] = []
                 
-    
+    def timeScale(self):
+        self.minx = float(self.contents[4].strip()[14:])
+        self.maxx = float(self.contents[3].strip()[13:])

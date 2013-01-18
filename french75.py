@@ -9,7 +9,7 @@ for arg in sys.argv:
     parser.openCsv(arg)
     parser.parseResults()
     results[arg] = parser.results_dict
-    
+    parser.timeScale()
 
 draw_plot = Plotter()
-draw_plot.plot(results)
+draw_plot.plot(results,parser)
