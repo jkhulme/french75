@@ -20,5 +20,6 @@ for arg in argv:
     parser.timeScale()
 
 draw_plot = Plotter()
-#draw_plot.plot(results,parser)
-draw_plot.build_colour_plot_arrays([1, 2, 3, 4, 5, 6], 2)
+draw_plot.plot(results,parser)
+subs = draw_plot.build_colour_plot_arrays([1, 2, 3, 4, 5, 6], 2)
+draw_plot.plot_colour_int(subs)
