@@ -26,8 +26,8 @@ class Plotter():
         xmin, xmax, ymin, ymax = graph_plot.axis()
         graph_plot.axis((parser.minx, parser.maxx, ymin, ymax))
         graph_plot.show()
-        
-    def plot_colour_int(self,sub_plots):
+
+    def plot_colour_int(self, sub_plots):
         for sub_plot in sub_plots:
             graph_plot.plot(sub_plot)
         graph_plot.ylabel('Process Count/Variable Value')
@@ -37,6 +37,6 @@ class Plotter():
 
     def build_colour_plot_arrays(self, plot_data, interval):
         plot_arrays = []
-        for i in range(0, len(plot_data) -1):
+        for i in range(0, len(plot_data) - 1):
             plot_arrays += [[None] * i + plot_data[i:i + interval] + [None] * (len(plot_data) - interval - i)]
         return plot_arrays
