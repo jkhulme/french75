@@ -49,6 +49,7 @@ class French75(wx.Frame):
         self.plot_graphs()
 
     def plot_graphs(self):
+        self.results = {}
         parser = BioPepaCsvParser()
         for path in self.paths:
             parser.openCsv(path)
