@@ -1,7 +1,7 @@
 from biopepa_csv_parser import BioPepaCsvParser
 from plotter import Plotter
-from gui_launcher import VisWindow
-import sys
+#from gui_launcher import VisWindow
+#import sys
 import wx
 
 
@@ -11,20 +11,6 @@ import wx
 """
 results = {}
 argv = sys.argv[1:]
-
-
-
-app = wx.App()
-gui = VisWindow(None)
-app.MainLoop()
-
-print gui.paths
-
-
-draw_plot = Plotter()
-draw_plot.plot(results, parser)
-subs = draw_plot.build_colour_plot_arrays([1, 2, 3, 4, 5, 6], 2)
-draw_plot.plot_colour_int(subs)
 """
 
 
@@ -32,7 +18,7 @@ class French75(wx.Frame):
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
-
+        self.results = {}
         self.launchGui()
 
     def launchGui(self):
@@ -60,8 +46,23 @@ class French75(wx.Frame):
             self.paths = file_chooser.GetPaths()
         file_chooser.Destroy()
 
+        self.plot_graphs()
+
+    def plot_graphs(self):
+        parser = BioPepaCsvParser()
+        for path in self.paths:
+            parser.openCsv(path)
+            parser.parseResults()
+            self.results[path] = parser.results_dict
+            parser.timeScale()
+        draw_plot = Plotter()
+        draw_plot.plot(self.results, parser)
+        #subs = draw_plot.build_colour_plot_arrays([1, 2, 3, 4, 5, 6], 2)
+        #draw_plot.plot_colour_int(subs)
+
 
 if __name__ == '__main__':
     app = wx.App()
     gui = French75(None)
+    gui.Show()
     app.MainLoop()

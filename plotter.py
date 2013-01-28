@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('WXAgg')
 import matplotlib.pyplot as graph_plot
 
 """
