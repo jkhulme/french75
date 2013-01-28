@@ -61,7 +61,9 @@ class French75(wx.Frame):
         #subs = draw_plot.build_colour_plot_arrays([1, 2, 3, 4, 5, 6], 2)
         #draw_plot.plot_colour_int(subs)
 
-
+"""
+Like Java's main method
+"""
 if __name__ == '__main__':
     app = wx.App()
     gui = French75(None)
