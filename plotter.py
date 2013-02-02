@@ -10,11 +10,12 @@ class Plotter():
         self.interval = 1
         self.axes = axes
         self.canvas = canvas
-
-    def draw_figure(self):
-        self.axes.clear()
-        self.axes.plot([1, 2, 3, 4], [1, 4, 9, 16])
-        self.canvas.draw()
+        self.min_red = 160
+        self.max_red = 255
+        self.green = 0
+        self.blue = 0
+        self.min = 0
+        self.max = 0
 
     def plot(self, results, parser):
         self.axes.clear()
@@ -33,9 +34,22 @@ class Plotter():
         self.axes.axis((parser.minx, parser.maxx, ymin, ymax))
         self.canvas.draw()
 
+    def rgb_to_hex(self, rgb):
+        return '#%02x%02x%02x' % rgb
+
     def plot_colour_int(self, sub_plots):
+        self.spread = self.max - self.min
         for sub_plot in sub_plots:
-            self.axes.plot(sub_plot)
+            count = 0
+            current = 0
+            while True:
+                if (sub_plot[count] != None):
+                    current = sub_plot[count]
+                    break
+                count += 1
+            self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
+            self.colour = (self.r, self.green, self.blue)
+            self.axes.plot(sub_plot, color=self.rgb_to_hex(self.colour))
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
         self.axes.set_title('Active Src graph')
@@ -43,6 +57,8 @@ class Plotter():
 
     def build_colour_plot_arrays(self, plot_data, interval):
         plot_arrays = []
+        self.min = min(plot_data)
+        self.max = max(plot_data)
         count = 0
         while True:
             plot_arrays += [[None] * count + plot_data[count:count + interval] + [None] * (len(plot_data) - interval - count)]
