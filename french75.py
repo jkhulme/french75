@@ -3,6 +3,10 @@ from plotter import Plotter
 #from gui_launcher import VisWindow
 #import sys
 import wx
+import matplotlib
+matplotlib.use('WXAgg')
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
 
 #results - one index for each csv file, dictionary of dictionaries
@@ -19,9 +23,19 @@ class French75(wx.Frame):
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
         self.results = {}
+        self.data = [5, 6, 9, 14]
         self.launchGui()
+        self.draw_figure()
 
     def launchGui(self):
+        self.panel = wx.Panel(self)
+        self.fig = Figure((5.0, 4.0))
+        self.canvas = FigCanvas(self.panel, -1, self.fig)
+        self.axes = self.fig.add_subplot(111)
+        self.vbox = wx.BoxSizer(wx.VERTICAL)
+        self.vbox.Add(self.canvas)
+        self.panel.SetSizer(self.vbox)
+        self.vbox.Fit(self)
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
         filem = fileMenu.Append(wx.ID_OPEN, '&Open')
@@ -34,6 +48,12 @@ class French75(wx.Frame):
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
+
+    def draw_figure(self):
+        x = range(len(self.data))
+        self.axes.clear()
+        self.axes.bar(left=x, height=self.data)
+        self.canvas.draw()
 
     def openFile(self, e):
         file_chooser = wx.FileDialog(
