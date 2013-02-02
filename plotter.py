@@ -12,6 +12,13 @@ class Plotter():
 
     def __init__(self):
         self.interval = 1
+        self.data = [5, 6, 9, 14]
+
+    def draw_figure(self, axes, canvas):
+        x = range(len(self.data))
+        axes.clear()
+        axes.bar(left=x, height=self.data)
+        canvas.draw()
 
     def plot(self, results, parser):
         for result in results:
