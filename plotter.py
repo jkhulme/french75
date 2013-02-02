@@ -1,7 +1,3 @@
-import matplotlib
-matplotlib.use('WXAgg')
-import matplotlib.pyplot as graph_plot
-
 """
 Given the data, plot it on one graph
 Might be doing to much work in here - maybe make it more abstract
@@ -28,22 +24,22 @@ class Plotter():
                 if (not key == 'Time'):
                     self.axes.plot(results_dict['Time'], results_dict[key], label=key)
 
-        #self.axes.ylabel('Process Count/Variable Value')
-        #self.axes.xlabel('Time')
+        self.axes.set_ylabel('Process Count/Variable Value')
+        self.axes.set_xlabel('Time')
         self.axes.grid(True)
         self.axes.legend(loc=1)
-        #self.axes.title('Active Src graph')
+        self.axes.set_title('Active Src graph')
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((parser.minx, parser.maxx, ymin, ymax))
         self.canvas.draw()
 
     def plot_colour_int(self, sub_plots):
         for sub_plot in sub_plots:
-            graph_plot.plot(sub_plot)
-        graph_plot.ylabel('Process Count/Variable Value')
-        graph_plot.xlabel('Time')
-        graph_plot.title('Active Src graph')
-        graph_plot.show()
+            self.axes.plot(sub_plot)
+        self.axes.set_ylabel('Process Count/Variable Value')
+        self.axes.set_xlabel('Time')
+        self.axes.set_title('Active Src graph')
+        self.canvas.draw()
 
     def build_colour_plot_arrays(self, plot_data, interval):
         plot_arrays = []
