@@ -43,6 +43,10 @@ class Plotter():
 
     def build_colour_plot_arrays(self, plot_data, interval):
         plot_arrays = []
-        for i in range(0, len(plot_data) - 1):
-            plot_arrays += [[None] * i + plot_data[i:i + interval] + [None] * (len(plot_data) - interval - i)]
+        count = 0
+        while True:
+            plot_arrays += [[None] * count + plot_data[count:count + interval] + [None] * (len(plot_data) - interval - count)]
+            if (plot_arrays[-1][-1] != None):
+                break
+            count += interval - 1
         return plot_arrays
