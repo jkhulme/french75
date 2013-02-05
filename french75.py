@@ -1,7 +1,5 @@
 from biopepa_csv_parser import BioPepaCsvParser
 from plotter import Plotter
-#from gui_launcher import VisWindow
-#import sys
 import wx
 import matplotlib
 matplotlib.use('WXAgg')
@@ -9,16 +7,14 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
 
-#results - one index for each csv file, dictionary of dictionaries
-#argv - files passed to plotted
-
-"""
-results = {}
-argv = sys.argv[1:]
-"""
-
-
 class French75(wx.Frame):
+
+    #self.results - data to be plotted
+    #self.panel - container for the drawn graph
+    #self.fig - container for the canvas
+    #self.canvas - container where we draw the graph
+    #self.axes - container that holds the data about what has been plotted
+    #self.vbox - another layout container
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
@@ -27,7 +23,7 @@ class French75(wx.Frame):
 
     def launchGui(self):
         self.panel = wx.Panel(self)
-        self.fig = Figure((10.0, 10.0))
+        self.fig = Figure((10.0, 6))
         self.canvas = FigCanvas(self.panel, -1, self.fig)
         self.axes = self.fig.add_subplot(111)
         self.vbox = wx.BoxSizer(wx.VERTICAL)
@@ -42,7 +38,7 @@ class French75(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.openFile, filem)
 
-        self.SetSize((800, 800))
+        self.SetSize((800, 500))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
@@ -68,10 +64,9 @@ class French75(wx.Frame):
             parser.parseResults()
             self.results[path] = parser.results_dict
             parser.timeScale()
-        draw_plot = Plotter(self.axes, self.canvas)
-        #draw_plot.plot(self.results, parser)
-        subs = draw_plot.build_colour_plot_arrays(self.results, 2)
-        draw_plot.plot_colour_int(subs)
+        draw_plot = Plotter(self.axes, self.canvas, self.results, parser)
+        #draw_plot.plot()
+        draw_plot.plot_colour_int()
 
 """
 Like Java's main method

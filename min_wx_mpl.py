@@ -1,3 +1,7 @@
+"""
+Used as template to get matplotlib plotting with wx backend.  Stripped down version of that guys web version that is public domain
+"""
+
 import wx
 import matplotlib
 matplotlib.use('WXAgg')
