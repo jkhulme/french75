@@ -27,7 +27,7 @@ class French75(wx.Frame):
 
     def launchGui(self):
         self.panel = wx.Panel(self)
-        self.fig = Figure((5.0, 4.0))
+        self.fig = Figure((10.0, 10.0))
         self.canvas = FigCanvas(self.panel, -1, self.fig)
         self.axes = self.fig.add_subplot(111)
         self.vbox = wx.BoxSizer(wx.VERTICAL)
@@ -42,7 +42,7 @@ class French75(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.openFile, filem)
 
-        self.SetSize((500, 300))
+        self.SetSize((800, 800))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
@@ -70,7 +70,7 @@ class French75(wx.Frame):
             parser.timeScale()
         draw_plot = Plotter(self.axes, self.canvas)
         #draw_plot.plot(self.results, parser)
-        subs = draw_plot.build_colour_plot_arrays([1, 2, 2, 2, 4, 3], 2)
+        subs = draw_plot.build_colour_plot_arrays(self.results, 2)
         draw_plot.plot_colour_int(subs)
 
 """

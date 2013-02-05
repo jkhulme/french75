@@ -55,7 +55,18 @@ class Plotter():
         self.axes.set_title('Active Src graph')
         self.canvas.draw()
 
-    def build_colour_plot_arrays(self, plot_data, interval):
+    def build_colour_plot_arrays(self, results, interval):
+        plot_data = []
+        for result in results:
+            results_dict = results[result]
+            for key in results_dict:
+                if (not key == 'Time'):
+                    plot_data = results_dict[key]
+
+        print plot_data
+        for i, x in enumerate(plot_data):
+            plot_data[i] = float(x)
+
         plot_arrays = []
         self.min = min(plot_data)
         self.max = max(plot_data)
