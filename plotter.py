@@ -1,3 +1,5 @@
+from line import Line
+
 """
 Given the data, plot it on one graph
 
@@ -34,10 +36,12 @@ class Plotter():
         self.parser = parser
         self.results = {}
         for result in results:
+            print result
             results_dict = results[result]
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.results[key] = (results_dict['Time'], results_dict[key])
+                    self.results[key] = Line(self.axes, results_dict[key], results_dict['Time'], result)
+                    print self.results[key]
 
     """
     For basic matplotlib line graphs.
@@ -45,8 +49,7 @@ class Plotter():
     def plot(self):
         self.axes.clear()
         for key in self.results:
-            if (not key == 'Time'):
-                self.axes.plot(self.results[key][0], self.results[key][1], label=key)
+            self.results[key].plot()
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
@@ -80,33 +83,3 @@ class Plotter():
         self.axes.set_xlabel('Time')
         self.axes.set_title('Active Src graph')
         self.canvas.draw()
-
-    def plot_sub_plots(self, sub_plots):
-        for sub_plot in sub_plots:
-            count = 0
-            current = 0
-            while True:
-                if (sub_plot[count] != None):
-                    current = sub_plot[count]
-                    break
-                count += 1
-            self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
-            self.colour = (self.r, self.green, self.blue)
-            self.axes.plot(sub_plot, color=self.rgb_to_hex(self.colour))
-
-    """
-    Split the data into multiple lists padded with None to enable the intensity plot
-    """
-    def build_colour_plot_arrays(self, plot_data, interval):
-        for i, x in enumerate(plot_data):
-            plot_data[i] = float(x)
-        plot_arrays = []
-        self.min = min(plot_data)
-        self.max = max(plot_data)
-        count = 0
-        while True:
-            plot_arrays += [[None] * count + plot_data[count:count + interval] + [None] * (len(plot_data) - interval - count)]
-            if (plot_arrays[-1][-1] != None):
-                break
-            count += interval - 1
-        return plot_arrays

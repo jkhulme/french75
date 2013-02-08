@@ -67,7 +67,6 @@ class French75(wx.Frame):
         self.plot_graphs()
 
     def plot_graphs(self):
-        print self.splitter.GetSashPosition()
         self.results = {}
         parser = BioPepaCsvParser()
         for path in self.paths:
@@ -76,8 +75,8 @@ class French75(wx.Frame):
             self.results[path] = parser.results_dict
             parser.timeScale()
         draw_plot = Plotter(self.axes, self.canvas, self.results, parser)
-        #draw_plot.plot()
-        draw_plot.plot_colour_int()
+        draw_plot.plot()
+        #draw_plot.plot_colour_int()
 
 """
 Like Java's main method
