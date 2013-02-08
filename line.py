@@ -28,12 +28,14 @@ class Line():
         self.min = 0
         self.max = 0
         self.csv = csv
+        print self.time
+        print self.results
 
     def __print__(self):
         print self.csv + self.results
 
     def plot(self):
-        self.axes.plot(self.results, self.time, label=self.csv)
+        self.axes.plot(self.time, self.results, label=self.csv)
 
     """
     def plot_sub_plots(self, sub_plots):

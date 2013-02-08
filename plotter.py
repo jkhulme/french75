@@ -41,7 +41,6 @@ class Plotter():
             for key in results_dict:
                 if (not key == 'Time'):
                     self.results[key] = Line(self.axes, results_dict[key], results_dict['Time'], result)
-                    print self.results[key]
 
     """
     For basic matplotlib line graphs.
