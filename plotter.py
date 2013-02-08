@@ -25,7 +25,7 @@ class Plotter():
         self.interval = 2
         self.axes = axes
         self.canvas = canvas
-        self.min_red = 0
+        self.min_red = 150
         self.max_red = 255
         self.green = 0
         self.blue = 0
@@ -91,7 +91,7 @@ class Plotter():
                     break
                 count += 1
             self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
-            self.colour = (self.r, self.r, self.r)
+            self.colour = (self.r, self.green, self.blue)
             self.axes.plot(sub_plot, color=self.rgb_to_hex(self.colour))
 
     """

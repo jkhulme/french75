@@ -22,23 +22,33 @@ class French75(wx.Frame):
         self.launchGui()
 
     def launchGui(self):
-        self.panel = wx.Panel(self)
+        self.splitter = wx.SplitterWindow(self, -1)
+        self.graph_panel = wx.Panel(self.splitter, -1)
+        self.legend_panel = wx.Panel(self.splitter, -1)
+        self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
+        self.leg_title = wx.StaticText(self.legend_panel, -1, "This is a legend")
+        self.vbox_leg.Add(self.leg_title)
+        self.leg_title2 = wx.StaticText(self.legend_panel, -1, "This is another legend")
+        self.vbox_leg.Add(self.leg_title2)
+
         self.fig = Figure((10.0, 6))
-        self.canvas = FigCanvas(self.panel, -1, self.fig)
+        self.canvas = FigCanvas(self.graph_panel, -1, self.fig)
         self.axes = self.fig.add_subplot(111)
         self.vbox = wx.BoxSizer(wx.VERTICAL)
         self.vbox.Add(self.canvas)
-        self.panel.SetSizer(self.vbox)
+        self.graph_panel.SetSizer(self.vbox)
+        self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox.Fit(self)
+        self.vbox_leg.Fit(self)
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
         filem = fileMenu.Append(wx.ID_OPEN, '&Open')
         menubar.Append(fileMenu, '&File')
         self.SetMenuBar(menubar)
-
+        self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
+        self.splitter.SetSashPosition(800)
         self.Bind(wx.EVT_MENU, self.openFile, filem)
-
-        self.SetSize((800, 500))
+        self.SetSize((1000, 500))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
@@ -57,6 +67,7 @@ class French75(wx.Frame):
         self.plot_graphs()
 
     def plot_graphs(self):
+        print self.splitter.GetSashPosition()
         self.results = {}
         parser = BioPepaCsvParser()
         for path in self.paths:
