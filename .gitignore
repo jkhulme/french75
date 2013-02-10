@@ -1,3 +1,4 @@
 *.pyc
 .ropeproject/
 *.sublime-*
+f75_env/
