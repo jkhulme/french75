@@ -49,13 +49,11 @@ class Plotter():
     """
     def plot(self):
         self.axes.clear()
-        files = []
         for result in self.results:
-            files += [result]
             for key in self.results[result]:
                 self.results[result][key].plot()
 
-        self.legend.draw_legend(files)
+        self.legend.draw_legend(self.results)
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
         self.axes.grid(True)

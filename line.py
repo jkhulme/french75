@@ -37,6 +37,9 @@ class Line():
     def plot(self):
         self.axes.plot(self.time, self.results, label=self.species)
 
+    def show_hide(self):
+        print "help"
+
     """
     def plot_sub_plots(self, sub_plots):
         for sub_plot in sub_plots:
