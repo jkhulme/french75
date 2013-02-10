@@ -22,8 +22,9 @@ class Plotter():
     #self.min - minimum data value - used in colour intensity
     #self.max - maximum data value used in colour intensity
     #self.r - calculated red component for colour intensity
+    #self.legend - Will plot the legend
 
-    def __init__(self, axes, canvas, results, parser):
+    def __init__(self, axes, canvas, results, parser, legend):
         self.interval = 2
         self.axes = axes
         self.canvas = canvas
@@ -34,22 +35,27 @@ class Plotter():
         self.min = 0
         self.max = 0
         self.parser = parser
+        self.legend = legend
         self.results = {}
         for result in results:
-            print result
             results_dict = results[result]
+            self.results[result] = {}
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.results[key] = Line(self.axes, results_dict[key], results_dict['Time'], result)
+                    self.results[result][key] = Line(self.axes, results_dict[key], results_dict['Time'], result, key)
 
     """
     For basic matplotlib line graphs.
     """
     def plot(self):
         self.axes.clear()
-        for key in self.results:
-            self.results[key].plot()
+        files = []
+        for result in self.results:
+            files += [result]
+            for key in self.results[result]:
+                self.results[result][key].plot()
 
+        self.legend.draw_legend(files)
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
         self.axes.grid(True)

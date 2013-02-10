@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
+from legend import Legend
 
 
 class French75(wx.Frame):
@@ -25,11 +26,6 @@ class French75(wx.Frame):
         self.splitter = wx.SplitterWindow(self, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
         self.legend_panel = wx.Panel(self.splitter, -1)
-        self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
-        self.leg_title = wx.StaticText(self.legend_panel, -1, "This is a legend")
-        self.vbox_leg.Add(self.leg_title)
-        self.leg_title2 = wx.StaticText(self.legend_panel, -1, "This is another legend")
-        self.vbox_leg.Add(self.leg_title2)
 
         self.fig = Figure((10.0, 6))
         self.canvas = FigCanvas(self.graph_panel, -1, self.fig)
@@ -37,9 +33,9 @@ class French75(wx.Frame):
         self.vbox = wx.BoxSizer(wx.VERTICAL)
         self.vbox.Add(self.canvas)
         self.graph_panel.SetSizer(self.vbox)
-        self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox.Fit(self)
-        self.vbox_leg.Fit(self)
+
+        self.legend = Legend(self.legend_panel)
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
         filem = fileMenu.Append(wx.ID_OPEN, '&Open')
@@ -74,7 +70,7 @@ class French75(wx.Frame):
             parser.parseResults()
             self.results[path] = parser.results_dict
             parser.timeScale()
-        draw_plot = Plotter(self.axes, self.canvas, self.results, parser)
+        draw_plot = Plotter(self.axes, self.canvas, self.results, parser, self.legend)
         draw_plot.plot()
         #draw_plot.plot_colour_int()
 
