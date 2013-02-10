@@ -39,7 +39,8 @@ class Legend():
         self.vbox_leg.Fit(self.legend_panel)
 
     def OnClick(self, event, line, checked):
-        cb = event.GetEventObject()
-        print cb.GetLabel()
+        #cb = event.GetEventObject()
+        #print cb.GetLabel()
+        print line.species
         line.showhide = checked
         self.plotter.plot()
