@@ -12,26 +12,26 @@ class Legend():
 
         self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
 
-    def draw_legend(self, results):
+    def draw_legend(self, plotter, results):
+        self.plotter = plotter
         for child in self.legend_panel.GetChildren():
             child.Destroy()
         for result in results:
             collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
+            collpane.Expand()
 
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
             win = collpane.GetPane()
             paneSz = wx.BoxSizer(wx.VERTICAL)
             for key in results[result]:
-                self.cb = wx.CheckBox(win, -1, 'Show Title', (10, 10))
-                paneSz.Add(self.cb)
-                self.cb.SetValue(True)
-                self.cb.Bind(wx.EVT_CHECKBOX,
+                cb = wx.CheckBox(win, -1, key, (10, 10))
+                paneSz.Add(cb)
+                cb.SetValue(results[result][key].showhide)
+                cb.Bind(wx.EVT_CHECKBOX,
                     lambda event: self.OnClick(event, results[result][key],
-                        self.cb.GetValue()), self.cb)
-                #wx.EVT_CHECKBOX(self.cb,
-                #    self.cb.GetId(), self.getOnCheck(results[result][key]))
-                paneSz.Add(wx.StaticText(win, wx.ID_ANY, key), 1, wx.GROW |
-                    wx.ALL, 2)
+                        cb.GetValue()), cb)
+                label = wx.StaticText(win, -1, key)
+                paneSz.Add(label)
             win.SetSizer(paneSz)
             paneSz.SetSizeHints(win)
 
@@ -39,6 +39,7 @@ class Legend():
         self.vbox_leg.Fit(self.legend_panel)
 
     def OnClick(self, event, line, checked):
-        print line.showhide
+        cb = event.GetEventObject()
+        print cb.GetLabel()
         line.showhide = checked
-        print line.showhide
+        self.plotter.plot()

@@ -49,15 +49,14 @@ class Plotter():
     """
     def plot(self):
         self.axes.clear()
-        self.legend.draw_legend(self.results)
         for result in self.results:
             for key in self.results[result]:
                 self.results[result][key].plot()
+        self.legend.draw_legend(self, self.results)
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
         self.axes.grid(True)
-        self.axes.legend(loc=1)
         self.axes.set_title('Active Src graph')
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
@@ -86,3 +85,6 @@ class Plotter():
         self.axes.set_xlabel('Time')
         self.axes.set_title('Active Src graph')
         self.canvas.draw()
+
+    def test(self):
+        print "thundercunt"
