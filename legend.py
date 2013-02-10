@@ -26,7 +26,8 @@ class Legend():
                 paneSz.Add(self.cb)
                 self.cb.SetValue(True)
                 self.cb.Bind(wx.EVT_CHECKBOX,
-                    lambda event: self.OnClick(event, 'somevalue'), self.cb)
+                    lambda event: self.OnClick(event, results[result][key],
+                        self.cb.GetValue()), self.cb)
                 #wx.EVT_CHECKBOX(self.cb,
                 #    self.cb.GetId(), self.getOnCheck(results[result][key]))
                 paneSz.Add(wx.StaticText(win, wx.ID_ANY, key), 1, wx.GROW |
@@ -37,5 +38,7 @@ class Legend():
         self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox_leg.Fit(self.legend_panel)
 
-    def OnClick(self, event, somearg):
-        print somearg
+    def OnClick(self, event, line, checked):
+        print line.showhide
+        line.showhide = checked
+        print line.showhide

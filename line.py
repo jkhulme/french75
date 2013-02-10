@@ -30,15 +30,14 @@ class Line():
         self.max = 0
         self.csv = csv
         self.species = key
+        self.showhide = True
 
     def __print__(self):
         print self.csv + self.results
 
     def plot(self):
-        self.axes.plot(self.time, self.results, label=self.species)
-
-    def show_hide(self):
-        print "help"
+        if self.showhide:
+            self.axes.plot(self.time, self.results, label=self.species)
 
     """
     def plot_sub_plots(self, sub_plots):
