@@ -12,10 +12,13 @@ class Legend():
 
         self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
 
-    def draw_legend(self, results):
+    def draw_legend(self, plotter, results):
+        print "test"
+        self.plotter = plotter
         for child in self.legend_panel.GetChildren():
             child.Destroy()
         for result in results:
+            print result
             collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
 
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
@@ -24,7 +27,7 @@ class Legend():
             for key in results[result]:
                 self.cb = wx.CheckBox(win, -1, 'Show Title', (10, 10))
                 paneSz.Add(self.cb)
-                self.cb.SetValue(True)
+                self.cb.SetValue(results[result][key].showhide)
                 self.cb.Bind(wx.EVT_CHECKBOX,
                     lambda event: self.OnClick(event, results[result][key],
                         self.cb.GetValue()), self.cb)
@@ -39,6 +42,5 @@ class Legend():
         self.vbox_leg.Fit(self.legend_panel)
 
     def OnClick(self, event, line, checked):
-        print line.showhide
         line.showhide = checked
-        print line.showhide
+        self.plotter.plot()
