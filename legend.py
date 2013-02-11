@@ -13,6 +13,7 @@ class Legend():
         self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
 
     def draw_legend(self, plotter, results):
+        self.results = results
         self.plotter = plotter
         for child in self.legend_panel.GetChildren():
             child.Destroy()
@@ -39,8 +40,8 @@ class Legend():
         self.vbox_leg.Fit(self.legend_panel)
 
     def OnClick(self, event, line, checked):
-        #cb = event.GetEventObject()
-        #print cb.GetLabel()
-        print line.species
-        line.showhide = checked
-        self.plotter.plot()
+        cb = event.GetEventObject()
+        print cb.GetLabel()
+        parent = cb.GetParent()
+        #line.showhide = checked
+        #self.plotter.plot()
