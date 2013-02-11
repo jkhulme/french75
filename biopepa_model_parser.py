@@ -1,6 +1,10 @@
+from location import Location
 
 
 class Biopepa_Model_Parser():
+
+    def __init__(self):
+        self.loc_results = {}
 
     def open_model(self, model):
         with open(model, 'r') as f:
@@ -23,10 +27,19 @@ class Biopepa_Model_Parser():
                 loc_parent = location.split(',')[0].strip().split('in')[1].strip().split(':')[0]
             else:
                 loc_name = location.split(',')[0].strip().split(':')[0][9:]
-                print loc_name
+            self.loc_results[loc_name] = Location(loc_name, loc_size,
+                loc_parent, loc_type)
+
+    def __str__(self):
+        output = ""
+        for location in self.loc_results:
+            output += self.loc_results[location].__str__()
+        return output
+
 
 if __name__ == '__main__':
     parser = Biopepa_Model_Parser()
     parser.open_model('camp-pka-mapk.biopepa')
     parser.get_locations()
     parser.parse_location()
+    print parser
