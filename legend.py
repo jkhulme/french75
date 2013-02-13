@@ -41,5 +41,5 @@ class Legend(object):
     def OnClick(self, event):
         #pdb.set_trace()
         cb = event.GetEventObject()
-        print cb.GetLabel()
-        self.plotter.plot()
+        print cb.GetValue()
+        self.plotter.plot(False)

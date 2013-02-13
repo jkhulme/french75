@@ -47,12 +47,13 @@ class Plotter(object):
     """
     For basic matplotlib line graphs.
     """
-    def plot(self):
+    def plot(self, test):
         self.axes.clear()
         for result in self.results:
             for key in self.results[result]:
                 self.results[result][key].plot()
-        self.legend.draw_legend(self, self.results)
+        if (test):
+            self.legend.draw_legend(self, self.results)
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
