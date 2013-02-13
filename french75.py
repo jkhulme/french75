@@ -74,6 +74,7 @@ class French75(wx.Frame):
         draw_plot.plot()
         #draw_plot.plot_colour_int()
 
+
 """
 Like Java's main method
 """

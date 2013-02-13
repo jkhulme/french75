@@ -1,7 +1,8 @@
 import wx
+import pdb
 
 
-class Legend():
+class Legend(object):
 
     """
     self.legend_panel
@@ -27,9 +28,7 @@ class Legend():
                 cb = wx.CheckBox(win, -1, key, (10, 10))
                 paneSz.Add(cb)
                 cb.SetValue(results[result][key].showhide)
-                cb.Bind(wx.EVT_CHECKBOX,
-                    lambda event: self.OnClick(event, results[result][key],
-                        cb.GetValue()), cb)
+                cb.Bind(wx.EVT_CHECKBOX, self.OnClick)
                 label = wx.StaticText(win, -1, key)
                 paneSz.Add(label)
             win.SetSizer(paneSz)
@@ -38,9 +37,8 @@ class Legend():
         self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox_leg.Fit(self.legend_panel)
 
-    def OnClick(self, event, line, checked):
-        #cb = event.GetEventObject()
-        #print cb.GetLabel()
-        print line.species
-        line.showhide = checked
+    def OnClick(self, event):
+        #pdb.set_trace()
+        cb = event.GetEventObject()
+        print cb.GetLabel()
         self.plotter.plot()

@@ -11,7 +11,7 @@ Might be doing to much work in here - maybe make it more abstract
 """
 
 
-class Plotter():
+class Plotter(object):
     #self.interval - should be 2, used to split the datasets for intensity plots
     #self.axes - Lines are plotted using this.
     #self.canvas - Used to draw the axes/plots

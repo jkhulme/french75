@@ -1,6 +1,6 @@
 
 
-class Line():
+class Line(object):
 
     """
     self.axes

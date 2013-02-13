@@ -14,7 +14,7 @@ Expected Structure
 """
 
 
-class BioPepaCsvParser():
+class BioPepaCsvParser(object):
 
     #contents - entire file contents
     #results_dict - the actual data indexed by column header, only for one csv
