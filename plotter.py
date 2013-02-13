@@ -86,6 +86,3 @@ class Plotter(object):
         self.axes.set_xlabel('Time')
         self.axes.set_title('Active Src graph')
         self.canvas.draw()
-
-    def test(self):
-        print "thundercunt"

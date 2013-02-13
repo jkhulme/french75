@@ -1,5 +1,4 @@
 import wx
-import pdb
 
 
 class Legend(object):
@@ -39,7 +38,6 @@ class Legend(object):
         self.vbox_leg.Fit(self.legend_panel)
 
     def OnClick(self, event):
-        #pdb.set_trace()
         cb = event.GetEventObject()
-        print cb.GetValue()
+        self.results[cb.GetParent().GetParent().GetLabel()][cb.GetLabel()].showhide = cb.GetValue()
         self.plotter.plot(False)
