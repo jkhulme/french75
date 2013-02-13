@@ -14,6 +14,7 @@ class Legend(object):
         self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
 
     def draw_legend(self, plotter, results):
+        self.results = results
         self.plotter = plotter
         for child in self.legend_panel.GetChildren():
             child.Destroy()
