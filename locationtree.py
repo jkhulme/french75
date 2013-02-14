@@ -5,18 +5,22 @@ class LocationTree:
     def __init__(self, location_data):
         self.loc_data = location_data
         self.tree = {}
+        self.stack = []
 
     def build_tree(self):
-        self.root_elems()
-        self.child_elems()
-
-    def root_elems(self):
         for loc in self.loc_data:
-            if (self.loc_data[loc].parent == "root"):
-                self.tree[self.loc_data[loc].name] = {}
+            if (not self.loc_data[loc].parent in self.tree):
+                self.tree[self.loc_data[loc].parent] = [self.loc_data[loc].name]
+            else:
+                self.tree[self.loc_data[loc].parent] += [self.loc_data[loc].name]
         print self.tree
 
-    def child_elems(self):
-        for loc in self.loc_data:
-            if (self.loc_data[loc].parent in self.tree.keys()):
-                self.tree[self.loc_data[loc].name] = {}
+    def draw_tree(self):
+        self.stack += [self.tree['root'][0][:-1]]
+        while (len(self.stack) > 0):
+            node = self.stack.pop(0)
+            print node
+            try:
+                self.stack += self.tree[node]
+            except:
+                print "leaf"
