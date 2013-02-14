@@ -1,4 +1,5 @@
 from location import Location
+from locationtree import LocationTree
 
 
 class Biopepa_Model_Parser():
@@ -28,7 +29,7 @@ class Biopepa_Model_Parser():
                 loc_parent = location.split(',')[0].strip().split('in')[1].strip().split(':')[0]
             else:
                 loc_name = location.split(',')[0].strip().split(':')[0][9:]
-                loc_parent = "n/a"
+                loc_parent = "root"
             self.loc_results[loc_name] = Location(loc_name, loc_size,
                 loc_parent, loc_type)
 
@@ -39,10 +40,8 @@ class Biopepa_Model_Parser():
         return output
 
     def build_graph(self):
-        for loc in self.loc_results:
-            if (self.loc_results[loc].parent == "n/a"):
-                    self.loc_tree[self.loc_results[loc].name] = "foo"
-        print self.loc_tree
+        self.tree = LocationTree(self.loc_results)
+        self.tree.build_tree()
 
 if __name__ == '__main__':
     parser = Biopepa_Model_Parser()
@@ -50,4 +49,3 @@ if __name__ == '__main__':
     parser.get_locations()
     parser.parse_location()
     parser.build_graph()
-    print parser
