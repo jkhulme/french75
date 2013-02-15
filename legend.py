@@ -1,5 +1,6 @@
 import wx
 import wx.lib.agw.pycollapsiblepane as PCP
+import platform
 
 
 class Legend(object):
@@ -19,7 +20,10 @@ class Legend(object):
         for child in self.legend_panel.GetChildren():
             child.Destroy()
         for result in results:
-            collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
+            if (platform.system() == "Linux"):
+                collpane = PCP.PyCollapsiblePane(self.legend_panel, wx.ID_ANY, result)
+            else:
+                collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
             collpane.Expand()
 
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
