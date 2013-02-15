@@ -1,4 +1,5 @@
 import wx
+import wx.lib.agw.pycollapsiblepane as PCP
 
 
 class Legend(object):
