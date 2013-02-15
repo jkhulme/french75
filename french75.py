@@ -68,7 +68,7 @@ class French75(wx.Frame):
         for path in self.paths:
             parser.openCsv(path)
             parser.parseResults()
-            self.results[path] = parser.results_dict
+            self.results[path.split('/')[-1]] = parser.results_dict
             parser.timeScale()
         draw_plot = Plotter(self.axes, self.canvas, self.results, parser, self.legend)
         draw_plot.plot(True)

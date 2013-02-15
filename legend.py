@@ -30,18 +30,16 @@ class Legend(object):
             win = collpane.GetPane()
             paneSz = wx.BoxSizer(wx.VERTICAL)
             for key in results[result]:
-                cb = wx.CheckBox(win, -1, key, (10, 10))
+                cb = wx.CheckBox(win, -1, key + '- Show', (10, 10))
                 paneSz.Add(cb)
                 cb.SetValue(results[result][key].showhide)
                 cb.Bind(wx.EVT_CHECKBOX, self.OnClick)
-                
-                cb2 = wx.CheckBox(win, -1, key, (10, 10))
+
+                cb2 = wx.CheckBox(win, -1, key + '- Intensity Plot', (10, 10))
                 paneSz.Add(cb2)
-                cb2.SetValue(results[result][key].normal_plot)
+                cb2.SetValue(results[result][key].intense_plot)
                 cb2.Bind(wx.EVT_CHECKBOX, self.OnClickTwo)
-                
-                label = wx.StaticText(win, -1, key)
-                paneSz.Add(label)
+
             win.SetSizer(paneSz)
             paneSz.SetSizeHints(win)
 
@@ -50,10 +48,10 @@ class Legend(object):
 
     def OnClick(self, event):
         cb = event.GetEventObject()
-        self.results[cb.GetParent().GetParent().GetLabel()][cb.GetLabel()].showhide = cb.GetValue()
+        self.results[cb.GetParent().GetParent().GetLabel()][cb.GetLabel().split('-')[0].strip()].showhide = cb.GetValue()
         self.plotter.plot(False)
 
     def OnClickTwo(self, event):
         cb2 = event.GetEventObject()
-        self.results[cb2.GetParent().GetParent().GetLabel()][cb2.GetLabel()].normal_plot = cb2.GetValue()
+        self.results[cb2.GetParent().GetParent().GetLabel()][cb2.GetLabel().split('-')[0].strip()].intense_plot = cb2.GetValue()
         self.plotter.plot(False)

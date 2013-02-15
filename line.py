@@ -31,7 +31,7 @@ class Line(object):
         self.csv = csv
         self.species = key
         self.showhide = True
-        self.normal_plot = True
+        self.intense_plot = False
         self.interval = 2
 
     def __print__(self):
@@ -39,7 +39,7 @@ class Line(object):
 
     def plot(self):
         if self.showhide:
-            if self.normal_plot:
+            if not self.intense_plot:
                 self.axes.plot(self.time, self.results, label=self.species)
             else:
                 self.int_plot()
