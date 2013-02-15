@@ -64,13 +64,6 @@ class Plotter(object):
         self.canvas.draw()
 
     """
-    Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
-    Taken from this thread: http://stackoverflow.com/questions/214359/converting-hex-color-to-rgb-and-vice-versa
-    """
-    def rgb_to_hex(self, rgb):
-        return '#%02x%02x%02x' % rgb
-
-    """
     Change the colour depending on data gradient.
     Currently a bit iffy.
     """

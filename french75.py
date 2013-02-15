@@ -72,7 +72,6 @@ class French75(wx.Frame):
             parser.timeScale()
         draw_plot = Plotter(self.axes, self.canvas, self.results, parser, self.legend)
         draw_plot.plot(True)
-        #draw_plot.plot_colour_int()
 
 
 """
