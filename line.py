@@ -3,25 +3,28 @@
 class Line(object):
 
     """
-    self.axes
-    self.results
-    self.time
-    self.intensity
-    self.min_red
-    self.max_red
-    self.green
-    self.blue
-    self.min
-    self.max
-    self.csv
-    self.species
+    self.axes - plots the data
+    self.results - data to plot
+    self.time - The time scale
+    self.min_red - for intensity plot
+    self.max_red - for intensity plot
+    self.r - what shade of red should be used in the intensity plot
+    self.colour - holds the rgb tuple for plot colour
+    self.green - for intensity plot
+    self.blue - for intensity plot
+    self.min - minimum data value
+    self.max - maximum data value
+    self.csv - file the data came from
+    self.species - species the data is results of
+    self.showhide - whether to display or not on the axes
+    self.intense_plot - whether to do colour intensity or normal plot
+    self.interval - for building sub plots - I think this has to be 2.
     """
 
     def __init__(self, axes, results, time, csv, key):
         self.axes = axes
         self.results = results
         self.time = time
-        self.intensity = False
         self.min_red = 0
         self.max_red = 255
         self.green = 0
@@ -34,9 +37,12 @@ class Line(object):
         self.intense_plot = False
         self.interval = 2
 
-    def __print__(self):
-        print self.csv + self.results
+    def __str__(self):
+        return self.csv + "\n" + self.results
 
+    """
+    Decides how we're going to plot
+    """
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
@@ -44,6 +50,9 @@ class Line(object):
             else:
                 self.int_plot()
 
+    """
+    performs the steps for intensity plot
+    """
     def int_plot(self):
         self.build_colour_plot_arrays()
         self.plot_sub_plots()
@@ -55,6 +64,10 @@ class Line(object):
     def rgb_to_hex(self, rgb):
         return '#%02x%02x%02x' % rgb
 
+    """
+    Plots the sub plots and works out what colour the line should be
+    this is for colour intensity plot
+    """
     def plot_sub_plots(self):
         sub_plots = self.plot_arrays
         for sub_plot in sub_plots:
@@ -72,7 +85,6 @@ class Line(object):
     """
     Split the data into multiple lists padded with None to enable the intensity plot
     """
-
     def build_colour_plot_arrays(self):
         plot_data = self.results
         for i, x in enumerate(plot_data):
