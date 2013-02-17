@@ -2,27 +2,29 @@
 Parse results data from BioPEPA csv files
 
 Expected Structure
-#algorithm used
-#number of data points
-#number of replications
-#stop time
-#start time
-#line with "model paramaters" written
-#run time
-#column headings (Time needs to be first column)
-#actual data
+-algorithm used
+-number of data points
+-number of replications
+-stop time
+-start time
+-line with "model paramaters" written
+-run time
+-column headings (Time needs to be first column)
+-actual data
 """
 
 
 class BioPepaCsvParser(object):
 
-    #contents - entire file contents
-    #results_dict - the actual data indexed by column header, only for one csv
-    #keys - column headers, used to index the dictionary, time is included
-    #minx - start time
-    #maxx - stop time
+    """
+    self.contents - entire file contents
+    self.results_dict - the actual data indexed by column header, only for one csv
+    self.keys - column headers, used to index the dictionary, time is included
+    self.minx - start time
+    self.maxx - stop time
+    """
 
-    def parseResults(self):
+    def parse_results(self):
         data = self.contents[8:]
 
         for row in data:
@@ -30,7 +32,7 @@ class BioPepaCsvParser(object):
             for i in range(0, len(row)):
                 self.results_dict[self.keys[i]] += [row[i].strip()]
 
-    def openCsv(self, csv):
+    def open_csv(self, csv):
         with open(csv, 'r') as f:
             self.contents = f.readlines()
             self.results_dict = {}
@@ -42,6 +44,6 @@ class BioPepaCsvParser(object):
                 self.keys[i] = self.keys[i].strip()[1:-1]
                 self.results_dict[self.keys[i]] = []
 
-    def timeScale(self):
+    def timescale(self):
         self.minx = float(self.contents[4].strip()[14:])
         self.maxx = float(self.contents[3].strip()[13:])

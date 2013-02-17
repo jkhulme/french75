@@ -88,10 +88,10 @@ class French75(wx.Frame):
         self.results = {}
         self.parser = BioPepaCsvParser()
         for path in self.paths:
-            self.parser.openCsv(path)
-            self.parser.parseResults()
+            self.parser.open_csv(path)
+            self.parser.parse_results()
             self.results[path.split('/')[-1]] = self.parser.results_dict
-            self.parser.timeScale()
+            self.parser.timescale()
         draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend)
         draw_plot.plot(True)
 
