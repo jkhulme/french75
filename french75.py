@@ -10,46 +10,65 @@ from legend import Legend
 
 class French75(wx.Frame):
 
-    #self.results - data to be plotted
-    #self.panel - container for the drawn graph
-    #self.fig - container for the canvas
-    #self.canvas - container where we draw the graph
-    #self.axes - container that holds the data about what has been plotted
-    #self.vbox - another layout container
+    """
+    self.results - data to be plotted
+    self.panel - container for the drawn graph
+    self.graph_fig - container for the canvas
+    self.graph_canvas - container where we draw the graph
+    self.graph_axes - container that holds the data about what has been plotted
+    self.graph_vbox - another layout container
+    self.splitter - splits the windows
+    self.graph_panel - where the standard graph is drawn
+    self.legend_panel - where the legend for the standard graph is drawn
+    self.legend - what is drawn on the legend panel
+    self.paths - all the files to be read
+    self.parser - csv parser
+    """
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
-        self.results = {}
-        self.launchGui()
 
-    def launchGui(self):
+        self.results = {}
+        self.launch_gui()
+
+    """
+    Draws the main window
+    """
+    def launch_gui(self):
         self.splitter = wx.SplitterWindow(self, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
         self.legend_panel = wx.Panel(self.splitter, -1)
 
-        self.fig = Figure((10.0, 6))
-        self.canvas = FigCanvas(self.graph_panel, -1, self.fig)
-        self.axes = self.fig.add_subplot(111)
-        self.vbox = wx.BoxSizer(wx.VERTICAL)
-        self.vbox.Add(self.canvas)
-        self.graph_panel.SetSizer(self.vbox)
-        self.vbox.Fit(self)
+        self.graph_fig = Figure((10.0, 6))
+        self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
+        self.graph_axes = self.graph_fig.add_subplot(111)
+
+        self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
+        self.graph_vbox.Add(self.graph_canvas)
+        self.graph_panel.SetSizer(self.graph_vbox)
+        self.graph_vbox.Fit(self)
 
         self.legend = Legend(self.legend_panel)
+
         menubar = wx.MenuBar()
-        fileMenu = wx.Menu()
-        filem = fileMenu.Append(wx.ID_OPEN, '&Open')
-        menubar.Append(fileMenu, '&File')
+        file_menu = wx.Menu()
+        filem = file_menu.Append(wx.ID_OPEN, '&Open')
+        menubar.Append(file_menu, '&File')
         self.SetMenuBar(menubar)
+        self.Bind(wx.EVT_MENU, self.open_file, filem)
+
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
-        self.Bind(wx.EVT_MENU, self.openFile, filem)
+
         self.SetSize((1000, 500))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
 
-    def openFile(self, e):
+    """
+    selects which csv files to use
+    """
+    def open_file(self, e):
         file_chooser = wx.FileDialog(
             self,
             message="Choose a file",
@@ -62,15 +81,18 @@ class French75(wx.Frame):
 
         self.plot_graphs()
 
+    """
+    Get the data then plot it
+    """
     def plot_graphs(self):
         self.results = {}
-        parser = BioPepaCsvParser()
+        self.parser = BioPepaCsvParser()
         for path in self.paths:
-            parser.openCsv(path)
-            parser.parseResults()
-            self.results[path.split('/')[-1]] = parser.results_dict
-            parser.timeScale()
-        draw_plot = Plotter(self.axes, self.canvas, self.results, parser, self.legend)
+            self.parser.openCsv(path)
+            self.parser.parseResults()
+            self.results[path.split('/')[-1]] = self.parser.results_dict
+            self.parser.timeScale()
+        draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend)
         draw_plot.plot(True)
 
 
