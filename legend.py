@@ -49,9 +49,11 @@ class Legend(object):
     def OnClick(self, event):
         cb = event.GetEventObject()
         self.results[cb.GetParent().GetParent().GetLabel()][cb.GetLabel().split('-')[0].strip()].showhide = cb.GetValue()
-        self.plotter.plot(False)
+        self.plotter.draw_legend = False
+        self.plotter.plot()
 
     def OnClickTwo(self, event):
         cb2 = event.GetEventObject()
         self.results[cb2.GetParent().GetParent().GetLabel()][cb2.GetLabel().split('-')[0].strip()].intense_plot = cb2.GetValue()
-        self.plotter.plot(False)
+        self.plotter.draw_legend = False
+        self.plotter.plot()

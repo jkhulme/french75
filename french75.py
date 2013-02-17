@@ -92,8 +92,8 @@ class French75(wx.Frame):
             self.parser.parse_results()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             self.parser.timescale()
-        draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend)
-        draw_plot.plot(True)
+        draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True)
+        draw_plot.plot()
 
 
 """

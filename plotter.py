@@ -6,37 +6,31 @@ Given the data, plot it on one graph
 Plots currently supported:
     Intensity plot.
     General line plots.
-
-Might be doing to much work in here - maybe make it more abstract
 """
 
 
 class Plotter(object):
-    #self.interval - should be 2, used to split the datasets for intensity plots
-    #self.axes - Lines are plotted using this.
-    #self.canvas - Used to draw the axes/plots
-    #self.min_red - min red for colour intensity
-    #self.max_red - max red for colour intensity
-    #self.green - green component for colour intensity
-    #self.blue - blue component for colour intensity
-    #self.min - minimum data value - used in colour intensity
-    #self.max - maximum data value used in colour intensity
-    #self.r - calculated red component for colour intensity
-    #self.legend - Will plot the legend
 
-    def __init__(self, axes, canvas, results, parser, legend):
-        self.interval = 2
+    """
+    self.axes - Lines are plotted using this.
+    self.canvas - Used to draw the axes/plots
+    self.parser - the csv parser
+    self.results - the results data
+    self.draw_legend - redrawing the legend is causing a seg fault on mac, I think it is something to do with redefining the event handler
+    self.legend - Will plot the legend
+    """
+
+    """
+    Initialise what we need, and then create a line for each plot
+    """
+    def __init__(self, axes, canvas, results, parser, legend, draw_legend):
         self.axes = axes
         self.canvas = canvas
-        self.min_red = 150
-        self.max_red = 255
-        self.green = 0
-        self.blue = 0
-        self.min = 0
-        self.max = 0
         self.parser = parser
         self.legend = legend
         self.results = {}
+        self.draw_legend = draw_legend
+
         for result in results:
             results_dict = results[result]
             self.results[result] = {}
@@ -45,14 +39,15 @@ class Plotter(object):
                     self.results[result][key] = Line(self.axes, results_dict[key], results_dict['Time'], result, key)
 
     """
-    For basic matplotlib line graphs.
+    Attempt to plot each line.
+    Then set the environment of the graph
     """
-    def plot(self, test):
+    def plot(self):
         self.axes.clear()
         for result in self.results:
             for key in self.results[result]:
                 self.results[result][key].plot()
-        if (test):
+        if (self.draw_legend):
             self.legend.draw_legend(self, self.results)
 
         self.axes.set_ylabel('Process Count/Variable Value')
@@ -61,21 +56,5 @@ class Plotter(object):
         self.axes.set_title('Active Src graph')
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
-        self.canvas.draw()
 
-    """
-    Change the colour depending on data gradient.
-    Currently a bit iffy.
-    """
-    def plot_colour_int(self):
-        self.axes.clear()
-        for key in self.results:
-            if (not key == 'Time'):
-                sub_plots = self.build_colour_plot_arrays(self.results[key][1], self.interval)
-                self.spread = self.max - self.min
-                self.plot_sub_plots(sub_plots)
-
-        self.axes.set_ylabel('Process Count/Variable Value')
-        self.axes.set_xlabel('Time')
-        self.axes.set_title('Active Src graph')
         self.canvas.draw()
