@@ -1,3 +1,4 @@
+from math import sqrt
 
 
 class Line(object):
@@ -40,10 +41,34 @@ class Line(object):
     def __str__(self):
         return self.csv + "\n" + self.results
 
+    def euclid_distance(self, p1, p2):
+        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
+
+    def line_distance(self):
+        output = []
+        for i in range(0, len(self.results) - 1):
+            p1 = (float(self.time[i]), float(self.results[i]))
+            p2 = (float(self.time[i + 1]), float(self.results[i + 1]))
+            output += [self.euclid_distance(p1, p2)]
+        print output
+
+    def interpolate(self, data, steps):
+        middle = []
+        inc = (data[1] - data[0]) / float(steps)
+        for i in range(0, steps - 1):
+            middle += [data[0] + ((i + 1) * inc)]
+        print [data[0]] + middle + [data[1]]
+
     """
     Decides how we're going to plot
     """
     def plot(self):
+        self.interpolate([1, 2], 2)
+        self.interpolate([1, 2], 3)
+        self.interpolate([4, 8], 2)
+        self.interpolate([4, 8], 3)
+        self.interpolate([4, 8], 4)
+        self.interpolate([4, 8], 5)
         if self.showhide:
             if not self.intense_plot:
                 self.axes.plot(self.time, self.results, label=self.species)
@@ -80,7 +105,7 @@ class Line(object):
                 count += 1
             self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
             self.colour = (self.r, self.r, self.r)
-            self.axes.plot(self.time, sub_plot, color=self.rgb_to_hex(self.colour))
+            self.axes.plot(self.time, sub_plot, '.', color=self.rgb_to_hex(self.colour))
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
