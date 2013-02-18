@@ -16,7 +16,7 @@ class LocationTree:
         print self.tree
 
     def draw_tree(self):
-        self.queue += [self.tree['root'][0][:-1]]
+        self.queue += [self.tree['root'][0]]
         while (len(self.queue) > 0):
             node = self.queue.pop(0)
             print node

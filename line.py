@@ -37,6 +37,7 @@ class Line(object):
         self.species = key
         self.showhide = True
         self.intense_plot = False
+        #see issue 40 if interval is too high
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()

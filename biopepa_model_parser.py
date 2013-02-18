@@ -28,7 +28,7 @@ class Biopepa_Model_Parser():
                 loc_name = loc_name.split('in')[0].strip()[9:]
                 loc_parent = location.split(',')[0].strip().split('in')[1].strip().split(':')[0]
             else:
-                loc_name = location.split(',')[0].strip().split(':')[0][9:]
+                loc_name = location.split(',')[0].strip().split(':')[0][9:].strip()
                 loc_parent = "root"
             self.loc_results[loc_name] = Location(loc_name, loc_size,
                 loc_parent, loc_type)
