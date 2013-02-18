@@ -65,11 +65,7 @@ class Legend(object):
     def show_hide_click(self, event):
         cb_show_hide = event.GetEventObject()
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
-        for child in cb_show_hide.GetParent().GetChildren():
-            if (child.GetName() == "staticText"):
-                species_key = child.GetLabel()
-            if (child == cb_show_hide):
-                break
+        species_key = self.get_species(cb_show_hide)
         self.results[file_key][species_key].showhide = cb_show_hide.GetValue()
         self.plotter.draw_legend = False
         self.plotter.plot()
@@ -80,11 +76,14 @@ class Legend(object):
     def intensity_click(self, event):
         cb_intense = event.GetEventObject()
         file_key = cb_intense.GetParent().GetParent().GetLabel()
-        for child in cb_intense.GetParent().GetChildren():
-            if (child.GetName() == "staticText"):
-                species_key = child.GetLabel()
-            if (child == cb_intense):
-                break
+        species_key = self.get_species(cb_intense)
         self.results[file_key][species_key].intense_plot = cb_intense.GetValue()
         self.plotter.draw_legend = False
         self.plotter.plot()
+
+    def get_species(self, cb):
+        for child in cb.GetParent().GetChildren():
+            if (child.GetName() == "staticText"):
+                species_key = child.GetLabel()
+            if (child == cb):
+                return species_key
