@@ -40,12 +40,15 @@ class Legend(object):
             vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             for key in self.results[result]:
-                cb_show_hide = wx.CheckBox(collpane_body, -1, key + '- Show', (10, 10))
+                species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
+                vbox_collpane.Add(species_label)
+
+                cb_show_hide = wx.CheckBox(collpane_body, -1, 'Show', (10, 10))
                 vbox_collpane.Add(cb_show_hide)
                 cb_show_hide.SetValue(self.results[result][key].showhide)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
-                cb_intense = wx.CheckBox(collpane_body, -1, key + '- Intensity Plot', (10, 10))
+                cb_intense = wx.CheckBox(collpane_body, -1, 'Intensity Plot', (10, 10))
                 vbox_collpane.Add(cb_intense)
                 cb_intense.SetValue(self.results[result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
@@ -61,7 +64,13 @@ class Legend(object):
     """
     def show_hide_click(self, event):
         cb_show_hide = event.GetEventObject()
-        self.results[cb_show_hide.GetParent().GetParent().GetLabel()][cb_show_hide.GetLabel().split('-')[0].strip()].showhide = cb_show_hide.GetValue()
+        file_key = cb_show_hide.GetParent().GetParent().GetLabel()
+        for child in cb_show_hide.GetParent().GetChildren():
+            if (child.GetName() == "staticText"):
+                species_key = child.GetLabel()
+            if (child == cb_show_hide):
+                break
+        self.results[file_key][species_key].showhide = cb_show_hide.GetValue()
         self.plotter.draw_legend = False
         self.plotter.plot()
 
@@ -70,6 +79,12 @@ class Legend(object):
     """
     def intensity_click(self, event):
         cb_intense = event.GetEventObject()
-        self.results[cb_intense.GetParent().GetParent().GetLabel()][cb_intense.GetLabel().split('-')[0].strip()].intense_plot = cb_intense.GetValue()
+        file_key = cb_intense.GetParent().GetParent().GetLabel()
+        for child in cb_intense.GetParent().GetChildren():
+            if (child.GetName() == "staticText"):
+                species_key = child.GetLabel()
+            if (child == cb_intense):
+                break
+        self.results[file_key][species_key].intense_plot = cb_intense.GetValue()
         self.plotter.draw_legend = False
         self.plotter.plot()

@@ -39,16 +39,21 @@ class Line(object):
         self.intense_plot = False
         self.interval = 2
         self.line_distance()
-        print self.results
         self.build_colour_plot_arrays()
-        print len(self.plot_arrays)
 
     def __str__(self):
         return self.csv
 
+    """
+    For working out whether we need to interpolate
+    """
     def euclid_distance(self, p1, p2):
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
+    """
+    Handles the details of what needs to be done to interpolate.  Then
+    updates the data to be used.
+    """
     def line_distance(self):
         dist = (ceil(self.time[-1]) / len(self.results)) * 1.1
         output_time = []
@@ -69,6 +74,11 @@ class Line(object):
         self.time = output_time
         self.results = output_results
 
+    """
+    Handles the interpolation of points, need to test to make sure this is
+    correct.  May have to advise that it is unsuitable for more than pretty
+    pictures
+    """
     def interpolate(self, data, steps):
         middle = []
         inc = (data[1] - data[0]) / float(steps)
@@ -82,7 +92,7 @@ class Line(object):
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, '.',  label=self.species)
+                self.axes.plot(self.time, self.results, label=self.species)
             else:
                 self.plot_sub_plots()
 
