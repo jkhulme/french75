@@ -30,7 +30,7 @@ class BioPepaCsvParser(object):
         for row in data:
             row = row.split(',')
             for i in range(0, len(row)):
-                self.results_dict[self.keys[i]] += [row[i].strip()]
+                self.results_dict[self.keys[i]] += [float(row[i].strip())]
 
     def open_csv(self, csv):
         with open(csv, 'r') as f:

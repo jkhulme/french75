@@ -39,6 +39,7 @@ class Line(object):
         self.intense_plot = False
         self.interval = 2
         self.line_distance()
+        print self.results
         self.build_colour_plot_arrays()
         print len(self.plot_arrays)
 
@@ -49,30 +50,30 @@ class Line(object):
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
     def line_distance(self):
-        dist = (ceil(float(self.time[-1])) / len(self.results)) * 1.1
+        dist = (ceil(self.time[-1]) / len(self.results)) * 1.1
         output_time = []
         output_results = []
         for i in range(0, len(self.results) - 1):
-            p1 = (float(self.time[i]), float(self.results[i]))
-            p2 = (float(self.time[i + 1]), float(self.results[i + 1]))
+            p1 = (self.time[i], self.results[i])
+            p2 = (self.time[i + 1], self.results[i + 1])
 
             if (self.euclid_distance(p1, p2) > dist):
                 step = ceil(self.euclid_distance(p1, p2) / dist)
-                output_time += [float(self.time[i])] + self.interpolate([self.time[i], self.time[i + 1]], step)
-                output_results += [float(self.results[i])] + self.interpolate([self.results[i], self.results[i + 1]], step)
+                output_time += [self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step)
+                output_results += [self.results[i]] + self.interpolate([self.results[i], self.results[i + 1]], step)
             else:
-                output_time += [float(self.time[i])]
-                output_results += [float(self.results[i])]
-        output_time += [float(self.time[-1])]
-        output_results += [float(self.results[-1])]
+                output_time += [self.time[i]]
+                output_results += [self.results[i]]
+        output_time += [self.time[-1]]
+        output_results += [self.results[-1]]
         self.time = output_time
         self.results = output_results
 
     def interpolate(self, data, steps):
         middle = []
-        inc = (float(data[1]) - float(data[0])) / float(steps)
+        inc = (data[1] - data[0]) / float(steps)
         for i in range(0, int(steps) - 1):
-            middle += [float(data[0]) + ((i + 1) * inc)]
+            middle += [data[0] + ((i + 1) * inc)]
         return middle
 
     """
@@ -81,7 +82,7 @@ class Line(object):
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species)
+                self.axes.plot(self.time, self.results, '.',  label=self.species)
             else:
                 self.plot_sub_plots()
 
@@ -115,8 +116,6 @@ class Line(object):
     """
     def build_colour_plot_arrays(self):
         plot_data = self.results
-        for i, x in enumerate(plot_data):
-            plot_data[i] = float(x)
         self.plot_arrays = []
         self.min = min(plot_data)
         self.max = max(plot_data)
