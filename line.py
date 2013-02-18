@@ -19,7 +19,8 @@ class Line(object):
     self.species - species the data is results of
     self.showhide - whether to display or not on the axes
     self.intense_plot - whether to do colour intensity or normal plot
-    self.interval - for building sub plots - I think this has to be 2.
+    self.interval - for building sub plots - I think this has to be 2
+    self.plot_arrays - the sub plots for intensity plots
     """
 
     def __init__(self, axes, results, time, csv, key):
@@ -37,9 +38,12 @@ class Line(object):
         self.showhide = True
         self.intense_plot = False
         self.interval = 2
+        self.line_distance()
+        self.build_colour_plot_arrays()
+        print len(self.plot_arrays)
 
     def __str__(self):
-        return self.csv + "\n" + self.results
+        return self.csv
 
     def euclid_distance(self, p1, p2):
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
@@ -56,6 +60,9 @@ class Line(object):
                 step = ceil(self.euclid_distance(p1, p2) / dist)
                 output_time += [float(self.time[i])] + self.interpolate([self.time[i], self.time[i + 1]], step)
                 output_results += [float(self.results[i])] + self.interpolate([self.results[i], self.results[i + 1]], step)
+            else:
+                output_time += [float(self.time[i])]
+                output_results += [float(self.results[i])]
         output_time += [float(self.time[-1])]
         output_results += [float(self.results[-1])]
         self.time = output_time
@@ -72,19 +79,11 @@ class Line(object):
     Decides how we're going to plot
     """
     def plot(self):
-        self.line_distance()
         if self.showhide:
             if not self.intense_plot:
                 self.axes.plot(self.time, self.results, label=self.species)
             else:
-                self.int_plot()
-
-    """
-    performs the steps for intensity plot
-    """
-    def int_plot(self):
-        self.build_colour_plot_arrays()
-        self.plot_sub_plots()
+                self.plot_sub_plots()
 
     """
     Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
@@ -127,4 +126,3 @@ class Line(object):
             if (self.plot_arrays[-1][-1] != None):
                 break
             count += self.interval - 1
-        return self.plot_arrays
