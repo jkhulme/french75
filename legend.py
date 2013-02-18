@@ -32,7 +32,6 @@ class Legend(object):
                 collpane = PCP.PyCollapsiblePane(self.legend_panel, wx.ID_ANY, result)
             else:
                 collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
-            collpane.Expand()
 
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
 
@@ -58,6 +57,9 @@ class Legend(object):
 
         self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox_leg.Fit(self.legend_panel)
+
+        for child in self.legend_panel.GetChildren():
+            child.Expand()
 
     """
     Event for showing/hiding the plot

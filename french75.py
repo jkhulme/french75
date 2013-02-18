@@ -94,6 +94,8 @@ class French75(wx.Frame):
             self.parser.timescale()
         draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True)
         draw_plot.plot()
+        self.splitter.SetSashPosition(801)
+        self.splitter.SetSashPosition(800)
 
 
 """
