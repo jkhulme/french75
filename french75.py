@@ -6,6 +6,7 @@ matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from legend import Legend
+from draw_model import Example
 
 
 class French75(wx.Frame):
@@ -35,7 +36,9 @@ class French75(wx.Frame):
     Draws the main window
     """
     def launch_gui(self):
-        self.splitter = wx.SplitterWindow(self, -1)
+        self.splitter_two = wx.SplitterWindow(self,)
+        self.model_panel = wx.Panel(self.splitter_two, -1)
+        self.splitter = wx.SplitterWindow(self.splitter_two, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
         self.legend_panel = wx.Panel(self.splitter, -1)
 
@@ -57,13 +60,18 @@ class French75(wx.Frame):
         self.SetMenuBar(menubar)
         self.Bind(wx.EVT_MENU, self.open_file, filem)
 
+        self.splitter_two.SplitVertically(self.model_panel, self.splitter)
+        self.splitter_two.SetSashPosition(200)
+
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
 
-        self.SetSize((1000, 500))
+        self.SetSize((1200, 500))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
+
+        model_draw = Example(self.model_panel)
 
     """
     selects which csv files to use

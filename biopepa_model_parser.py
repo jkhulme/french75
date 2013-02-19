@@ -41,9 +41,8 @@ class Biopepa_Model_Parser():
 
     def build_graph(self):
         self.tree = LocationTree(self.loc_results)
-        self.tree.build_tree()
-        self.tree.draw_tree()
 
+"""
 if __name__ == '__main__':
     parser = Biopepa_Model_Parser()
     parser.open_model('camp-pka-mapk.biopepa')
@@ -51,3 +50,4 @@ if __name__ == '__main__':
     parser.parse_location()
     print parser
     parser.build_graph()
+"""
