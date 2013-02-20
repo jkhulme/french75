@@ -1,4 +1,5 @@
 from biopepa_csv_parser import BioPepaCsvParser
+from biopepa_model_parser import Biopepa_Model_Parser
 from plotter import Plotter
 import wx
 import matplotlib
@@ -6,7 +7,7 @@ matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from legend import Legend
-from draw_model import Example
+#from draw_model import ModelVis
 
 
 class French75(wx.Frame):
@@ -71,7 +72,13 @@ class French75(wx.Frame):
         self.Centre()
         self.Show(True)
 
-        model_draw = Example(self.model_panel)
+        self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
+
+        self.parser = Biopepa_Model_Parser()
+        self.parser.open_model('camp-pka-mapk.biopepa')
+        self.parser.get_locations()
+        self.parser.parse_location()
+        self.parser.build_graph()
 
     """
     selects which csv files to use
@@ -104,6 +111,15 @@ class French75(wx.Frame):
         draw_plot.plot()
         self.splitter.SetSashPosition(801)
         self.splitter.SetSashPosition(800)
+
+    def OnPaint(self, e):
+        self.parser.tree.build_tree()
+        self.tree = self.parser.tree.draw_tree()
+        dc = wx.PaintDC(self.model_panel)
+        y = 20
+        for node in self.tree:
+            dc.DrawCircle(50, y, 10)
+            y += 30
 
 
 """
