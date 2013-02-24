@@ -113,16 +113,10 @@ class French75(wx.Frame):
         self.splitter.SetSashPosition(800)
 
     def OnPaint(self, e):
-        self.parser.tree.build_tree()
-        self.tree = self.parser.tree.draw_tree()
         dc = wx.PaintDC(self.model_panel)
-        for node in self.tree:
-            if (self.parser.loc_results[node].l_type == 'membrane'):
-                dc.DrawCircle(100, 100, 90)
-        dc.SetBrush(wx.Brush('#004fc5'))
-        for node in self.tree:
-            if (self.parser.loc_results[node].parent == 'root'):
-                dc.DrawCircle(100, 100, 60)
+        self.parser.tree.build_tree()
+        self.tree = self.parser.tree.draw_tree(dc)
+
 
 """
 Like Java's main method
