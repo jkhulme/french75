@@ -13,6 +13,6 @@ class Circle:
 
     def give_birth(self):
         radius = 10
-        x = self.cell_x - radius
-        y = self.cell_y - radius
+        x = self.x - radius
+        y = self.y - radius
         return (x, y, radius)

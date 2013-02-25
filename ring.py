@@ -15,7 +15,7 @@ class Ring:
         self.dc.DrawCircle(self.x, self.y, self.radius)
 
     def give_birth(self):
-        radius = self.radius - self.cell_radius
-        x = self.cell_x + radius
-        y = self.cell_y + radius
+        radius = ((self.radius - self.cell_radius) / 2) - 3
+        x = self.cell_x + self.cell_radius - ((self.radius - self.cell_radius) / 4)
+        y = self.cell_y + self.cell_radius - ((self.radius - self.cell_radius) / 4)
         return (x, y, radius)

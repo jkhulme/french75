@@ -1,8 +1,9 @@
 location cyto in cyto_mem: size = 1, type = compartment;
 location extra : size = 0.111, type = compartment;
 location cyto_mem in extra: size = 0.2, type = membrane;
+location foo in extra: size = 1, type = compartment;
 
-//scaling factor 
+//scaling factor
 omega_cyto = 602;
 omega_extra = 66.82;
 
@@ -14,8 +15,8 @@ kcat_MEK_activates_MAPK = 0.15; //rule 4
 kcat_PKA_activates_Raf = 10; //rule 5
 kcat_AC_active_AC_active =  8.5;  //rule 6
 kcat_highKM_PDE = 8; //rule 7
-kcat_PKA_P_PTP = 0.2; //rule 8 
-kcat_AC_basal_AC_basal = 0.2; //rule 9 
+kcat_PKA_P_PTP = 0.2; //rule 8
+kcat_AC_basal_AC_basal = 0.2; //rule 9
 kcat_grk_GRK  = 0.104; //rule 10
 kcat_PKA_P_PDE = 10; //rule 11
 kcat_Raf_activates_MEK = 0.105; //rule 12
@@ -43,18 +44,18 @@ Kf_GTPase = 0.067; //reaction 10
 Kr_GTPase =0; //reaction 10
 Kf_trimer = 6; //reaction 11
 Kr_trimer = 0;//reaction 11
-Kf_G_binds_iso_BAR = 10; // reaction 12 
-Kr_G_binds_iso_BAR = 0.1;// reaction 12 
+Kf_G_binds_iso_BAR = 10; // reaction 12
+Kr_G_binds_iso_BAR = 0.1;// reaction 12
 Kf_v13 = 8.35;
 Kr_v13 = 0.017;
 Km_v14 = 15;
 Km_v15 = 0.1;
-Kf_AC_activation = 500; // reaction 16 
-Kr_AC_activation = 1; // reaction 16 
-Km_AC_basal = 1030; // reaction 17 
+Kf_AC_activation = 500; // reaction 16
+Kr_AC_activation = 1; // reaction 16
+Km_AC_basal = 1030; // reaction 17
 Kf_v18 = 0.006;
 Kr_v18 = 0.00028;
-Km_grk = 15; // reaction 19 
+Km_grk = 15; // reaction 19
 Km_v20 = 0.5;
 Km_v21 = 0.159;
 Km_v22 = 9;
@@ -67,8 +68,8 @@ Km_v26 = 0.77;
 Km_pp2a_4 = 8;
 Km_v28 = 6;
 Km_GRK_bg = 4;
-Kf_G_binds_BAR = 0.3; 
-Kr_G_binds_BAR = 0.1; 
+Kf_G_binds_BAR = 0.3;
+Kr_G_binds_BAR = 0.1;
 Km_v31 = 15.7;
 Kf_v32 = 8.350;
 Kr_v32 = 0.017;
@@ -124,11 +125,11 @@ G_GDP = v10f >> G_GDP@cyto + v10b << G_GDP@cyto + v11f << G_GDP@cyto + v11b >> G
 G_protein = v11f >> G_protein@cyto + v11b << G_protein@cyto + v12f << G_protein@cyto + v12b >> G_protein@cyto + v30f << G_protein@cyto + v30b >> G_protein@cyto ;
 G_a_s = v01f >> G_a_s@cyto + v01b << G_a_s@cyto + v10f << G_a_s@cyto + v10b >> G_a_s@cyto + v16f << G_a_s@cyto + v16b >> G_a_s@cyto ;
 GRK_bg = v06f >> GRK_bg@cyto + v06b << GRK_bg@cyto + v29 (+) GRK_bg@cyto ;
-iso_BAR_p = v19 >> iso_BAR_p@cyto_mem + v29 >> iso_BAR_p@cyto_mem ; 
+iso_BAR_p = v19 >> iso_BAR_p@cyto_mem + v29 >> iso_BAR_p@cyto_mem ;
 PDE4 = v27 >> PDE4@cyto + v20 << PDE4@cyto + v05 (+) PDE4 ;
-ATP = v09 << ATP@cyto + v17 << ATP@cyto ; 
+ATP = v09 << ATP@cyto + v17 << ATP@cyto ;
 R2C2 = v18f << R2C2@cyto + v18b >> R2C2@cyto ;
-PP_PDE = v27 (+) PP_PDE@cyto ; 
+PP_PDE = v27 (+) PP_PDE@cyto ;
 BAR = v04f << BAR@cyto_mem + v04b >> BAR@cyto_mem + v30f << BAR@cyto_mem + v30b >> BAR@cyto_mem ;
 BAR_G = v30f >> BAR_G@cyto_mem + v30b << BAR_G@cyto_mem + v25f << BAR_G@cyto_mem + v25b >> BAR_G@cyto_mem ;
 iso = v04f << iso@extra + v04b >> iso@extra + v25f << iso@extra + v25b >> iso@extra ;
