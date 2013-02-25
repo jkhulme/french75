@@ -1,8 +1,9 @@
 import math
+#dog
 
 
 class Ring:
-
+    
     def __init__(self, outer, inner, dc):
         self.dc = dc
         self.x = outer[0]
