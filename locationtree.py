@@ -22,7 +22,7 @@ class LocationTree:
         r = 90
         for key in self.loc_data:
             if (self.loc_data[key].l_type == 'membrane'):
-                self.circles[key] = Ring((100, 100, r), (100, 100, 60), dc)
+                self.circles[key] = Ring((100, 100, r), (100, 100, 60), len(self.tree[key]), dc)
                 self.circles[key].paint()
                 r = 60
                 break

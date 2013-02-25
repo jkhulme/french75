@@ -1,10 +1,10 @@
 import math
-#dog
 
 
 class Ring:
-    
-    def __init__(self, outer, inner, dc):
+
+    def __init__(self, outer, inner, num_children, dc):
+        self.theta = 360 / num_children
         self.dc = dc
         self.x = outer[0]
         self.y = outer[1]
@@ -20,6 +20,11 @@ class Ring:
         self.dc.DrawCircle(self.x, self.y, self.radius)
 
     def give_birth(self):
-        new_x = (self.child_x * math.cos(math.radians(20))) - (self.child_y * math.sin(math.radians(20)))
-        new_y = (self.child_x * math.sin(math.radians(20))) + (self.child_y * math.cos(math.radians(20)))
+        translatedx = self.child_x - self.x
+        translatedy = self.child_y - self.y
+        new_x = (translatedx * math.cos(math.radians(self.theta))) - (translatedy * math.sin(math.radians(self.theta)))
+        new_y = (translatedx * math.sin(math.radians(self.theta))) + (translatedy * math.cos(math.radians(self.theta)))
+        new_x += self.x
+        new_y += self.y
+        self.theta += self.theta
         return (new_x, new_y, self.child_radius)
