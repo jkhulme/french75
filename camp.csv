@@ -1,7 +1,7 @@
 # Simulator: Gillespie's Stochastic Algorithm
 # Number of data points: 100
-# Stop time: 15000.0
 # Number of independent replications: 10
+# Stop time: 15000.0
 # Start time: 0.0
 # Model Parameters
 # Run time = 202.0850067138672
