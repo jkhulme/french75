@@ -103,3 +103,5 @@ class Legend(object):
         plot_prefs.set_line(self.results[file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
+        self.plotter.draw_legend = False
+        self.plotter.plot()

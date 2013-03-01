@@ -11,42 +11,44 @@ class Plot_Dialog(wx.Dialog):
 
     def InitUI(self):
 
-        pnl = wx.Panel(self)
-        vbox = wx.BoxSizer(wx.VERTICAL)
+        dialog_panel = wx.Panel(self)
+        panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
-        sb = wx.StaticBox(pnl, label='Colors')
+        sb = wx.StaticBox(dialog_panel, label='Colors')
         sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
-        sbs.Add(wx.RadioButton(pnl, label='256 Colors',
-                style=wx.RB_GROUP))
-        sbs.Add(wx.RadioButton(pnl, label='16 Colors'))
-        sbs.Add(wx.RadioButton(pnl, label='2 Colors'))
+        self.cb_show_hide = wx.CheckBox(dialog_panel, -1, 'Show', (10, 10))
+        sbs.Add(self.cb_show_hide)
+        self.cb_intense = wx.CheckBox(dialog_panel, -1, 'Intensity Plot',
+                                     (10, 10))
+        sbs.Add(self.cb_intense)
 
-        hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-        hbox1.Add(wx.RadioButton(pnl, label='Custom'))
-        hbox1.Add(wx.TextCtrl(pnl), flag=wx.LEFT, border=5)
-        sbs.Add(hbox1)
+        dialog_panel.SetSizer(sbs)
 
-        pnl.SetSizer(sbs)
-
-        hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        btn_hbox = wx.BoxSizer(wx.HORIZONTAL)
         okButton = wx.Button(self, label='Ok')
-        closeButton = wx.Button(self, label='Close')
-        hbox2.Add(okButton)
-        hbox2.Add(closeButton, flag=wx.LEFT, border=5)
+        closeButton = wx.Button(self, label='Cancel')
+        btn_hbox.Add(okButton)
+        btn_hbox.Add(closeButton, flag=wx.LEFT, border=5)
 
-        vbox.Add(pnl, proportion=1,
-                 flag=wx.ALL | wx.EXPAND, border=5)
-        vbox.Add(hbox2,
-                 flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
+        panel_vbox.Add(dialog_panel, proportion=1, flag=wx.ALL |
+                       wx.EXPAND, border=5)
+        panel_vbox.Add(btn_hbox, flag=wx.ALIGN_CENTER | wx.TOP |
+                       wx.BOTTOM, border=10)
 
-        self.SetSizer(vbox)
+        self.SetSizer(panel_vbox)
 
-        okButton.Bind(wx.EVT_BUTTON, self.OnClose)
-        closeButton.Bind(wx.EVT_BUTTON, self.OnClose)
+        okButton.Bind(wx.EVT_BUTTON, self.on_ok)
+        closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
 
     def set_line(self, line):
-        print line.species
-        print line.showhide
+        self.line = line
+        self.cb_show_hide.SetValue(self.line.showhide)
+        self.cb_intense.SetValue(self.line.intense_plot)
 
-    def OnClose(self, e):
+    def on_ok(self, e):
+        self.line.showhide = self.cb_show_hide.GetValue()
+        self.line.intense_plot = self.cb_intense.GetValue()
+        self.Destroy()
+
+    def on_cancel(self, e):
         self.Destroy()
