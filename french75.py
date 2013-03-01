@@ -74,11 +74,11 @@ class French75(wx.Frame):
 
         self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
 
-        self.parser = Biopepa_Model_Parser()
-        self.parser.open_model('camp-pka-mapk.biopepa')
-        self.parser.get_locations()
-        self.parser.parse_location()
-        self.parser.build_graph()
+        self.model_parser = Biopepa_Model_Parser()
+        self.model_parser.open_model('camp-pka-mapk.biopepa')
+        self.model_parser.get_locations()
+        self.model_parser.parse_location()
+        self.model_parser.build_graph()
 
     """
     selects which csv files to use
@@ -88,8 +88,7 @@ class French75(wx.Frame):
             self,
             message="Choose a file",
             wildcard="*.csv",
-            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR
-            )
+            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
             self.paths = file_chooser.GetPaths()
         file_chooser.Destroy()
@@ -114,8 +113,8 @@ class French75(wx.Frame):
 
     def OnPaint(self, e):
         dc = wx.PaintDC(self.model_panel)
-        self.parser.tree.build_tree()
-        self.tree = self.parser.tree.draw_tree(dc)
+        self.model_parser.tree.build_tree()
+        self.tree = self.model_parser.tree.draw_tree(dc)
 
 
 """
