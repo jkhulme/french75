@@ -7,7 +7,7 @@ class Plot_Dialog(wx.Dialog):
         super(Plot_Dialog, self).__init__(*args, **kw)
         self.InitUI()
         self.SetSize((250, 200))
-        self.SetTitle("Change Color Depth")
+        #self.SetTitle("Change Color Depth")
 
     def InitUI(self):
 
@@ -43,6 +43,10 @@ class Plot_Dialog(wx.Dialog):
 
         okButton.Bind(wx.EVT_BUTTON, self.OnClose)
         closeButton.Bind(wx.EVT_BUTTON, self.OnClose)
+
+    def set_line(self, line):
+        print line.species
+        print line.showhide
 
     def OnClose(self, e):
         self.Destroy()

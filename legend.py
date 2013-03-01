@@ -96,6 +96,10 @@ class Legend(object):
                 return species_key
 
     def launch_dialog(self, event):
+        btn_props = event.GetEventObject()
+        file_key = btn_props.GetParent().GetParent().GetLabel()
+        species_key = self.get_species(btn_props)
         plot_prefs = Plot_Dialog(None, title='Change Plot Style')
+        plot_prefs.set_line(self.results[file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
