@@ -1,6 +1,7 @@
 import wx
 import wx.lib.agw.pycollapsiblepane as PCP
 import platform
+from plot_dialog import Plot_Dialog
 
 
 class Legend(object):
@@ -52,6 +53,10 @@ class Legend(object):
                 cb_intense.SetValue(self.results[result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
+                btn_props = wx.Button(collpane_body, -1, 'Prefs')
+                btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
+                vbox_collpane.Add(btn_props)
+
             collpane_body.SetSizer(vbox_collpane)
             vbox_collpane.SetSizeHints(collpane_body)
 
@@ -89,3 +94,8 @@ class Legend(object):
                 species_key = child.GetLabel()
             if (child == cb):
                 return species_key
+
+    def launch_dialog(self, event):
+        plot_prefs = Plot_Dialog(None, title='Change Plot Style')
+        plot_prefs.ShowModal()
+        plot_prefs.Destroy()
