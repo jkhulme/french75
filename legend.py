@@ -103,15 +103,15 @@ class Legend(object):
         plot_prefs.set_line(self.results[file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
-        self.update(btn_props.GetParent())
+        self.update(btn_props.GetParent(), file_key, species_key)
         self.plotter.draw_legend = False
         self.plotter.plot()
 
-    def update(self, csv):
+    def update(self, csv, file_key, species_key):
         for child in csv.GetChildren():
             if child.GetName() == "check":
                 print child.GetLabel()
                 if child.GetLabel() == "Show":
-                    child.SetValue(False)
+                    child.SetValue(self.results[file_key][species_key].showhide)
                 if child.GetLabel() == "Intensity Plot":
-                    child.SetValue(False)
+                    child.SetValue(self.results[file_key][species_key].intense_plot)
