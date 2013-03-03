@@ -43,6 +43,8 @@ class Line(object):
         self.line_distance()
         self.build_colour_plot_arrays()
         self.flat_colour = self.random_colour()
+        self.min_alpha = 0.2
+        self.max_alpha = 1
 
     def __str__(self):
         return self.csv
@@ -95,7 +97,7 @@ class Line(object):
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour)
+                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour, alpha=self.max_alpha)
             else:
                 self.plot_sub_plots()
 
@@ -122,7 +124,7 @@ class Line(object):
                 count += 1
             self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
             self.colour = (self.r, self.r, self.r)
-            self.axes.plot(self.time, sub_plot, color=self.rgb_to_hex(self.colour))
+            self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.max_alpha)
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
