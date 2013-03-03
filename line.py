@@ -1,4 +1,5 @@
 from math import sqrt, ceil
+from random import randrange
 
 
 class Line(object):
@@ -41,7 +42,7 @@ class Line(object):
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()
-        self.colour = '#ff0000'
+        self.flat_colour = self.random_colour()
 
     def __str__(self):
         return self.csv
@@ -94,7 +95,7 @@ class Line(object):
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species, color=self.colour)
+                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour)
             else:
                 self.plot_sub_plots()
 
@@ -137,3 +138,10 @@ class Line(object):
             if (self.plot_arrays[-1][-1] != None):
                 break
             count += self.interval - 1
+
+    def random_colour(self):
+        rgb = [0,0,0]
+        for i in range(0,3):
+            rgb[i] = randrange(0,255,1)
+        rgb_tup = (rgb[0], rgb[1], rgb[2])
+        return self.rgb_to_hex(rgb_tup)

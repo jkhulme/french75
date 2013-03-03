@@ -45,11 +45,16 @@ class Plot_Dialog(wx.Dialog):
         self.line = line
         self.cb_show_hide.SetValue(self.line.showhide)
         self.cb_intense.SetValue(self.line.intense_plot)
-        self.colour_picker.SetColour(self.line.colour)
+        self.colour_picker.SetColour(self.line.flat_colour)
+
+    def rgb_to_hex(self, rgb):
+        return '#%02x%02x%02x' % rgb
 
     def on_ok(self, e):
         self.line.showhide = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
+        rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
+        self.line.flat_colour = self.rgb_to_hex(rgb)
         self.Destroy()
 
     def on_cancel(self, e):
