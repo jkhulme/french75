@@ -7,7 +7,6 @@ class Plot_Dialog(wx.Dialog):
         super(Plot_Dialog, self).__init__(*args, **kw)
         self.InitUI()
         self.SetSize((250, 200))
-        #self.SetTitle("Change Color Depth")
 
     def InitUI(self):
 
@@ -21,6 +20,8 @@ class Plot_Dialog(wx.Dialog):
         self.cb_intense = wx.CheckBox(dialog_panel, -1, 'Intensity Plot',
                                      (10, 10))
         sbs.Add(self.cb_intense)
+        self.colour_picker = wx.ColourPickerCtrl(dialog_panel, -1)
+        sbs.Add(self.colour_picker)
 
         dialog_panel.SetSizer(sbs)
 
@@ -44,6 +45,7 @@ class Plot_Dialog(wx.Dialog):
         self.line = line
         self.cb_show_hide.SetValue(self.line.showhide)
         self.cb_intense.SetValue(self.line.intense_plot)
+        self.colour_picker.SetColour(self.line.colour)
 
     def on_ok(self, e):
         self.line.showhide = self.cb_show_hide.GetValue()

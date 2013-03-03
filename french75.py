@@ -5,10 +5,11 @@ import wx
 import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
+from matplotlib.backends.backend_wxagg import \
+    FigureCanvasWxAgg as FigCanvas, \
+    NavigationToolbar2WxAgg as NavigationToolbar
 from legend import Legend
-#from draw_model import ModelVis
-
+import os
 
 class French75(wx.Frame):
 
@@ -29,7 +30,7 @@ class French75(wx.Frame):
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
-
+        self.dpi = 100
         self.results = {}
         self.launch_gui()
 
@@ -49,6 +50,10 @@ class French75(wx.Frame):
 
         self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
         self.graph_vbox.Add(self.graph_canvas)
+
+        self.toolbar = NavigationToolbar(self.graph_canvas)
+        self.graph_vbox.Add(self.toolbar)
+
         self.graph_panel.SetSizer(self.graph_vbox)
         self.graph_vbox.Fit(self)
 
@@ -57,9 +62,11 @@ class French75(wx.Frame):
         menubar = wx.MenuBar()
         file_menu = wx.Menu()
         filem = file_menu.Append(wx.ID_OPEN, '&Open')
+        file_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
         menubar.Append(file_menu, '&File')
         self.SetMenuBar(menubar)
         self.Bind(wx.EVT_MENU, self.open_file, filem)
+        self.Bind(wx.EVT_MENU, self.on_save_plot, file_save_plot)
 
         self.splitter_two.SplitVertically(self.model_panel, self.splitter)
         self.splitter_two.SetSashPosition(200)
@@ -67,7 +74,7 @@ class French75(wx.Frame):
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
 
-        self.SetSize((1200, 500))
+        self.SetSize((1200, 540))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
@@ -115,6 +122,21 @@ class French75(wx.Frame):
         dc = wx.PaintDC(self.model_panel)
         self.model_parser.tree.build_tree()
         self.tree = self.model_parser.tree.draw_tree(dc)
+
+    def on_save_plot(self, event):
+        file_choices = "PNG (*.png)|*.png"
+
+        dlg = wx.FileDialog(
+            self,
+            message="Save plot as...",
+            defaultDir=os.getcwd(),
+            defaultFile="plot.png",
+            wildcard=file_choices,
+            style=wx.SAVE)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            self.graph_canvas.print_figure(path, dpi=self.dpi)
 
 
 """

@@ -110,7 +110,6 @@ class Legend(object):
     def update(self, csv, file_key, species_key):
         for child in csv.GetChildren():
             if child.GetName() == "check":
-                print child.GetLabel()
                 if child.GetLabel() == "Show":
                     child.SetValue(self.results[file_key][species_key].showhide)
                 if child.GetLabel() == "Intensity Plot":

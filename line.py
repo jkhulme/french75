@@ -41,6 +41,7 @@ class Line(object):
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()
+        self.colour = '#ff0000'
 
     def __str__(self):
         return self.csv
@@ -93,7 +94,7 @@ class Line(object):
     def plot(self):
         if self.showhide:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species)
+                self.axes.plot(self.time, self.results, label=self.species, color=self.colour)
             else:
                 self.plot_sub_plots()
 
