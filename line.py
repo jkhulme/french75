@@ -28,7 +28,7 @@ class Line(object):
         self.axes = axes
         self.results = results
         self.time = time
-        self.min_red = 0
+        self.min_red = 70
         self.max_red = 255
         self.green = 0
         self.blue = 0
@@ -123,8 +123,9 @@ class Line(object):
                     break
                 count += 1
             self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
+            self.alpha = self.r/255
             self.colour = (self.r, self.r, self.r)
-            self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.max_alpha)
+            self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.alpha)
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
