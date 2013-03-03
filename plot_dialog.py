@@ -53,8 +53,11 @@ class Plot_Dialog(wx.Dialog):
     def on_ok(self, e):
         self.line.showhide = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
-        rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
-        self.line.flat_colour = self.rgb_to_hex(rgb)
+        try:
+            rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
+            self.line.flat_colour = self.rgb_to_hex(rgb)
+        except:
+            print "No colour change"
         self.Close()
 
     def on_cancel(self, e):
