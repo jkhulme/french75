@@ -55,7 +55,7 @@ class Plot_Dialog(wx.Dialog):
         self.line.intense_plot = self.cb_intense.GetValue()
         rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
         self.line.flat_colour = self.rgb_to_hex(rgb)
-        self.Destroy()
+        self.Close()
 
     def on_cancel(self, e):
-        self.Destroy()
+        self.Close()
