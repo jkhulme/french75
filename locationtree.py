@@ -47,5 +47,4 @@ class LocationTree:
                 self.circles[node] = Circle(new, dc)
                 self.circles[node].paint()
 
-        print self.circles['extra'].children
         return self.output

@@ -33,14 +33,10 @@ class Circle:
                 y = self.y - (random.random() * (self.radius - (2 * radius)))
 
             for child in self.children:
-                print child
                 if (self.euclid_distance([x, y], [child[0], child[1]]) > (2 * radius)):
-                    print "ok"
                     flag = False
                 else:
-                    print "not ok"
                     flag = True
-                print dist_flag
             dist_flag = flag
 
         self.children.append((x, y, radius))

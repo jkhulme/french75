@@ -63,10 +63,12 @@ class French75(wx.Frame):
         menubar = wx.MenuBar()
         file_menu = wx.Menu()
         filem = file_menu.Append(wx.ID_OPEN, '&Open')
+        filem2 = file_menu.Append(wx.ID_ANY, '&View Model')
         file_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
         menubar.Append(file_menu, '&File')
         self.SetMenuBar(menubar)
         self.Bind(wx.EVT_MENU, self.open_file, filem)
+        self.Bind(wx.EVT_MENU, self.open_file2, filem2)
         self.Bind(wx.EVT_MENU, self.on_save_plot, file_save_plot)
 
         self.splitter_two.SplitVertically(self.model_panel, self.splitter)
@@ -74,14 +76,6 @@ class French75(wx.Frame):
 
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
-
-        self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
-
-        self.model_parser = Biopepa_Model_Parser()
-        self.model_parser.open_model('camp-pka-mapk.biopepa')
-        self.model_parser.get_locations()
-        self.model_parser.parse_location()
-        self.model_parser.build_graph()
 
         self.SetSize((1200, 540))
         self.SetTitle('French75')
@@ -102,6 +96,26 @@ class French75(wx.Frame):
         file_chooser.Destroy()
 
         self.plot_graphs()
+        self.model_panel.Parent.Refresh()
+
+    def open_file2(self, e):
+        file_chooser = wx.FileDialog(
+            self,
+            message="Choose a file",
+            wildcard="*.biopepa",
+            style=wx.OPEN | wx.CHANGE_DIR)
+        if file_chooser.ShowModal() == wx.ID_OK:
+            self.paths = file_chooser.GetPaths()
+        file_chooser.Destroy()
+
+        self.model_parser = Biopepa_Model_Parser()
+        self.model_parser.open_model(self.paths[0])
+        self.model_parser.get_locations()
+        self.model_parser.parse_location()
+        self.model_parser.build_graph()
+
+        self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.model_panel.Parent.Refresh()
 
     """
     Get the data then plot it
