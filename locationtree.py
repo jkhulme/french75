@@ -38,13 +38,14 @@ class LocationTree:
             try:
                 self.queue += self.tree[node]
                 if (self.loc_data[node].l_type != 'membrane') and (self.loc_data[node].parent != 'root'):
-                    new = self.circles[self.loc_data[node].parent].give_birth()
+                    new = self.circles[self.loc_data[node].parent].give_birth(node)
                     self.circles[node] = Circle(new, dc)
                     print node
                     self.circles[node].paint()
             except:
-                new = self.circles[self.loc_data[node].parent].give_birth()
+                new = self.circles[self.loc_data[node].parent].give_birth(node)
                 self.circles[node] = Circle(new, dc)
                 self.circles[node].paint()
 
+        print self.circles['extra'].children
         return self.output

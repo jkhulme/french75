@@ -20,7 +20,7 @@ class Ring:
     def paint(self):
         self.dc.DrawCircle(self.x, self.y, self.radius)
 
-    def give_birth(self):
+    def give_birth(self, node):
         translatedx = self.child_x - self.x
         translatedy = self.child_y - self.y
         new_x = (translatedx * math.cos(math.radians(self.theta))) - (translatedy * math.sin(math.radians(self.theta)))
