@@ -1,3 +1,4 @@
+import random
 
 
 class Circle:
@@ -12,7 +13,15 @@ class Circle:
         self.dc.DrawCircle(self.x, self.y, self.radius)
 
     def give_birth(self):
-        radius = 10
-        x = self.x - radius
-        y = self.y - radius
+        radius = 13
+        if (random.random() < 0.5):
+            x = self.x + (random.random() * (self.radius - (2 * radius)))
+        else:
+            x = self.x - (random.random() * (self.radius - (2 * radius)))
+
+        if (random.random() < 0.5):
+            y = self.y + (random.random() * (self.radius - (2 * radius)))
+        else:
+            y = self.y - (random.random() * (self.radius - (2 * radius)))
+
         return (x, y, radius)
