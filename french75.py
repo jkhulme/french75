@@ -11,6 +11,7 @@ from matplotlib.backends.backend_wxagg import \
 from legend import Legend
 import os
 
+
 class French75(wx.Frame):
 
     """
@@ -74,11 +75,6 @@ class French75(wx.Frame):
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
 
-        self.SetSize((1200, 540))
-        self.SetTitle('French75')
-        self.Centre()
-        self.Show(True)
-
         self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
 
         self.model_parser = Biopepa_Model_Parser()
@@ -86,6 +82,11 @@ class French75(wx.Frame):
         self.model_parser.get_locations()
         self.model_parser.parse_location()
         self.model_parser.build_graph()
+
+        self.SetSize((1200, 540))
+        self.SetTitle('French75')
+        self.Centre()
+        self.Show(True)
 
     """
     selects which csv files to use
