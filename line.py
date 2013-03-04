@@ -118,7 +118,7 @@ class Line(object):
             count = 0
             current = 0
             while True:
-                if (sub_plot[count] != None):
+                if (sub_plot[count] is not None):
                     current = sub_plot[count]
                     break
                 count += 1
@@ -138,13 +138,13 @@ class Line(object):
         count = 0
         while True:
             self.plot_arrays += [[None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count)]
-            if (self.plot_arrays[-1][-1] != None):
+            if (self.plot_arrays[-1][-1] is not None):
                 break
             count += self.interval - 1
 
     def random_colour(self):
-        rgb = [0,0,0]
-        for i in range(0,3):
-            rgb[i] = randrange(0,255,1)
+        rgb = [0, 0, 0]
+        for i in range(0, 3):
+            rgb[i] = randrange(0, 255, 1)
         rgb_tup = (rgb[0], rgb[1], rgb[2])
         return self.rgb_to_hex(rgb_tup)

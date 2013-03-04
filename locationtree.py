@@ -40,6 +40,7 @@ class LocationTree:
                 if (self.loc_data[node].l_type != 'membrane') and (self.loc_data[node].parent != 'root'):
                     new = self.circles[self.loc_data[node].parent].give_birth()
                     self.circles[node] = Circle(new, dc)
+                    print node
                     self.circles[node].paint()
             except:
                 new = self.circles[self.loc_data[node].parent].give_birth()

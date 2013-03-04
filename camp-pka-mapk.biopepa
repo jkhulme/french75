@@ -3,6 +3,7 @@ location extra : size = 0.111, type = compartment;
 location cyto_mem in extra: size = 0.2, type = membrane;
 location foo in extra: size = 1, type = compartment;
 
+
 //scaling factor
 omega_cyto = 602;
 omega_extra = 66.82;

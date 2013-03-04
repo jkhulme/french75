@@ -4,7 +4,8 @@ import math
 class Ring:
 
     def __init__(self, outer, inner, num_children, dc):
-        self.theta = 360 / num_children
+        self.theta = 360 / (num_children)
+        self.theta_base = 360 / (num_children)
         self.dc = dc
         self.x = outer[0]
         self.y = outer[1]
@@ -26,5 +27,5 @@ class Ring:
         new_y = (translatedx * math.sin(math.radians(self.theta))) + (translatedy * math.cos(math.radians(self.theta)))
         new_x += self.x
         new_y += self.y
-        self.theta += self.theta
+        self.theta += self.theta_base
         return (new_x, new_y, self.child_radius)
