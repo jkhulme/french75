@@ -116,6 +116,8 @@ class French75(wx.Frame):
 
         self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
         self.model_panel.Parent.Refresh()
+        self.Show(False)
+        self.Show(True)
 
     """
     Get the data then plot it
