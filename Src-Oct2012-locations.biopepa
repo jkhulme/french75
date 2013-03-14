@@ -13,9 +13,9 @@
 // make run 15000
 
 //Compartments:
-location cyto in cyto_mem: size = 1, type = compartment;
-location extra : size = 0.111, type = compartment;
-location cyto_mem in extra: size = 0.2, type = membrane;
+location cytoplasm in cell_membrane: size = 1, type = compartment;
+location external : size = 0.111, type = compartment;
+location cell_membrane in external: size = 0.2, type = membrane;
 
 
 // control parameters

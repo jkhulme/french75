@@ -1,0 +1,276 @@
+// basic Src trafficking model
+// assume short recycling loop for active unbound Src at the membrane
+// assume long recycling loop for active Src bound to F at the membrane
+// single trigger event to simulate stimulation by FGF which release a large amount of F
+
+// Ll and ll indicate association with long recycling loop
+// Sl and sl indicate association with short recycling loop
+
+// realistic time parameters with time in seconds
+// basal behaviour for 1 hour: 3600 seconds
+// expect peak behaviour to be reduced after 30 minutes: 1800 seconds, so at 5400
+// for small concentration, expect peak to continue up to 2 hours: 7200 seconds, so at 10800
+// make run 15000
+
+// control parameters
+
+// together these parameters determine how fast and how much FGF is added
+// comment out pairs of parameters to get low or high concentration
+
+//st_F=20000;             // low concentration: 20000, 4
+//release = 4;            // low concentration: 20000, 4
+
+st_F=1000000;            // high concentration: 1000000, 40
+release = 40;            // high concentration: 1000000, 40
+
+// set trig_F to 1 to add FGF at 3600 seconds
+// set trig_F to 0 for basal behaviour only
+
+trig_F = 1;
+//trig_F = 0;
+
+// =========================================================================================
+// species description
+//
+// note that inactive Src in the perinuclear region is implicit in the model since its
+// quantity does not constrain the model
+//
+// aSrc    : active Src
+//
+// Sl_form : initial endosome in short loop containing active Src
+// Sl_endo : endosome in short loop containing active Src
+//
+// F_trig  : a single molecule of this species allows the addition of FGF
+//           (not a real species, used for modelling purposes only)
+// F_rel   : addition of FGF triggered by F_trig creates this pool of FGF
+//           (not a real species, used for modelling purposes only)
+
+// F       : actual FGF that is released
+// R       : FGFR receptors on the cell membrane
+// FR1     : complex made up of FGF (F) and FGFR (R)
+// FR2     : complex made up of FGF and FGFR, and other unspecified species
+// aSrcF   : complex made up of active Src and FR2
+
+// Ll_endo : endosome in long loop containing aSrcF
+// Ll_rec  : endosome in long loop containing aSrcF and inactive Src being
+//           transformed to active Src
+
+// =========================================================================================
+// parameters
+
+// initial quantity of FGFR
+receptors_init = 50000;
+// rate of binding of FGF to FGFR
+receptor_binding_rate = 0.01;
+// rate of change from FR1 to FR2
+complex_rate = 0.005;
+// rate of binding of aSrc and FR2
+binding_rate = 0.01;
+// time at which addition of FGF occurs
+time_to_addF = 3600;
+
+// initial quantity of aSrc in the whole model
+sl_total_init = 1000;
+// proportion of initial aSrc at the membrane
+prop_aSrc = 3;
+// proportion of initial aSrc in the short loop
+prop_endo_sl = 1;
+
+// creation of aSrc is taking place at the membrane
+creation = 1;
+// time taken to create a molecule of aSrc at the membrane
+mean_time_to_create = 0.04;
+
+// short loop is activated
+sl_activated = 1;
+// time taken for mobilisation of an endosome in short loop
+sl_form_time = 60;
+// probability of recycling endosome in short loop to membrane
+prob_of_recycle_sl = 0.80;
+
+// long loop is activated
+ll_activated = 1;
+// time taken for mobilisation of an endosome in long loop
+ll_form_time = 60;
+// probability of recycling endosome in long loop to membrane
+prob_of_recycle_ll = 0.5;
+
+// stoichiometry values
+
+// number of aSrc into an endosome in short loop
+st_to_sl=10;
+// number of aSrc from an endosome in short loop
+st_from_sl=10;
+
+// number of aSrcF into an endosome in long loop
+st_to_ll=10;
+// number of aSrc from an endosome in long loop
+st_from_ll=1000;
+
+// assume distance of 20µm from the membrane to the perinuclear region and an endosome speed of 20µm
+
+// time taken for an endosome to travel inwards in short loop
+mean_time_inwards_sl = 10;
+// time taken for an endosome to travel outwards in short loop
+mean_time_outwards_sl = 10;
+
+// time taken for an endosome to travel inwards in long loop
+mean_time_inwards_ll = 20;
+// time taken for an endosome to travel outwards in long loop
+mean_time_outwards_ll = 20 + 5; // additional time for iSrc pickup
+
+// =========================================================================================
+// reaction constants
+
+// rate for triggering F
+f0 = 10000;
+// rate for adding F
+f1 = release;
+// rate of binding of aSrc and FR2
+f2 = binding_rate;
+// rate of binding of FGF to FGFR
+f3 = receptor_binding_rate;
+// rate of change from FR1 to FR2
+f4 = complex_rate;
+// rate for basal aSrc creation
+c1 = 1/mean_time_to_create * creation;
+
+// short recycling loop
+// formation of the endosome
+sl2 = 1/sl_form_time * sl_activated;
+// movement of endosome inwards
+sl3 = 1/mean_time_inwards_sl;
+// decision to degrade
+sl4 = 1/mean_time_outwards_sl * (1 - prob_of_recycle_sl);
+// movement of endosome to membrane
+sl5 = 1/mean_time_outwards_sl * prob_of_recycle_sl;
+
+// long recycling loop
+// movement of aSrc into endosomes
+ll2 = 1/ll_form_time * ll_activated;
+// movement of endosome to inwards
+ll3 = 1/mean_time_inwards_ll;
+// decision to degrade
+ll4 = 1/mean_time_outwards_ll * (1 - prob_of_recycle_ll);
+// movement of endosome to membrane
+ll5 = 1/mean_time_outwards_ll * prob_of_recycle_ll;
+
+// =========================================================================================
+// rate equations
+
+aSrc_to_fs   = [ aSrc * sl2 ];
+sl_in        = [ (Sl_form * st_to_sl)  * sl3 ];
+sl_deg       = [ (Sl_endo * st_to_sl)  * sl4 ];
+sl_to_aSrc   = [ (Sl_endo * st_to_sl)  * sl5 ];
+
+create       = [ c1 ];
+
+trigger      = [ H(F_trig)  * f0 * H(time - time_to_addF)];
+add          = [ H(F_rel)   * f1 ];
+binding      = [ aSrc * FR2 * f2 ];
+fr_binding   = [ F * R      * f3 ];
+complexation = [ (FR1)      * f4 ];
+
+aSrcF_to_ll  = [ aSrcF                 * ll2 ];
+ll_to_rec    = [ (Ll_endo * st_to_ll)  * ll3 ];
+ll_deg       = [ (Ll_rec  * st_to_ll)  * ll4 ];
+ll_to_aSrc   = [ (Ll_rec  * st_to_ll)  * ll5 ];
+
+// =========================================================================================
+// species
+
+aSrc    = (aSrc_to_fs,st_to_sl) <<
+        + (sl_to_aSrc,st_from_sl) >>
+        + (ll_to_aSrc,st_from_ll) >>
+        + binding <<
+        + create >> ;
+
+Sl_form = aSrc_to_fs >>
+        + sl_in << ;
+
+Sl_endo = sl_in >>
+        + sl_to_aSrc <<
+        + sl_deg << ;
+
+F_trig  = trigger << ;
+
+F_rel   = (trigger,st_F) >>
+        + add <<;
+
+F       = add >>
+        + fr_binding << ;
+
+R       = fr_binding << ;
+
+FR1     = fr_binding >>
+        + complexation << ;
+
+FR2     = complexation >>
+        + binding << ;
+
+aSrcF   = binding >>
+        + (aSrcF_to_ll,st_to_ll) <<
+        + (ll_to_aSrc,st_to_ll) >> ;
+
+Ll_endo = aSrcF_to_ll >>
+        + ll_to_rec << ;
+
+Ll_rec = ll_to_rec >>
+       + ll_deg <<
+       + ll_to_aSrc << ;
+
+// =========================================================================================
+// variables
+
+// total quantity of aSrc at the membrane, bound and unbound
+aSrc_total_MB = aSrc + aSrcF;
+
+// quantity of aSrc in short loop
+aSrc_in_loop = Sl_endo * st_to_sl + Sl_form * st_to_sl;
+
+// quantity of aSrcF in long loop
+aSrcF_in_loop = Ll_endo * st_to_ll + Ll_rec * st_to_ll;
+
+// =========================================================================================
+// initial quantities
+
+F_trig_init = trig_F;
+R_init = receptors_init;
+
+sl_total_prop = prop_aSrc + prop_endo_sl;
+
+// initial quantity of aSrc at membrane
+aSrc_init = floor(sl_total_init * prop_aSrc / sl_total_prop);
+
+// initial quantity of aSrc in short loop
+// determines initial quantity of endosomes in short loop
+Sl_endo_init = floor(sl_total_init * prop_endo_sl /
+                     (sl_total_prop * st_to_sl));
+
+
+// everything else starts with nothing
+
+Sl_form_init = 0;
+F_init = 0;
+F_rel_init = 0;
+FR1_init = 0;
+FR2_init = 0;
+aSrcF_init = 0;
+Ll_endo_init = 0;
+Ll_rec_init = 0;
+
+// =========================================================================================
+// model
+
+    aSrc      [aSrc_init]
+<*> Sl_form[Sl_form_init]
+<*> Sl_endo[Sl_endo_init]
+<*> F_trig  [F_trig_init]
+<*> F_rel    [F_rel_init]
+<*> F            [F_init]
+<*> R            [R_init]
+<*> FR1        [FR1_init]
+<*> FR2        [FR2_init]
+<*> aSrcF    [aSrcF_init]
+<*> Ll_endo[Ll_endo_init]
+<*> Ll_rec  [Ll_rec_init]
