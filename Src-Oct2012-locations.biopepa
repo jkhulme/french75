@@ -13,9 +13,10 @@
 // make run 15000
 
 //Compartments:
-location external	                    : size = 1.00, type = compartment;
-location cell_membrane in external      : size = 1.00, type = membrane;
-location cytoplasm     in cell_membrane : size = 1.00, type = compartment;
+location cyto in cyto_mem: size = 1, type = compartment;
+location extra : size = 0.111, type = compartment;
+location cyto_mem in extra: size = 0.2, type = membrane;
+
 
 // control parameters
 
@@ -75,13 +76,13 @@ binding_rate = 0.01;
 time_to_addF = 3600;
 
 // initial quantity of aSrc@cell_membrane in the whole model
-sl_total_init = 1000; 
+sl_total_init = 1000;
 // proportion of initial aSrc@cell_membrane at the membrane
 prop_aSrc = 3;
 // proportion of initial aSrc@cell_membrane in the short loop
 prop_endo_sl = 1;
 
-// creation of aSrc@cell_membrane is taking place at the membrane 
+// creation of aSrc@cell_membrane is taking place at the membrane
 creation = 1;
 // time taken to create a molecule of aSrc@cell_membrane at the membrane
 mean_time_to_create = 0.04;
@@ -91,7 +92,7 @@ sl_activated = 1;
 // time taken for mobilisation of an endosome in short loop
 sl_form_time = 60;
 // probability of recycling endosome in short loop to membrane
-prob_of_recycle_sl = 0.80;  
+prob_of_recycle_sl = 0.80;
 
 // long loop is activated
 ll_activated = 1;
@@ -124,12 +125,12 @@ mean_time_inwards_ll = 20;
 // time taken for an endosome to travel outwards in long loop
 mean_time_outwards_ll = 20 + 5; // additional time for iSrc pickup
 
-// =========================================================================================                
+// =========================================================================================
 // reaction constants
 
-// rate for triggering F@external 
+// rate for triggering F@external
 f0 = 10000;
-// rate for adding F@external 
+// rate for adding F@external
 f1 = release;
 // rate of binding of aSrc@cell_membrane and FR2@cell_membrane
 f2 = binding_rate;
@@ -160,7 +161,7 @@ ll4 = 1/mean_time_outwards_ll * (1 - prob_of_recycle_ll);
 // movement of endosome to membrane
 ll5 = 1/mean_time_outwards_ll * prob_of_recycle_ll;
 
-// =========================================================================================                
+// =========================================================================================
 // rate equations
 
 aSrc_to_fs   = [ aSrc@cell_membrane * sl2 ];
@@ -181,7 +182,7 @@ ll_to_rec    = [ (Ll_endo@cytoplasm * st_to_ll)  * ll3 ];
 ll_deg       = [ (Ll_rec@cytoplasm  * st_to_ll)  * ll4 ];
 ll_to_aSrc   = [ (Ll_rec@cytoplasm  * st_to_ll)  * ll5 ];
 
-// =========================================================================================                
+// =========================================================================================
 // species
 
 aSrc    = (aSrc_to_fs,st_to_sl) << aSrc@cell_membrane
@@ -189,14 +190,14 @@ aSrc    = (aSrc_to_fs,st_to_sl) << aSrc@cell_membrane
         + (ll_to_aSrc,st_from_ll) >> aSrc@cell_membrane
         + binding << aSrc@cell_membrane
         + create >> aSrc@cell_membrane;
-        
+
 Sl_form = aSrc_to_fs >> Sl_form@cytoplasm
         + sl_in << Sl_form@cytoplasm;
-       
+
 Sl_endo = sl_in >> Sl_endo@cytoplasm
         + sl_to_aSrc << Sl_endo@cytoplasm
         + sl_deg << Sl_endo@cytoplasm;
-        
+
 F_trig  = trigger << F_trig@external;
 
 F_rel   = (trigger,st_F) >> F_rel@external
@@ -204,27 +205,27 @@ F_rel   = (trigger,st_F) >> F_rel@external
 
 F       = add >> F@external
         + fr_binding << F@external;
-        
+
 R       = fr_binding << R@cell_membrane;
 
 FR1     = fr_binding >> FR1@cell_membrane
         + complexation << FR1@cell_membrane;
-        
+
 FR2     = complexation >> FR2@cell_membrane
-        + binding << FR2@cell_membrane;        
-      
+        + binding << FR2@cell_membrane;
+
 aSrcF   = binding >> aSrcF@cell_membrane
         + (aSrcF_to_ll,st_to_ll) << aSrcF@cell_membrane
         + (ll_to_aSrc,st_to_ll) >> aSrcF@cell_membrane;
-        
+
 Ll_endo = aSrcF_to_ll >> Ll_endo@cytoplasm
         + ll_to_rec << Ll_endo@cytoplasm;
-        
+
 Ll_rec  = ll_to_rec >> Ll_rec@cytoplasm
         + ll_deg << Ll_rec@cytoplasm
-        + ll_to_aSrc << Ll_rec@cytoplasm;                
+        + ll_to_aSrc << Ll_rec@cytoplasm;
 
-// =========================================================================================                
+// =========================================================================================
 // variables
 
 // total quantity of aSrc@cell_membrane at the membrane, bound and unbound
@@ -236,7 +237,7 @@ aSrc_in_loop = Sl_endo@cytoplasm * st_to_sl + Sl_form@cytoplasm * st_to_sl;
 // quantity of aSrcF@cell_membrane in long loop
 aSrcF_in_loop = Ll_endo@cytoplasm * st_to_ll + Ll_rec@cytoplasm * st_to_ll;
 
-// =========================================================================================                
+// =========================================================================================
 // initial quantities
 
 F_trig_external_init = trig_F;
@@ -263,8 +264,8 @@ FR2_cell_membrane_init = 0;
 aSrcF_cell_membrane_init = 0;
 Ll_endo_cytoplasm_init = 0;
 Ll_rec_cytoplasm_init = 0;
-        
-// =========================================================================================        
+
+// =========================================================================================
 // model
 
     aSrc@cell_membrane   [aSrc_cell_membrane_init]
@@ -278,4 +279,4 @@ Ll_rec_cytoplasm_init = 0;
 <*> FR2@cell_membrane     [FR2_cell_membrane_init]
 <*> aSrcF@cell_membrane [aSrcF_cell_membrane_init]
 <*> Ll_endo@cytoplasm     [Ll_endo_cytoplasm_init]
-<*> Ll_rec@cytoplasm       [Ll_rec_cytoplasm_init]    
+<*> Ll_rec@cytoplasm       [Ll_rec_cytoplasm_init]

@@ -21,11 +21,12 @@ class LocationTree:
     def draw_tree(self, dc):
         r = 90
         for key in self.loc_data:
-            print self.loc_data[key]
-
-        for key in self.loc_data:
             if (self.loc_data[key].l_type == 'membrane'):
-                self.circles[key] = Ring((100, 100, r), (100, 100, 60), len(self.tree[key]), dc)
+                try:
+                    num_children = len(self.tree[key])
+                except:
+                    num_children = 1
+                self.circles[key] = Ring((100, 100, r), (100, 100, 60), num_children, dc)
                 self.circles[key].paint()
                 r = 60
                 break
@@ -37,6 +38,7 @@ class LocationTree:
 
         while (len(self.queue) > 0):
             node = self.queue.pop(0)
+            print node
             self.output += [node]
             try:
                 self.queue += self.tree[node]
