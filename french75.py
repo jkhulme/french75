@@ -93,10 +93,12 @@ class French75(wx.Frame):
             style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
             self.paths = file_chooser.GetPaths()
-        file_chooser.Destroy()
+            file_chooser.Destroy()
 
-        self.plot_graphs()
-        self.model_panel.Parent.Refresh()
+            self.plot_graphs()
+            self.model_panel.Parent.Refresh()
+        else:
+            file_chooser.Destroy()
 
     def open_file2(self, e):
         file_chooser = wx.FileDialog(
