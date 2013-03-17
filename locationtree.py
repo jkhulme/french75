@@ -18,7 +18,7 @@ class LocationTree:
             else:
                 self.tree[self.loc_data[loc].parent] += [self.loc_data[loc].name]
 
-    def draw_tree(self, dc):
+    def draw_tree_one(self, dc):
         r = 90
         for key in self.loc_data:
             if (self.loc_data[key].l_type == 'membrane'):
@@ -53,3 +53,26 @@ class LocationTree:
                 self.circles[node].paint()
 
         return self.output
+
+    def draw_tree_two(self, dc):
+            for key in self.loc_data:
+                if (self.loc_data[key].l_type == 'membrane'):
+                    self.circles[key].paint()
+                    break
+
+            self.queue += [self.tree['root'][0]]
+            self.circles[self.tree['root'][0]].paint()
+            self.output = []
+
+            while (len(self.queue) > 0):
+                node = self.queue.pop(0)
+                print node
+                self.output += [node]
+                try:
+                    self.queue += self.tree[node]
+                    if (self.loc_data[node].l_type != 'membrane') and (self.loc_data[node].parent != 'root'):
+                        self.circles[node].paint()
+                except:
+                    self.circles[node].paint()
+
+            return self.output

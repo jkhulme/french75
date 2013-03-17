@@ -33,6 +33,7 @@ class French75(wx.Frame):
         super(French75, self).__init__(*args, **kwargs)
         self.dpi = 100
         self.results = {}
+        self.first_time = True
         self.launch_gui()
 
     """
@@ -143,7 +144,11 @@ class French75(wx.Frame):
     def OnPaint(self, e):
         dc = wx.PaintDC(self.model_panel)
         self.model_parser.tree.build_tree()
-        self.tree = self.model_parser.tree.draw_tree(dc)
+        if self.first_time:
+            self.tree = self.model_parser.tree.draw_tree_one(dc)
+            self.first_time = False
+        else:
+            self.tree = self.model_parser.tree.draw_tree_two(dc)
 
     def on_save_plot(self, event):
         file_choices = "PNG (*.png)|*.png"
