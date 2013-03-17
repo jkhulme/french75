@@ -53,6 +53,7 @@ class French75(wx.Frame):
         self.graph_vbox.Add(self.graph_canvas)
 
         self.toolbar = NavigationToolbar(self.graph_canvas)
+        self.toolbar.DeleteToolByPos(7)
         self.graph_vbox.Add(self.toolbar)
 
         self.graph_panel.SetSizer(self.graph_vbox)
@@ -108,18 +109,20 @@ class French75(wx.Frame):
             style=wx.OPEN | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
             self.paths = file_chooser.GetPaths()
-        file_chooser.Destroy()
+            file_chooser.Destroy()
 
-        self.model_parser = Biopepa_Model_Parser()
-        self.model_parser.open_model(self.paths[0])
-        self.model_parser.get_locations()
-        self.model_parser.parse_location()
-        self.model_parser.build_graph()
+            self.model_parser = Biopepa_Model_Parser()
+            self.model_parser.open_model(self.paths[0])
+            self.model_parser.get_locations()
+            self.model_parser.parse_location()
+            self.model_parser.build_graph()
 
-        self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.model_panel.Parent.Refresh()
-        self.Show(False)
-        self.Show(True)
+            self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
+            self.model_panel.Parent.Refresh()
+            self.Show(False)
+            self.Show(True)
+        else:
+            file_chooser.Destroy()
 
     """
     Get the data then plot it
