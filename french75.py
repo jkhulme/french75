@@ -10,6 +10,7 @@ from matplotlib.backends.backend_wxagg import \
     NavigationToolbar2WxAgg as NavigationToolbar
 from legend import Legend
 import os
+import sys
 
 
 class French75(wx.Frame):
@@ -34,6 +35,13 @@ class French75(wx.Frame):
         self.dpi = 100
         self.results = {}
         self.first_time = True
+        self.xkcd = False
+        sys.argv = sys.argv[1:]
+        for arg in sys.argv:
+            if (arg == "--xkcd"):
+                self.xkcd = True
+                break
+
         self.launch_gui()
 
     """
@@ -138,7 +146,7 @@ class French75(wx.Frame):
             self.parser.parse_results()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             self.parser.timescale()
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True)
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter.SetSashPosition(801)
         self.splitter.SetSashPosition(800)

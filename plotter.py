@@ -26,7 +26,7 @@ class Plotter(object):
     """
     Initialise what we need, and then create a line for each plot
     """
-    def __init__(self, axes, canvas, results, parser, legend, draw_legend):
+    def __init__(self, axes, canvas, results, parser, legend, draw_legend, xkcdify):
         self.axes = axes
         self.canvas = canvas
         self.parser = parser
@@ -36,6 +36,7 @@ class Plotter(object):
         self.mpl_legend = False
         self.colours = []
         self.hard_colours = self.populate_colours()
+        self.xkcdify = xkcdify
 
         for result in results:
             results_dict = results[result]
@@ -70,9 +71,10 @@ class Plotter(object):
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
 
-        XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
-                xaxis_arrow='+-', yaxis_arrow='+-',
-                expand_axes=True)
+        if (self.xkcdify):
+            XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
+                    xaxis_arrow='+-', yaxis_arrow='+-',
+                    expand_axes=True)
 
         self.canvas.draw()
 
