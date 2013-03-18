@@ -1,6 +1,7 @@
 from line import Line
 from math import sqrt
 from random import randrange
+from xkcd import XKCDify
 
 """
 Given the data, plot it on one graph
@@ -68,6 +69,10 @@ class Plotter(object):
         self.axes.set_title('Active Src graph')
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
+
+        XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
+                xaxis_arrow='+-', yaxis_arrow='+-',
+                expand_axes=True)
 
         self.canvas.draw()
 
