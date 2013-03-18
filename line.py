@@ -1,5 +1,4 @@
 from math import sqrt, ceil
-from random import randrange
 
 
 class Line(object):
@@ -24,7 +23,7 @@ class Line(object):
     self.plot_arrays - the sub plots for intensity plots
     """
 
-    def __init__(self, axes, results, time, csv, key):
+    def __init__(self, axes, results, time, csv, key, colour):
         self.axes = axes
         self.results = results
         self.time = time
@@ -42,7 +41,7 @@ class Line(object):
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()
-        self.flat_colour = self.random_colour()
+        self.flat_colour = self.rgb_to_hex(colour)
         self.min_alpha = 0.2
         self.max_alpha = 1
         self.thickness = 2
@@ -143,9 +142,4 @@ class Line(object):
                 break
             count += self.interval - 1
 
-    def random_colour(self):
-        rgb = [0, 0, 0]
-        for i in range(0, 3):
-            rgb[i] = randrange(0, 255, 1)
-        rgb_tup = (rgb[0], rgb[1], rgb[2])
-        return self.rgb_to_hex(rgb_tup)
+

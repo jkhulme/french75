@@ -1,4 +1,6 @@
 from line import Line
+from math import sqrt
+from random import randrange
 
 """
 Given the data, plot it on one graph
@@ -31,13 +33,19 @@ class Plotter(object):
         self.results = {}
         self.draw_legend = draw_legend
         self.mpl_legend = False
+        self.colours = []
+        self.hard_colours = self.populate_colours()
 
         for result in results:
             results_dict = results[result]
             self.results[result] = {}
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.results[result][key] = Line(self.axes, results_dict[key], results_dict['Time'], result, key)
+                    self.results[result][key] = Line(self.axes,
+                                                     results_dict[key],
+                                                     results_dict['Time'],
+                                                     result, key,
+                                                     self.choose_colour())
 
     """
     Attempt to plot each line.
@@ -62,3 +70,36 @@ class Plotter(object):
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
 
         self.canvas.draw()
+
+    def choose_colour(self):
+        if (len(self.hard_colours) > 0):
+            return self.hard_colours.pop()
+        else:
+            accept = False
+
+            while(not accept):
+                accept = True
+                temp_colour = self.random_colour()
+                for colour in self.colours:
+                    if (self.euclid_distance(temp_colour, colour) < 50):
+                        accept = False
+                        break
+            self.colours.append(temp_colour)
+            return temp_colour
+
+    def random_colour(self):
+        rgb = [0, 0, 0]
+        for i in range(0, 3):
+            rgb[i] = randrange(0, 200, 1)
+        rgb_tup = (rgb[0], rgb[1], rgb[2])
+        return rgb_tup
+
+    def euclid_distance(self, p1, p2):
+        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2)
+
+    def populate_colours(self):
+        colour_list = []
+        colour_list.append((255, 0, 0))
+        colour_list.append((0, 255, 0))
+        colour_list.append((0, 0, 255))
+        return colour_list
