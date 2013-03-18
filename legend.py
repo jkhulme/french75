@@ -29,6 +29,8 @@ class Legend(object):
             child.Destroy()
 
         title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_CENTER)
+        font = wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD)
+        title.SetFont(font)
         self.vbox_leg.Add(title, flag=wx.CENTER)
 
         for result in self.results:
