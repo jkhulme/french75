@@ -15,13 +15,19 @@ class Plot_Dialog(wx.Dialog):
 
         sb = wx.StaticBox(dialog_panel, label='Colors')
         sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
+
         self.cb_show_hide = wx.CheckBox(dialog_panel, -1, 'Show', (10, 10))
         sbs.Add(self.cb_show_hide)
+
         self.cb_intense = wx.CheckBox(dialog_panel, -1, 'Intensity Plot',
                                      (10, 10))
         sbs.Add(self.cb_intense)
+
         self.colour_picker = wx.ColourPickerCtrl(dialog_panel, -1)
         sbs.Add(self.colour_picker)
+
+        self.thick_spin = wx.SpinCtrl(dialog_panel, -1, "2")
+        sbs.Add(self.thick_spin)
 
         dialog_panel.SetSizer(sbs)
 
@@ -46,6 +52,7 @@ class Plot_Dialog(wx.Dialog):
         self.cb_show_hide.SetValue(self.line.showhide)
         self.cb_intense.SetValue(self.line.intense_plot)
         self.colour_picker.SetColour(self.line.flat_colour)
+        self.thick_spin.SetValue(self.line.thickness)
 
     def rgb_to_hex(self, rgb):
         return '#%02x%02x%02x' % rgb
@@ -53,6 +60,7 @@ class Plot_Dialog(wx.Dialog):
     def on_ok(self, e):
         self.line.showhide = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
+        self.line.thickness = self.thick_spin.GetValue()
         try:
             rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
             self.line.flat_colour = self.rgb_to_hex(rgb)

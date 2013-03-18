@@ -126,6 +126,8 @@ class Legend(object):
 
     def update(self, csv, file_key, species_key):
         for child in csv.GetChildren():
+            if child.GetLabel() == "":
+                child.SetBackgroundColour(self.results[file_key][species_key].flat_colour)
             if child.GetName() == "check":
                 if child.GetLabel() == "Show":
                     child.SetValue(self.results[file_key][species_key].showhide)
