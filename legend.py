@@ -46,8 +46,9 @@ class Legend(object):
 
             for key in self.results[result]:
                 hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
+                vbox_coll = wx.BoxSizer(wx.VERTICAL)
                 species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
-                hbox_collpane.Add(species_label)
+                vbox_coll.Add(species_label)
 
                 btn_colour = wx.Button(collpane_body, -1, '', size=(20, 20))
                 btn_colour.Disable()
@@ -67,7 +68,8 @@ class Legend(object):
                 btn_props = wx.Button(collpane_body, -1, 'P', size=(20, 20))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
                 hbox_collpane.Add(btn_props)
-                self.vbox_collpane.Add(hbox_collpane)
+                vbox_coll.Add(hbox_collpane)
+                self.vbox_collpane.Add(vbox_coll)
 
             collpane_body.SetSizer(self.vbox_collpane)
             self.vbox_collpane.Fit(collpane_body)
