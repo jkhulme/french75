@@ -42,28 +42,35 @@ class Legend(object):
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
 
             collpane_body = collpane.GetPane()
-            vbox_collpane = wx.BoxSizer(wx.VERTICAL)
+            self.vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             for key in self.results[result]:
+                hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
                 species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
-                vbox_collpane.Add(species_label)
+                hbox_collpane.Add(species_label)
 
-                cb_show_hide = wx.CheckBox(collpane_body, -1, 'Show', (10, 10))
-                vbox_collpane.Add(cb_show_hide)
+                btn_colour = wx.Button(collpane_body, -1, '', size=(20, 20))
+                btn_colour.Disable()
+                btn_colour.SetBackgroundColour(self.results[result][key].flat_colour)
+                hbox_collpane.Add(btn_colour)
+
+                cb_show_hide = wx.CheckBox(collpane_body, -1, 'S')
+                hbox_collpane.Add(cb_show_hide)
                 cb_show_hide.SetValue(self.results[result][key].showhide)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
-                cb_intense = wx.CheckBox(collpane_body, -1, 'Intensity Plot', (10, 10))
-                vbox_collpane.Add(cb_intense)
+                cb_intense = wx.CheckBox(collpane_body, -1, 'I')
+                hbox_collpane.Add(cb_intense)
                 cb_intense.SetValue(self.results[result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
-                btn_props = wx.Button(collpane_body, -1, 'Prefs')
+                btn_props = wx.Button(collpane_body, -1, 'P', size=(20, 20))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
-                vbox_collpane.Add(btn_props)
+                hbox_collpane.Add(btn_props)
+                self.vbox_collpane.Add(hbox_collpane)
 
-            collpane_body.SetSizer(vbox_collpane)
-            vbox_collpane.Fit(collpane_body)
+            collpane_body.SetSizer(self.vbox_collpane)
+            self.vbox_collpane.Fit(collpane_body)
 
         self.legend_panel.SetSizer(self.vbox_leg)
         self.vbox_leg.Fit(self.legend_panel)
