@@ -30,6 +30,7 @@ class Plotter(object):
         self.legend = legend
         self.results = {}
         self.draw_legend = draw_legend
+        self.mpl_legend = False
 
         for result in results:
             results_dict = results[result]
@@ -49,6 +50,9 @@ class Plotter(object):
                 self.results[result][key].plot()
         if (self.draw_legend):
             self.legend.draw_legend(self, self.results)
+
+        if (self.mpl_legend):
+            self.axes.legend()
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')

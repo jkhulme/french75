@@ -55,6 +55,8 @@ class French75(wx.Frame):
 
         self.toolbar = NavigationToolbar(self.graph_canvas)
         self.toolbar.DeleteToolByPos(7)
+        self.toolbar.DeleteToolByPos(6)
+        self.toolbar.DeleteToolByPos(6)
         self.graph_vbox.Add(self.toolbar)
 
         self.graph_panel.SetSizer(self.graph_vbox)
@@ -136,8 +138,8 @@ class French75(wx.Frame):
             self.parser.parse_results()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             self.parser.timescale()
-        draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True)
-        draw_plot.plot()
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True)
+        self.draw_plot.plot()
         self.splitter.SetSashPosition(801)
         self.splitter.SetSashPosition(800)
 
@@ -163,7 +165,11 @@ class French75(wx.Frame):
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
+            self.draw_plot.mpl_legend = True
+            self.draw_plot.plot()
             self.graph_canvas.print_figure(path, dpi=self.dpi)
+            self.draw_plot.mpl_legend = False
+            self.draw_plot.plot()
 
 
 """
