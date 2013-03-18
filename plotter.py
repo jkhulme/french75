@@ -1,7 +1,10 @@
 from line import Line
 from math import sqrt
 from random import randrange
-from xkcd import XKCDify
+try:
+    from xkcd import XKCDify
+except:
+    print "scipi not installed"
 
 """
 Given the data, plot it on one graph
