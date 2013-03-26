@@ -26,7 +26,9 @@ class BioPepaCsvParser(object):
 
     def __init__(self):
         self.ymin = 1000000
+        self.minx = 1000000
         self.ymax = 0
+        self.maxx = 0
 
     def parse_results(self):
         data = self.contents[8:]
@@ -55,9 +57,12 @@ class BioPepaCsvParser(object):
     def values(self):
         for result in self.results_dict:
             if not result == 'Time':
-                self.results_dict[result][-1]
                 if min(self.results_dict[result]) < self.ymin:
                     self.ymin = min(self.results_dict[result])
                 if max(self.results_dict[result]) > self.ymax:
                     self.ymax = max(self.results_dict[result])
-                    print self.ymax
+            else:
+                if min(self.results_dict[result]) < self.minx:
+                    self.minx = min(self.results_dict[result])
+                if max(self.results_dict[result]) > self.maxx:
+                    self.maxx = max(self.results_dict[result])
