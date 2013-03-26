@@ -42,6 +42,7 @@ class Legend(object):
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
 
             collpane_body = collpane.GetPane()
+            collpane_body.SetBackgroundColour('white')
             self.vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             for key in self.results[result]:

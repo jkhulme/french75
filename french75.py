@@ -53,9 +53,13 @@ class French75(wx.Frame):
         self.splitter = wx.SplitterWindow(self.splitter_two, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
         self.legend_panel = wx.Panel(self.splitter, -1)
+        self.legend_panel.SetBackgroundColour('white')
+        self.model_panel.SetBackgroundColour('white')
+        self.graph_panel.SetBackgroundColour('white')
 
         self.graph_fig = Figure((10.0, 6))
         self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
+        self.graph_fig.set_facecolor('white')
         self.graph_axes = self.graph_fig.add_subplot(111)
 
         self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
@@ -73,6 +77,7 @@ class French75(wx.Frame):
         self.legend = Legend(self.legend_panel)
 
         menubar = wx.MenuBar()
+        menubar.SetBackgroundColour('white')
         file_menu = wx.Menu()
         filem = file_menu.Append(wx.ID_OPEN, '&Open')
         filem2 = file_menu.Append(wx.ID_ANY, '&View Model')
