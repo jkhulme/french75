@@ -139,7 +139,9 @@ class Legend(object):
                 child.SetBackgroundColour(self.results[file_key][species_key].flat_colour)
                 print "changed colour"
             if child.GetName() == "check" and update:
-                if child.GetLabel() == "Show":
+                print "da fuck"
+                if child.GetLabel() == "S":
                     child.SetValue(self.results[file_key][species_key].showhide)
-                if child.GetLabel() == "Intensity Plot" and update:
+                if child.GetLabel() == "I" and update:
+                    print "int plot"
                     child.SetValue(self.results[file_key][species_key].intense_plot)
