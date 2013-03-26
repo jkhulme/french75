@@ -75,7 +75,7 @@ class Plotter(object):
         self.axes.set_xlabel('Time')
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
-        self.axes.set_title('Active Src graph')
+        self.axes.set_title('Graph')
         self.axes.axis((self.parser.minx, self.parser.maxx, self.parser.ymin, self.parser.ymax*1.1))
 
         if (self.xkcdify):

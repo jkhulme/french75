@@ -165,6 +165,7 @@ class French75(wx.Frame):
             self.first_time = False
         else:
             self.tree = self.model_parser.tree.draw_tree_two(dc)
+            self.saveSnapshot(dc)
 
     def on_save_plot(self, event):
         file_choices = "PNG (*.png)|*.png"
@@ -185,7 +186,32 @@ class French75(wx.Frame):
             self.draw_plot.mpl_legend = False
             self.draw_plot.plot()
 
+    def saveSnapshot(self, dcSource):
+        # based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
+        size = dcSource.Size
 
+        # Create a Bitmap that will later on hold the screenshot image
+        # Note that the Bitmap must have a size big enough to hold the screenshot
+        # -1 means using the current default colour depth
+        bmp = wx.EmptyBitmap(200, 200)
+
+        # Create a memory DC that will be used for actually taking the screenshot
+        memDC = wx.MemoryDC()
+
+        # Tell the memory DC to use our Bitmap
+        # all drawing action on the memory DC will go to the Bitmap now
+        memDC.SelectObject(bmp)
+
+        # Blit (in this case copy) the actual screen on the memory DC
+        # and thus the Bitmap
+        memDC.Blit(0, 0, size.width, size.height, dcSource, 0, 0)
+
+        # Select the Bitmap out of the memory DC by selecting a new
+        # uninitialized Bitmap
+        memDC.SelectObject(wx.NullBitmap)
+
+        img = bmp.ConvertToImage()
+        img.SaveFile('saved.png', wx.BITMAP_TYPE_PNG)
 """
 Like Java's main method
 """
