@@ -5,7 +5,6 @@ import wx
 import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
-from matplotlib.ticker import MultipleLocator
 from matplotlib.backends.backend_wxagg import \
     FigureCanvasWxAgg as FigCanvas, \
     NavigationToolbar2WxAgg as NavigationToolbar
@@ -152,6 +151,7 @@ class French75(wx.Frame):
             self.parser.parse_results()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             self.parser.timescale()
+            self.parser.values()
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter.SetSashPosition(801)

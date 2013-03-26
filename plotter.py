@@ -76,8 +76,7 @@ class Plotter(object):
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title('Active Src graph')
-        xmin, xmax, ymin, ymax = self.axes.axis()
-        self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
+        self.axes.axis((self.parser.minx, self.parser.maxx, self.parser.ymin, self.parser.ymax*1.1))
 
         if (self.xkcdify):
             XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
