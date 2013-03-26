@@ -126,11 +126,20 @@ class Legend(object):
         self.plotter.plot()
 
     def update(self, csv, file_key, species_key):
+        print len(csv.GetChildren())
+        update = False
         for child in csv.GetChildren():
-            if child.GetLabel() == "":
+            if (child.GetName() == "staticText"):
+                if (child.GetLabel() == species_key):
+                    update = True
+                else:
+                    update = False
+
+            if child.GetLabel() == "" and update:
                 child.SetBackgroundColour(self.results[file_key][species_key].flat_colour)
-            if child.GetName() == "check":
+                print "changed colour"
+            if child.GetName() == "check" and update:
                 if child.GetLabel() == "Show":
                     child.SetValue(self.results[file_key][species_key].showhide)
-                if child.GetLabel() == "Intensity Plot":
+                if child.GetLabel() == "Intensity Plot" and update:
                     child.SetValue(self.results[file_key][species_key].intense_plot)
