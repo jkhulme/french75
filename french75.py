@@ -11,7 +11,6 @@ from matplotlib.backends.backend_wxagg import \
 from legend import Legend
 import os
 import sys
-import time
 
 
 class French75(wx.Frame):
@@ -158,8 +157,8 @@ class French75(wx.Frame):
             self.parser.values()
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
-        self.splitter.SetSashPosition(801)
-        self.splitter.SetSashPosition(800)
+        self.splitter_two.SetSashPosition(201)
+        self.splitter_two.SetSashPosition(200)
 
     def OnPaint(self, e):
         self.dc = wx.PaintDC(self.model_panel)
