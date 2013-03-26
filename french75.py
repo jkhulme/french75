@@ -5,6 +5,7 @@ import wx
 import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
+from matplotlib.ticker import MultipleLocator
 from matplotlib.backends.backend_wxagg import \
     FigureCanvasWxAgg as FigCanvas, \
     NavigationToolbar2WxAgg as NavigationToolbar

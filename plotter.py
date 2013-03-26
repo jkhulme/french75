@@ -1,6 +1,7 @@
 from line import Line
 from math import sqrt
 from random import randrange
+from matplotlib.ticker import MultipleLocator
 try:
     from xkcd import XKCDify
 except:
@@ -67,9 +68,13 @@ class Plotter(object):
         if (self.mpl_legend):
             self.axes.legend()
 
+        self.axes.xaxis.set_minor_locator(MultipleLocator(500))
+        self.axes.yaxis.set_minor_locator(MultipleLocator(5000))
+
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
-        self.axes.grid(True)
+        self.axes.xaxis.grid(True, 'minor')
+        self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title('Active Src graph')
         xmin, xmax, ymin, ymax = self.axes.axis()
         self.axes.axis((self.parser.minx, self.parser.maxx, ymin, ymax))
