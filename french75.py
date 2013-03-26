@@ -48,11 +48,11 @@ class French75(wx.Frame):
     Draws the main window
     """
     def launch_gui(self):
-        self.splitter_two = wx.SplitterWindow(self,)
+        self.splitter_two = wx.SplitterWindow(self, -1)
+        self.model_panel = wx.Panel(self.splitter_two, -1)
         self.splitter = wx.SplitterWindow(self.splitter_two, -1)
-        self.model_panel = wx.Panel(self.splitter, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
-        self.legend_panel = wx.Panel(self.splitter_two, -1)
+        self.legend_panel = wx.Panel(self.splitter, -1)
         self.legend_panel.SetBackgroundColour('white')
         self.model_panel.SetBackgroundColour('white')
         self.graph_panel.SetBackgroundColour('white')
@@ -74,30 +74,29 @@ class French75(wx.Frame):
         self.graph_panel.SetSizer(self.graph_vbox)
         self.graph_vbox.Fit(self)
 
-        self.legend = Legend(self.legend_panel)
+        self.legend = Legend(self.model_panel)
 
         menubar = wx.MenuBar()
         menubar.SetBackgroundColour('white')
-        self.file_menu = wx.Menu()
-        filem = self.file_menu.Append(wx.ID_OPEN, '&Open')
-        file_save_plot = self.file_menu.Append(wx.ID_SAVE, '&Save')
-        filem2 = self.file_menu.Append(wx.ID_ANY, '&View Model')
-        filem3 = self.file_menu.Append(wx.ID_ANY, 'Save &Model')
-
-        menubar.Append(self.file_menu, '&File')
+        file_menu = wx.Menu()
+        filem = file_menu.Append(wx.ID_OPEN, '&Open')
+        filem2 = file_menu.Append(wx.ID_ANY, '&View Model')
+        filem3 = file_menu.Append(wx.ID_ANY, 'Save &Model')
+        file_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+        menubar.Append(file_menu, '&File')
         self.SetMenuBar(menubar)
         self.Bind(wx.EVT_MENU, self.open_file, filem)
         self.Bind(wx.EVT_MENU, self.open_file2, filem2)
         self.Bind(wx.EVT_MENU, self.save_model, filem3)
         self.Bind(wx.EVT_MENU, self.on_save_plot, file_save_plot)
 
-        self.splitter_two.SplitVertically(self.legend_panel, self.splitter)
+        self.splitter_two.SplitVertically(self.model_panel, self.splitter)
         self.splitter_two.SetSashPosition(200)
 
-        self.splitter.SplitVertically(self.graph_panel, self.model_panel)
+        self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(800)
 
-        self.SetSize((1200, 540))
+        self.SetSize((1210, 540))
         self.SetTitle('French75')
         self.Centre()
         self.Show(True)
@@ -136,12 +135,15 @@ class French75(wx.Frame):
             self.model_parser.parse_location()
             self.model_parser.build_graph()
 
-            self.model_panel.Bind(wx.EVT_PAINT, self.OnPaint)
-            self.model_panel.Parent.Refresh()
+            self.legend_panel.Bind(wx.EVT_PAINT, self.OnPaint)
+            self.legend_panel.Parent.Refresh()
             self.Show(False)
             self.Show(True)
         else:
             file_chooser.Destroy()
+
+    def save_model(self, e):
+        self.saveSnapshot()
 
     """
     Get the data then plot it
@@ -161,7 +163,7 @@ class French75(wx.Frame):
         self.splitter_two.SetSashPosition(200)
 
     def OnPaint(self, e):
-        self.dc = wx.PaintDC(self.model_panel)
+        self.dc = wx.PaintDC(self.legend_panel)
         self.model_parser.tree.build_tree()
         if self.first_time:
             self.tree = self.model_parser.tree.draw_tree_one(self.dc)
@@ -188,14 +190,9 @@ class French75(wx.Frame):
             self.draw_plot.mpl_legend = False
             self.draw_plot.plot()
 
-    def save_model(self, event):
-        self.tree = self.model_parser.tree.draw_tree_two(self.dc)
-        self.saveSnapshot()
-
     def saveSnapshot(self):
         # based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
         dcSource = self.dc
-
         size = dcSource.Size
 
         # Create a Bitmap that will later on hold the screenshot image
