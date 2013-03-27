@@ -3,3 +3,4 @@
 *.sublime-*
 f75_env/
 *.png
+.DS*
