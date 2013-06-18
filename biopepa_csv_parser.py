@@ -15,13 +15,13 @@ Expected Structure
 """
 
 
-class BioPepaCsvParser(object):
+class BioPepaCsvParserNew(object):
 
     def __init__(self):
         self.ymin = 1000000
-        self.xmin = 1000000
+        self.minx = 1000000
         self.ymax = 0
-        self.xmax = 0
+        self.maxx = 0
 
     def open_csv(self, csv):
         with open(csv, 'r') as f:
@@ -36,14 +36,35 @@ class BioPepaCsvParser(object):
             results['data'] = ('Time, ' + re.findall('Time, (.*?)\n', contents)[0]).split(',')
             data = [line.split(',') for line in contents.split('\n') if not "#" in line]
             transposed_data = map(None, *data)
-
+            results['results'] = {}
             for i, data_item in enumerate(results['data']):
-                results[str(data_item)] = transposed_data[i]
+                results['results'][str(data_item)] = transposed_data[i]
 
             print results.keys()
+            self.results_dict = results
+
+    def parse_results(self):
+        pass
+
+    def timescale(self):
+        self.minx = float(self.results_dict['start_time'])
+        self.maxx = float(self.results_dict['stop_time'])
+
+    def values(self):
+        for result in self.results_dict['results']:
+            if not result == 'Time':
+                if min(self.results_dict['results'][result]) < self.ymin:
+                    self.ymin = min(self.results_dict['results'][result])
+                if max(self.results_dict['results'][result]) > self.ymax:
+                    self.ymax = max(self.results_dict['results'][result])
+            else:
+                if min(self.results_dict['results'][result]) < self.minx:
+                    self.minx = min(self.results_dict['results'][result])
+                if max(self.results_dict['results'][result]) > self.maxx:
+                    self.maxx = max(self.results_dict['results'][result])
 
 
-class BioPepaCsvParserOld(object):
+class BioPepaCsvParser(object):
 
     """
     self.contents - entire file contents
