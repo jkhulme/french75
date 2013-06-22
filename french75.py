@@ -154,7 +154,7 @@ class French75(wx.Frame):
         for path in self.paths:
             self.parser.open_csv(path)
             self.parser.parse_results()
-            print self.parser.results_dict
+            print self.parser.results_dict.keys()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             #self.parser.timescale()
             self.parser.values()

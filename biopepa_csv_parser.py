@@ -15,7 +15,7 @@ Expected Structure
 """
 
 
-class BioPepaCsvParserNew(object):
+class BioPepaCsvParser(object):
 
     def __init__(self):
         self.ymin = 1000000
@@ -36,12 +36,13 @@ class BioPepaCsvParserNew(object):
             results['data'] = ('Time, ' + re.findall('Time, (.*?)\n', contents)[0]).split(',')
             data = [line.split(',') for line in contents.split('\n') if not "#" in line]
             transposed_data = map(None, *data)
+            print transposed_data
             results['results'] = {}
             for i, data_item in enumerate(results['data']):
-                results['results'][str(data_item)] = transposed_data[i]
+                results['results'][str(data_item)] = [float(n) for n in transposed_data[i]]
 
-            print results.keys()
-            self.results_dict = results
+            print results['results']['Time']
+            self.results_dict = results['results']
 
     def parse_results(self):
         pass
@@ -51,20 +52,20 @@ class BioPepaCsvParserNew(object):
         self.maxx = float(self.results_dict['stop_time'])
 
     def values(self):
-        for result in self.results_dict['results']:
+        for result in self.results_dict:
             if not result == 'Time':
-                if min(self.results_dict['results'][result]) < self.ymin:
-                    self.ymin = min(self.results_dict['results'][result])
-                if max(self.results_dict['results'][result]) > self.ymax:
-                    self.ymax = max(self.results_dict['results'][result])
+                if min(self.results_dict[result]) < self.ymin:
+                    self.ymin = min(self.results_dict[result])
+                if max(self.results_dict[result]) > self.ymax:
+                    self.ymax = max(self.results_dict[result])
             else:
-                if min(self.results_dict['results'][result]) < self.minx:
-                    self.minx = min(self.results_dict['results'][result])
-                if max(self.results_dict['results'][result]) > self.maxx:
-                    self.maxx = max(self.results_dict['results'][result])
+                if min(self.results_dict[result]) < self.minx:
+                    self.minx = min(self.results_dict[result])
+                if max(self.results_dict[result]) > self.maxx:
+                    self.maxx = max(self.results_dict[result])
 
 
-class BioPepaCsvParser(object):
+class BioPepaCsvParserOld(object):
 
     """
     self.contents - entire file contents
