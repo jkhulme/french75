@@ -9,8 +9,8 @@ from matplotlib.backends.backend_wxagg import \
     FigureCanvasWxAgg as FigCanvas, \
     NavigationToolbar2WxAgg as NavigationToolbar
 from legend import Legend
-import os
 import sys
+import os
 
 
 class French75(wx.Frame):
@@ -154,7 +154,6 @@ class French75(wx.Frame):
         for path in self.paths:
             self.parser.open_csv(path)
             self.parser.parse_results()
-            print self.parser.results_dict.keys()
             self.results[path.split('/')[-1]] = self.parser.results_dict
             #self.parser.timescale()
             self.parser.values()

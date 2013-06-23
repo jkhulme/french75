@@ -1,4 +1,5 @@
 import wx
+from utils import rgb_to_hex
 
 
 class Plot_Dialog(wx.Dialog):
@@ -54,16 +55,13 @@ class Plot_Dialog(wx.Dialog):
         self.colour_picker.SetColour(self.line.flat_colour)
         self.thick_spin.SetValue(self.line.thickness)
 
-    def rgb_to_hex(self, rgb):
-        return '#%02x%02x%02x' % rgb
-
     def on_ok(self, e):
         self.line.showhide = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
         self.line.thickness = self.thick_spin.GetValue()
         try:
             rgb = (self.colour_picker.GetColour()[0], self.colour_picker.GetColour()[1], self.colour_picker.GetColour()[2])
-            self.line.flat_colour = self.rgb_to_hex(rgb)
+            self.line.flat_colour = rgb_to_hex(rgb)
         except:
             print "No colour change"
         self.Close()

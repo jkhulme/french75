@@ -36,12 +36,10 @@ class BioPepaCsvParser(object):
             results['data'] = ('Time, ' + re.findall('Time, (.*?)\n', contents)[0]).split(',')
             data = [line.split(',') for line in contents.split('\n') if not "#" in line]
             transposed_data = map(None, *data)
-            print transposed_data
             results['results'] = {}
             for i, data_item in enumerate(results['data']):
                 results['results'][str(data_item)] = [float(n) for n in transposed_data[i]]
 
-            print results['results']['Time']
             self.results_dict = results['results']
 
     def parse_results(self):

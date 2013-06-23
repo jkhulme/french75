@@ -1,5 +1,5 @@
 import random
-from math import sqrt
+from utils import euclid_distance
 
 
 class Circle:
@@ -13,9 +13,6 @@ class Circle:
 
     def paint(self):
         self.dc.DrawCircle(self.x, self.y, self.radius)
-
-    def euclid_distance(self, p1, p2):
-        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
     def give_birth(self, node):
         radius = self.radius/5
@@ -33,7 +30,7 @@ class Circle:
                 y = self.y - (random.random() * (self.radius - (2 * radius)))
 
             for child in self.children:
-                if (self.euclid_distance([x, y], [child[0], child[1]]) > (2 * radius)):
+                if (euclid_distance([x, y], [child[0], child[1]]) > (2 * radius)):
                     flag = False
                 else:
                     flag = True
