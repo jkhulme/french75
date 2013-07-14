@@ -3,6 +3,10 @@ import wx.lib.agw.pycollapsiblepane as PCP
 import platform
 from plot_dialog import Plot_Dialog
 
+_HEIGHT = 20
+_WIDTH = 20
+_BG_COLOUR = 'white'
+
 
 class Legend(object):
 
@@ -42,7 +46,7 @@ class Legend(object):
             self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
 
             collpane_body = collpane.GetPane()
-            collpane_body.SetBackgroundColour('white')
+            collpane_body.SetBackgroundColour(_BG_COLOUR)
             self.vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             for key in self.results[result]:
@@ -51,7 +55,7 @@ class Legend(object):
                 species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
                 vbox_coll.Add(species_label)
 
-                btn_colour = wx.Button(collpane_body, -1, '', size=(20, 20))
+                btn_colour = wx.Button(collpane_body, -1, '', size=(_WIDTH, _HEIGHT))
                 btn_colour.Disable()
                 btn_colour.SetBackgroundColour(self.results[result][key].flat_colour)
                 hbox_collpane.Add(btn_colour)
@@ -66,7 +70,7 @@ class Legend(object):
                 cb_intense.SetValue(self.results[result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
-                btn_props = wx.Button(collpane_body, -1, 'P', size=(20, 20))
+                btn_props = wx.Button(collpane_body, -1, 'P', size=(_WIDTH, _HEIGHT))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
                 hbox_collpane.Add(btn_props)
                 vbox_coll.Add(hbox_collpane)
@@ -126,22 +130,14 @@ class Legend(object):
         self.plotter.plot()
 
     def update(self, csv, file_key, species_key):
-        print len(csv.GetChildren())
-        update = False
         for child in csv.GetChildren():
             if (child.GetName() == "staticText"):
-                if (child.GetLabel() == species_key):
-                    update = True
-                else:
-                    update = False
+                update = True if (child.GetLabel() == species_key) else False
 
             if child.GetLabel() == "" and update:
                 child.SetBackgroundColour(self.results[file_key][species_key].flat_colour)
-                print "changed colour"
             if child.GetName() == "check" and update:
-                print "da fuck"
                 if child.GetLabel() == "S":
                     child.SetValue(self.results[file_key][species_key].showhide)
                 if child.GetLabel() == "I" and update:
-                    print "int plot"
                     child.SetValue(self.results[file_key][species_key].intense_plot)

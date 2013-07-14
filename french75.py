@@ -12,6 +12,14 @@ from legend import Legend
 import sys
 import os
 
+_DPI = 100
+_BG_COLOUR = 'white'
+_HEIGHT = 540
+_WIDTH = 1210
+_TITLE = 'French75'
+_LEFT_SASH_POS = 200
+_RIGHT_SASH_POS = 800
+
 
 class French75(wx.Frame):
 
@@ -32,15 +40,14 @@ class French75(wx.Frame):
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
-        self.dpi = 100
-        self.results = {}
         self.first_time = True
-        self.xkcd = False
         sys.argv = sys.argv[1:]
         for arg in sys.argv:
             if (arg == "--xkcd"):
                 self.xkcd = True
                 break
+        else:
+            self.xkcd = False
 
         self.launch_gui()
 
@@ -53,9 +60,9 @@ class French75(wx.Frame):
         self.splitter = wx.SplitterWindow(self.splitter_two, -1)
         self.graph_panel = wx.Panel(self.splitter, -1)
         self.legend_panel = wx.Panel(self.splitter, -1)
-        self.legend_panel.SetBackgroundColour('white')
-        self.model_panel.SetBackgroundColour('white')
-        self.graph_panel.SetBackgroundColour('white')
+        self.legend_panel.SetBackgroundColour(_BG_COLOUR)
+        self.model_panel.SetBackgroundColour(_BG_COLOUR)
+        self.graph_panel.SetBackgroundColour(_BG_COLOUR)
 
         self.graph_fig = Figure((10.0, 6))
         self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
@@ -65,46 +72,57 @@ class French75(wx.Frame):
         self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
         self.graph_vbox.Add(self.graph_canvas)
 
-        self.toolbar = NavigationToolbar(self.graph_canvas)
-        self.toolbar.DeleteToolByPos(7)
-        self.toolbar.DeleteToolByPos(6)
-        self.toolbar.DeleteToolByPos(6)
-        self.graph_vbox.Add(self.toolbar)
+        toolbar = self.build_tool_bar()
+        self.graph_vbox.Add(toolbar)
 
         self.graph_panel.SetSizer(self.graph_vbox)
         self.graph_vbox.Fit(self)
 
         self.legend = Legend(self.model_panel)
 
-        menubar = wx.MenuBar()
-        menubar.SetBackgroundColour('white')
-        file_menu = wx.Menu()
-        filem = file_menu.Append(wx.ID_OPEN, '&Open')
-        filem2 = file_menu.Append(wx.ID_ANY, '&View Model')
-        filem3 = file_menu.Append(wx.ID_ANY, 'Save &Model')
-        file_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
-        menubar.Append(file_menu, '&File')
-        self.SetMenuBar(menubar)
-        self.Bind(wx.EVT_MENU, self.open_file, filem)
-        self.Bind(wx.EVT_MENU, self.open_file2, filem2)
-        self.Bind(wx.EVT_MENU, self.save_model, filem3)
-        self.Bind(wx.EVT_MENU, self.on_save_plot, file_save_plot)
+        self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_two.SplitVertically(self.model_panel, self.splitter)
-        self.splitter_two.SetSashPosition(200)
+        self.splitter_two.SetSashPosition(_LEFT_SASH_POS)
 
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
-        self.splitter.SetSashPosition(800)
+        self.splitter.SetSashPosition(_RIGHT_SASH_POS)
 
-        self.SetSize((1210, 540))
-        self.SetTitle('French75')
+        self.SetSize((_WIDTH, _HEIGHT))
+        self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
+
+    def build_tool_bar(self):
+        toolbar = NavigationToolbar(self.graph_canvas)
+        toolbar.DeleteToolByPos(7)
+        toolbar.DeleteToolByPos(6)
+        toolbar.DeleteToolByPos(6)
+        return toolbar
+
+    def build_menu_bar(self):
+        menubar = wx.MenuBar()
+        menubar.SetBackgroundColour(_BG_COLOUR)
+
+        file_menu = wx.Menu()
+        filem_open_results = file_menu.Append(wx.ID_OPEN, '&Open')
+        filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
+        filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
+        filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+
+        menubar.Append(file_menu, '&File')
+
+        self.Bind(wx.EVT_MENU, self.open_results_file, filem_open_results)
+        self.Bind(wx.EVT_MENU, self.open_model_file, filem_open_results_open_model)
+        self.Bind(wx.EVT_MENU, self.save_snapshot, filem_open_results_save_model)
+        self.Bind(wx.EVT_MENU, self.on_save_plot, filem_open_results_save_plot)
+
+        return menubar
 
     """
     selects which csv files to use
     """
-    def open_file(self, e):
+    def open_results_file(self, e):
         file_chooser = wx.FileDialog(
             self,
             message="Choose a file",
@@ -119,7 +137,7 @@ class French75(wx.Frame):
         else:
             file_chooser.Destroy()
 
-    def open_file2(self, e):
+    def open_model_file(self, e):
         file_chooser = wx.FileDialog(
             self,
             message="Choose a file",
@@ -135,34 +153,28 @@ class French75(wx.Frame):
             self.model_parser.parse_location()
             self.model_parser.build_graph()
 
-            self.legend_panel.Bind(wx.EVT_PAINT, self.OnPaint)
+            self.legend_panel.Bind(wx.EVT_PAINT, self.on_paint)
             self.legend_panel.Parent.Refresh()
             self.Show(False)
             self.Show(True)
         else:
             file_chooser.Destroy()
 
-    def save_model(self, e):
-        self.saveSnapshot()
-
     """
     Get the data then plot it
     """
     def plot_graphs(self):
-        self.results = {}
-        self.parser = BioPepaCsvParser()
+        results = {}
+        parser = BioPepaCsvParser()
         for path in self.paths:
-            self.parser.open_csv(path)
-            self.parser.parse_results()
-            self.results[path.split('/')[-1]] = self.parser.results_dict
-            #self.parser.timescale()
-            self.parser.values()
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.results, self.parser, self.legend, True, self.xkcd)
+            parser.parse_csv(path)
+            results[path.split('/')[-1]] = parser.results_dict
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_two.SetSashPosition(201)
         self.splitter_two.SetSashPosition(200)
 
-    def OnPaint(self, e):
+    def on_paint(self, e):
         self.dc = wx.PaintDC(self.legend_panel)
         self.model_parser.tree.build_tree()
         if self.first_time:
@@ -190,36 +202,18 @@ class French75(wx.Frame):
             self.draw_plot.mpl_legend = False
             self.draw_plot.plot()
 
-    def saveSnapshot(self):
+    def save_snapshot(self, e):
         # based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
         dcSource = self.dc
         size = dcSource.Size
-
-        # Create a Bitmap that will later on hold the screenshot image
-        # Note that the Bitmap must have a size big enough to hold the screenshot
-        # -1 means using the current default colour depth
         bmp = wx.EmptyBitmap(200, 200)
-
-        # Create a memory DC that will be used for actually taking the screenshot
         memDC = wx.MemoryDC()
-
-        # Tell the memory DC to use our Bitmap
-        # all drawing action on the memory DC will go to the Bitmap now
         memDC.SelectObject(bmp)
-
-        # Blit (in this case copy) the actual screen on the memory DC
-        # and thus the Bitmap
         memDC.Blit(0, 0, size.width, size.height, dcSource, 0, 0)
-
-        # Select the Bitmap out of the memory DC by selecting a new
-        # uninitialized Bitmap
         memDC.SelectObject(wx.NullBitmap)
-
         img = bmp.ConvertToImage()
         img.SaveFile('saved.png', wx.BITMAP_TYPE_PNG)
-"""
-Like Java's main method
-"""
+
 if __name__ == '__main__':
     app = wx.App()
     gui = French75(None)

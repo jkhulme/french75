@@ -8,7 +8,7 @@ Expected Structure
 -number of replications
 -stop time
 -start time
--line with "model paramaters" written
+-line with "model paramaters" wrten
 -run time
 -column headings (Time needs to be first column)
 -actual data
@@ -19,11 +19,11 @@ class BioPepaCsvParser(object):
 
     def __init__(self):
         self.ymin = 1000000
-        self.minx = 1000000
+        self.xmin = 1000000
         self.ymax = 0
-        self.maxx = 0
+        self.xmax = 0
 
-    def open_csv(self, csv):
+    def parse_csv(self, csv):
         with open(csv, 'r') as f:
             contents = f.read().strip()
             results = {}
@@ -41,23 +41,13 @@ class BioPepaCsvParser(object):
                 results['results'][str(data_item)] = [float(n) for n in transposed_data[i]]
 
             self.results_dict = results['results']
+            self.min_max_values()
 
-    def parse_results(self):
-        pass
-
-    def timescale(self):
-        self.minx = float(self.results_dict['start_time'])
-        self.maxx = float(self.results_dict['stop_time'])
-
-    def values(self):
+    def min_max_values(self):
         for result in self.results_dict:
             if not result == 'Time':
-                if min(self.results_dict[result]) < self.ymin:
-                    self.ymin = min(self.results_dict[result])
-                if max(self.results_dict[result]) > self.ymax:
-                    self.ymax = max(self.results_dict[result])
+                self.ymin = min(self.ymin, min(self.results_dict[result]))
+                self.ymax = max(self.ymax, max(self.results_dict[result]))
             else:
-                if min(self.results_dict[result]) < self.minx:
-                    self.minx = min(self.results_dict[result])
-                if max(self.results_dict[result]) > self.maxx:
-                    self.maxx = max(self.results_dict[result])
+                self.xmin = min(self.xmin, min(self.results_dict[result]))
+                self.xmax = max(self.xmax, max(self.results_dict[result]))

@@ -1,5 +1,5 @@
 from line import Line
-from math import sqrt
+from utils import euclid_distance
 from random import randrange
 from matplotlib.ticker import MultipleLocator
 try:
@@ -76,7 +76,7 @@ class Plotter(object):
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title('Graph')
-        self.axes.axis((self.parser.minx, self.parser.maxx, self.parser.ymin, self.parser.ymax*1.1))
+        self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
         if (self.xkcdify):
             XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
@@ -95,7 +95,7 @@ class Plotter(object):
                 accept = True
                 temp_colour = self.random_colour()
                 for colour in self.colours:
-                    if (self.euclid_distance(temp_colour, colour) < 50):
+                    if (euclid_distance(temp_colour, colour) < 50):
                         accept = False
                         break
             self.colours.append(temp_colour)
@@ -107,9 +107,6 @@ class Plotter(object):
             rgb[i] = randrange(0, 200, 1)
         rgb_tup = (rgb[0], rgb[1], rgb[2])
         return rgb_tup
-
-    def euclid_distance(self, p1, p2):
-        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2)
 
     def populate_colours(self):
         colour_list = []

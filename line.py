@@ -41,9 +41,6 @@ class Line(object):
         self.max_alpha = 1
         self.thickness = 2
 
-    def __str__(self):
-        return "foo"
-
     """
     Handles the details of what needs to be done to interpolate.  Then
     updates the data to be used.
@@ -119,7 +116,7 @@ class Line(object):
         self.max = max(plot_data)
         count = 0
         while True:
-            self.plot_arrays += [[None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count)]
+            self.plot_arrays.append([None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count))
             if (self.plot_arrays[-1][-1] is not None):
                 break
             count += self.interval - 1
