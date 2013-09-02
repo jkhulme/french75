@@ -1,5 +1,6 @@
 from location import Location
 from locationtree import LocationTree
+import re
 
 
 class Biopepa_Model_Parser():
@@ -10,26 +11,20 @@ class Biopepa_Model_Parser():
 
     def open_model(self, model):
         with open(model, 'r') as f:
-            self.data = f.readlines()
+            self.data = f.read()
 
     def get_locations(self):
         self.locations = []
-        for line in self.data:
-            if (line.split(' ')[0] == 'location'):
-                self.locations += [line.strip()]
+        locations = re.findall("location (.*?)\n", self.data)
+        for location in locations:
+            self.locations.append("location " + location)
 
     def parse_location(self):
         for location in self.locations:
-            loc_type = location.split(',')[1].strip()
-            loc_type = loc_type[7:-1]
-            loc_size = location.split(',')[0].split('size')[1].strip()[2:]
-            loc_name = location.split(',')[0].strip()
-            if ('in' in loc_name):
-                loc_name = loc_name.split('in')[0].strip()[9:]
-                loc_parent = location.split(',')[0].strip().split('in')[1].strip().split(':')[0]
-            else:
-                loc_name = location.split(',')[0].strip().split(':')[0][9:].strip()
-                loc_parent = "root"
+            loc_type = re.findall("type (.*?) ", location)[0]
+            loc_size = "Remove this"
+            loc_name = re.findall("location (.*?) ", location)[0]
+            loc_parent = re.findall("in (.*?):", location)[0] if len(re.findall("in (.*?):", location)) > 0 else "root"
             self.loc_results[loc_name] = Location(loc_name, loc_size,
                                                   loc_parent, loc_type)
 
@@ -41,13 +36,3 @@ class Biopepa_Model_Parser():
 
     def build_graph(self):
         self.tree = LocationTree(self.loc_results)
-
-"""
-if __name__ == '__main__':
-    parser = Biopepa_Model_Parser()
-    parser.open_model('camp-pka-mapk.biopepa')
-    parser.get_locations()
-    parser.parse_location()
-    print parser
-    parser.build_graph()
-"""
