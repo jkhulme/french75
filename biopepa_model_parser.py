@@ -21,7 +21,7 @@ class Biopepa_Model_Parser():
 
     def parse_location(self):
         for location in self.locations:
-            loc_type = re.findall("type (.*?) ", location)[0]
+            loc_type = re.findall("type = (.*?);", location)[0]
             loc_size = "Remove this"
             loc_name = re.findall("location (.*?) ", location)[0]
             loc_parent = re.findall("in (.*?):", location)[0] if len(re.findall("in (.*?):", location)) > 0 else "root"

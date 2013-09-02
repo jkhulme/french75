@@ -17,6 +17,7 @@ class LocationTree:
                 self.tree[self.loc_data[loc].parent] = [self.loc_data[loc].name]
             else:
                 self.tree[self.loc_data[loc].parent] += [self.loc_data[loc].name]
+        print self.tree
 
     def draw_tree_one(self, dc):
         r = 90
