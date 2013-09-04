@@ -176,12 +176,12 @@ class French75(wx.Frame):
 
     def on_paint(self, e):
         self.dc = wx.PaintDC(self.legend_panel)
-        self.model_parser.tree.build_tree()
         if self.first_time:
+            self.model_parser.tree.build_tree()
             self.tree = self.model_parser.tree.draw_tree_one(self.dc)
             self.first_time = False
         else:
-            self.tree = self.model_parser.tree.draw_tree_two(self.dc)
+            self.tree = self.model_parser.tree.draw_tree_one(self.dc)
 
     def on_save_plot(self, event):
         file_choices = "PNG (*.png)|*.png"
