@@ -1,4 +1,5 @@
-import math
+import random
+from utils import euclid_distance
 
 
 class Ring:
@@ -15,17 +16,41 @@ class Ring:
         self.cell_radius = inner[2]
         self.child_x = self.cell_x + self.cell_radius - ((self.radius - self.cell_radius) / 4)
         self.child_y = self.cell_y + self.cell_radius - ((self.radius - self.cell_radius) / 4)
-        self.child_radius = ((self.radius - self.cell_radius) / 2) - 3
+        #self.child_radius = ((self.radius - self.cell_radius) / 2) - 3
+        self.child_radius = 10
+        self.children = [(self.cell_x, self.cell_y, self.cell_radius)]
 
     def paint(self):
+        print "painting"
         self.dc.DrawCircle(self.x, self.y, self.radius)
+        self.dc.DrawCircle(self.cell_x, self.cell_y, self.cell_radius)
 
     def give_birth(self, node):
-        translatedx = self.child_x - self.x
-        translatedy = self.child_y - self.y
-        new_x = (translatedx * math.cos(math.radians(self.theta))) - (translatedy * math.sin(math.radians(self.theta)))
-        new_y = (translatedx * math.sin(math.radians(self.theta))) + (translatedy * math.cos(math.radians(self.theta)))
-        new_x += self.x
-        new_y += self.y
-        self.theta += self.theta_base
-        return (new_x, new_y, self.child_radius)
+        print node
+        radius = self.radius/5
+        dist_flag = True
+        while (dist_flag):
+            flag = False
+            if (random.random() < 0.5):
+                x = self.x + (random.random() * (self.radius - (2 * radius)))
+            else:
+                x = self.x - (random.random() * (self.radius - (2 * radius)))
+
+            if (random.random() < 0.5):
+                y = self.y + (random.random() * (self.radius - (2 * radius)))
+            else:
+                y = self.y - (random.random() * (self.radius - (2 * radius)))
+
+            for child in self.children:
+                print "checking child"
+                print euclid_distance([x, y], [child[0], child[1]])
+                print (2 * radius)
+                if (euclid_distance([x, y], [child[0], child[1]]) > (3 * self.cell_radius)):
+                    flag = False
+                else:
+                    flag = True
+            dist_flag = flag
+
+        self.children.append((x, y, radius))
+
+        return (x, y, radius)
