@@ -28,7 +28,8 @@ class LocationTree:
 
     def draw_tree_one(self, dc):
         r = 90
-        self.circles['root'] = Ring((100, 100, r), (100, 100, 20), len(self.tree['root']), dc)
+        #self.circles['root'] = Ring((100, 100, r), (100, 100, 20), len(self.tree['root']), dc)
+        self.circles['root'] = Circle((100, 100, r), dc)
         self.circles['root'].paint()
 
         for key in self.tree['root']:

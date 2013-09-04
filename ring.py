@@ -16,8 +16,8 @@ class Ring:
         self.cell_radius = inner[2]
         self.child_x = self.cell_x + self.cell_radius - ((self.radius - self.cell_radius) / 4)
         self.child_y = self.cell_y + self.cell_radius - ((self.radius - self.cell_radius) / 4)
-        #self.child_radius = ((self.radius - self.cell_radius) / 2) - 3
-        self.child_radius = 10
+        self.child_radius = ((self.radius - self.cell_radius) / 2) - 3
+        #self.child_radius = 10
         self.children = [(self.cell_x, self.cell_y, self.cell_radius)]
 
     def paint(self):
@@ -26,8 +26,7 @@ class Ring:
         self.dc.DrawCircle(self.cell_x, self.cell_y, self.cell_radius)
 
     def give_birth(self, node):
-        print node
-        radius = self.radius/5
+        radius = self.child_radius
         dist_flag = True
         while (dist_flag):
             flag = False
@@ -42,10 +41,7 @@ class Ring:
                 y = self.y - (random.random() * (self.radius - (2 * radius)))
 
             for child in self.children:
-                print "checking child"
-                print euclid_distance([x, y], [child[0], child[1]])
-                print (2 * radius)
-                if (euclid_distance([x, y], [child[0], child[1]]) > (3 * self.cell_radius)):
+                if (euclid_distance([x, y], [child[0], child[1]]) > (2 * radius)):
                     flag = False
                 else:
                     flag = True
