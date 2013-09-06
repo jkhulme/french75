@@ -1,4 +1,4 @@
-from ring import Ring
+#from ring import Ring
 from circle import Circle
 
 
@@ -10,6 +10,9 @@ class LocationTree:
         self.queue = []
         self.circles = {}
 
+    """
+    Last paragraph needs to be done in model reader probably
+    """
     def build_tree(self):
         self.tree = {}
         for loc in self.loc_data:
@@ -24,23 +27,39 @@ class LocationTree:
         for location_name in self.tree['root']:
             self.loc_data[location_name].parent = 'root'
 
-        print self.tree
-
     def draw_tree_one(self, dc):
         r = 90
-        #self.circles['root'] = Ring((100, 100, r), (100, 100, 20), len(self.tree['root']), dc)
         self.circles['root'] = Circle((100, 100, r), dc)
         self.circles['root'].paint()
 
         for key in self.tree['root']:
             self.queue += [key]
             new = self.circles['root'].give_birth(key)
-            print new
             self.circles[key] = Circle(new, dc)
             self.circles[key].paint()
         self.output = []
 
+        while self.queue:
+            node = self.queue.pop(0)
+            self.output.append(node)
+            try:
+                self.queue.append(self.tree[node])
+                if (self.loc_data[node].l_type != 'membrane') and (self.loc_data[node].parent != 'root'):
+                    new = self.circles[self.loc_data[node].parent].give_birth(node)
+                    self.circles[node] = Circle(new, dc)
+                    self.circles[node].paint()
+            except:
+                new = self.circles[self.loc_data[node].parent].give_birth(node)
+                self.circles[node] = Circle(new, dc)
+                self.circles[node].paint()
+
         return self.output
+
+    """
+    This was because it was redrawing cell positions every refresh - which
+    were random and so hard to keep track of.  Its not doing it on the mac anymore.  I think it might have been linux only.  If it reappears then this should be integrated back into the other draw_tree method to aboid copy and paste code
+
+
 
     def draw_tree_two(self, dc):
         for key in self.loc_data:
@@ -64,3 +83,4 @@ class LocationTree:
                 self.circles[node].paint()
 
         return self.output
+    """
