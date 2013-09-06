@@ -44,8 +44,6 @@ class Ring:
             for (existing_x, existing_y, existing_radius) in self.children:
                 if (euclid_distance([child_x, child_y], [existing_x, existing_y]) > (self.child_radius + self.existing_radius)):
                     dist_flag = False
-                else:
-                    dist_flag = True
 
         child = (child_x, child_y, self.child_radius)
         self.children.append(child)
