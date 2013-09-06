@@ -5,48 +5,48 @@ from utils import euclid_distance
 class Ring:
 
     def __init__(self, outer, inner, num_children, dc):
-        self.theta = 360 / (num_children)
-        self.theta_base = 360 / (num_children)
         self.dc = dc
-        self.x = outer[0]
-        self.y = outer[1]
-        self.radius = outer[2]
-        self.cell_x = inner[0]
-        self.cell_y = inner[1]
-        self.cell_radius = inner[2]
-        self.child_x = self.cell_x + self.cell_radius - ((self.radius - self.cell_radius) / 4)
-        self.child_y = self.cell_y + self.cell_radius - ((self.radius - self.cell_radius) / 4)
-        self.child_radius = ((self.radius - self.cell_radius) / 2) - 3
-        #self.child_radius = 10
-        self.children = [(self.cell_x, self.cell_y, self.cell_radius)]
+
+        self.outer_x = outer[0]
+        self.outer_y = outer[1]
+        self.outer_radius = outer[2]
+
+        self.inner_x = inner[0]
+        self.inner_y = inner[1]
+        self.inner_radius = inner[2]
+
+        self.child_radius = ((self.outer_radius - self.inner_radius) / 2) - 3
+
+        #mark the inner circle as a child to prevent other children overlapping
+        #it
+        self.children = [(self.inner_x, self.inner_y, self.inner_radius)]
 
     def paint(self):
-        print "painting"
-        self.dc.DrawCircle(self.x, self.y, self.radius)
-        self.dc.DrawCircle(self.cell_x, self.cell_y, self.cell_radius)
+        self.dc.DrawCircle(self.outer_x, self.outer_y, self.outer_radius)
+        self.dc.DrawCircle(self.inner_x, self.inner_y, self.inner_radius)
 
     def give_birth(self, node):
-        radius = self.child_radius
         dist_flag = True
         while (dist_flag):
-            flag = False
+            dist_flag = False
             if (random.random() < 0.5):
-                x = self.x + (random.random() * (self.radius - (2 * radius)))
+                child_x = self.outer_x + (random.random() * (self.outer_radius - (2 * self.child_radius)))
             else:
-                x = self.x - (random.random() * (self.radius - (2 * radius)))
+                child_x = self.outer_x - (random.random() * (self.outer_radius - (2 * self.child_radius)))
 
             if (random.random() < 0.5):
-                y = self.y + (random.random() * (self.radius - (2 * radius)))
+                child_y = self.outer_y + (random.random() * (self.outer_radius - (2 * self.child_radius)))
             else:
-                y = self.y - (random.random() * (self.radius - (2 * radius)))
+                child_y = self.outer_y - (random.random() * (self.outer_radius - (2 * self.child_radius)))
 
-            for child in self.children:
-                if (euclid_distance([x, y], [child[0], child[1]]) > (2 * radius)):
-                    flag = False
+            #checks for overlap between new child and any existing children
+            #if there is overlap then rebirth the new child
+            for (existing_x, existing_y, existing_radius) in self.children:
+                if (euclid_distance([child_x, child_y], [existing_x, existing_y]) > (self.child_radius + self.existing_radius)):
+                    dist_flag = False
                 else:
-                    flag = True
-            dist_flag = flag
+                    dist_flag = True
 
-        self.children.append((x, y, radius))
-
-        return (x, y, radius)
+        child = (child_x, child_y, self.child_radius)
+        self.children.append(child)
+        return child
