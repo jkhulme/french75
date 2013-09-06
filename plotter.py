@@ -23,20 +23,20 @@ class Plotter(object):
     self.canvas - Used to draw the axes/plots
     self.parser - the csv parser
     self.results - the results data
-    self.draw_legend - redrawing the legend is causing a seg fault on mac, I think it is something to do with redefining the event handler
+    self.redraw_legend - do we need to redraw the legend or not
     self.legend - Will plot the legend
     """
 
     """
     Initialise what we need, and then create a line for each plot
     """
-    def __init__(self, axes, canvas, results, parser, legend, draw_legend, xkcdify):
+    def __init__(self, axes, canvas, results, parser, legend, redraw_legend, xkcdify):
         self.axes = axes
         self.canvas = canvas
         self.parser = parser
         self.legend = legend
         self.results = {}
-        self.draw_legend = draw_legend
+        self.redraw_legend = redraw_legend
         self.mpl_legend = False
         self.colours = []
         self.hard_colours = self.populate_colours()
@@ -59,15 +59,20 @@ class Plotter(object):
     """
     def plot(self):
         self.axes.clear()
+
         for result in self.results:
             for key in self.results[result]:
                 self.results[result][key].plot()
-        if (self.draw_legend):
+
+        #my interactive legend
+        if (self.redraw_legend):
             self.legend.draw_legend(self, self.results)
 
+        #matplotlib legend - for saving with a legend
         if (self.mpl_legend):
             self.axes.legend()
 
+        #Grid lines - TODO - make these not fixed
         self.axes.xaxis.set_minor_locator(MultipleLocator(500))
         self.axes.yaxis.set_minor_locator(MultipleLocator(5000))
 
@@ -85,6 +90,10 @@ class Plotter(object):
 
         self.canvas.draw()
 
+    """
+    Work through the list of set colours first.  Then start generating new
+    colours - if they are too close then regenerate
+    """
     def choose_colour(self):
         if (len(self.hard_colours) > 0):
             return self.hard_colours.pop()
@@ -102,15 +111,11 @@ class Plotter(object):
             return temp_colour
 
     def random_colour(self):
-        rgb = [0, 0, 0]
-        for i in range(0, 3):
-            rgb[i] = randrange(0, 200, 1)
-        rgb_tup = (rgb[0], rgb[1], rgb[2])
-        return rgb_tup
+        return (randrange(0, 200, 1),
+                randrange(0, 200, 1),
+                randrange(0, 200, 1))
 
     def populate_colours(self):
-        colour_list = []
-        colour_list.append((255, 0, 0))
-        colour_list.append((0, 255, 0))
-        colour_list.append((0, 0, 255))
-        return colour_list
+        return [(255, 0, 0),
+                (0, 255, 0),
+                (0, 0, 255)]
