@@ -8,14 +8,11 @@ class Line(object):
     self.axes - plots the data
     self.results - data to plot
     self.time - The time scale
-    self.min_red - for intensity plot
-    self.max_red - for intensity plot
-    self.r - what shade of red should be used in the intensity plot
+    self.min_intensity - for intensity plot
+    self.max_intensity - for intensity plot
     self.colour - holds the rgb tuple for plot colour
-    self.min - minimum data value
-    self.max - maximum data value
     self.species - species the data is results of
-    self.showhide - whether to display or not on the axes
+    self.plot_line - whether to display or not on the axes
     self.intense_plot - whether to do colour intensity or normal plot
     self.interval - for building sub plots - I think this has to be 2
     self.plot_arrays - the sub plots for intensity plots
@@ -25,20 +22,18 @@ class Line(object):
         self.axes = axes
         self.results = results
         self.time = time
-        self.min_red = 70
-        self.max_red = 255
+        self.min_intensity = 70
+        self.max_intensity = 255
         self.min = 0
         self.max = 0
         self.species = key
-        self.showhide = True
+        self.plot_line = True
         self.intense_plot = False
         #see issue 40 if interval is too high
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()
         self.flat_colour = rgb_to_hex(colour)
-        self.min_alpha = 0.2
-        self.max_alpha = 1
         self.thickness = 2
 
     """
@@ -55,13 +50,13 @@ class Line(object):
 
             if (euclid_distance(p1, p2) > dist):
                 step = ceil(euclid_distance(p1, p2) / dist)
-                output_time += [self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step)
-                output_results += [self.results[i]] + self.interpolate([self.results[i], self.results[i + 1]], step)
+                output_time.extend([self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step))
+                output_results.extend([self.results[i]] + self.interpolate([self.results[i], self.results[i + 1]], step))
             else:
-                output_time += [self.time[i]]
-                output_results += [self.results[i]]
-        output_time += [self.time[-1]]
-        output_results += [self.results[-1]]
+                output_time.append(self.time[i])
+                output_results.append(self.results[i])
+        output_time.append(self.time[-1])
+        output_results.append(self.results[-1])
         self.time = output_time
         self.results = output_results
 
@@ -81,9 +76,9 @@ class Line(object):
     Decides how we're going to plot
     """
     def plot(self):
-        if self.showhide:
+        if self.plot_line:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour, alpha=self.max_alpha, lw=self.thickness)
+                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour, alpha=1, lw=self.thickness)
             else:
                 self.plot_sub_plots()
 
@@ -101,9 +96,8 @@ class Line(object):
                     current = sub_plot[count]
                     break
                 count += 1
-            self.r = (((current - self.min) / float(self.max - self.min)) * (self.max_red - self.min_red)) + self.min_red
-            self.alpha = self.r/255
-            self.colour = (self.r, self.r, self.r)
+            intensity = (((current - self.min) / float(self.max - self.min)) * (self.max_intensity - self.min_intensity)) + self.min_intensity
+            self.alpha = intensity/255
             self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.alpha, lw=self.thickness)
 
     """
