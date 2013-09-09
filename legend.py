@@ -62,7 +62,7 @@ class Legend(object):
 
                 cb_show_hide = wx.CheckBox(collpane_body, -1, 'S')
                 hbox_collpane.Add(cb_show_hide)
-                cb_show_hide.SetValue(self.results[result][key].showhide)
+                cb_show_hide.SetValue(self.results[result][key].plot_line)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
                 cb_intense = wx.CheckBox(collpane_body, -1, 'I')
@@ -95,8 +95,8 @@ class Legend(object):
         cb_show_hide = event.GetEventObject()
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_show_hide)
-        self.results[file_key][species_key].showhide = cb_show_hide.GetValue()
-        self.plotter.draw_legend = False
+        self.results[file_key][species_key].plot_line = cb_show_hide.GetValue()
+        self.plotter.redraw_legend = False
         self.plotter.plot()
 
     """
@@ -107,7 +107,7 @@ class Legend(object):
         file_key = cb_intense.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_intense)
         self.results[file_key][species_key].intense_plot = cb_intense.GetValue()
-        self.plotter.draw_legend = False
+        self.plotter.redraw_legend = False
         self.plotter.plot()
 
     def get_species(self, cb):
@@ -126,7 +126,7 @@ class Legend(object):
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
         self.update(btn_props.GetParent(), file_key, species_key)
-        self.plotter.draw_legend = False
+        self.plotter.redraw_legend = False
         self.plotter.plot()
 
     def update(self, csv, file_key, species_key):
@@ -138,6 +138,6 @@ class Legend(object):
                 child.SetBackgroundColour(self.results[file_key][species_key].flat_colour)
             if child.GetName() == "check" and update:
                 if child.GetLabel() == "S":
-                    child.SetValue(self.results[file_key][species_key].showhide)
+                    child.SetValue(self.results[file_key][species_key].plot_line)
                 if child.GetLabel() == "I" and update:
                     child.SetValue(self.results[file_key][species_key].intense_plot)

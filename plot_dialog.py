@@ -50,13 +50,13 @@ class Plot_Dialog(wx.Dialog):
 
     def set_line(self, line):
         self.line = line
-        self.cb_show_hide.SetValue(self.line.showhide)
+        self.cb_show_hide.SetValue(self.line.plot_line)
         self.cb_intense.SetValue(self.line.intense_plot)
         self.colour_picker.SetColour(self.line.flat_colour)
         self.thick_spin.SetValue(self.line.thickness)
 
     def on_ok(self, e):
-        self.line.showhide = self.cb_show_hide.GetValue()
+        self.line.plot_line = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
         self.line.thickness = self.thick_spin.GetValue()
         try:

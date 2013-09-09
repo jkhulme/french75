@@ -1,5 +1,5 @@
 from math import ceil
-from utils import rgb_to_hex, euclid_distance
+from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 
 
 class Line(object):
@@ -33,6 +33,7 @@ class Line(object):
         self.interval = 20
         self.line_distance()
         self.build_colour_plot_arrays()
+        self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
 
@@ -98,7 +99,10 @@ class Line(object):
                 count += 1
             intensity = (((current - self.min) / float(self.max - self.min)) * (self.max_intensity - self.min_intensity)) + self.min_intensity
             self.alpha = intensity/255
-            self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.alpha, lw=self.thickness)
+            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, self.alpha))
+            #self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.alpha, lw=self.thickness)
+            self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
+
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
