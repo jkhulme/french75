@@ -30,9 +30,9 @@ class French75(wx.Frame):
     self.graph_canvas - container where we draw the graph
     self.graph_axes - container that holds the data about what has been plotted
     self.graph_vbox - another layout container
-    self.splitter - splits the windows
+    self.splitter_right - splits the windows
     self.graph_panel - where the standard graph is drawn
-    self.legend_panel - where the legend for the standard graph is drawn
+    self.model_panel - where the legend for the standard graph is drawn
     self.legend - what is drawn on the legend panel
     self.paths - all the files to be read
     self.parser - csv parser
@@ -55,21 +55,25 @@ class French75(wx.Frame):
     Draws the main window
     """
     def launch_gui(self):
-        print wx.DisplaySize()
-        self.splitter_two = wx.SplitterWindow(self, -1)
-        self.model_panel = wx.Panel(self.splitter_two, -1)
-        self.splitter = wx.SplitterWindow(self.splitter_two, -1)
-        self.graph_panel = wx.Panel(self.splitter, -1)
-        self.legend_panel = wx.Panel(self.splitter, -1)
-        self.legend_panel.SetBackgroundColour(_BG_COLOUR)
+        #the containers
+        self.splitter_left = wx.SplitterWindow(self, -1)
+        self.legend_panel = wx.Panel(self.splitter_left, -1)
+        self.splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        self.graph_panel = wx.Panel(self.splitter_right, -1)
+        self.model_panel = wx.Panel(self.splitter_right, -1)
+
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
+        self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         self.graph_panel.SetBackgroundColour(_BG_COLOUR)
 
-        self.graph_fig = Figure((10.0, 6))
-        self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
+        #graph stuff - TODO - Get rid of the magic 1440
+        graph_width = int(((1440/6)*4)/80)
+        graph_height = int(graph_width/1.618)
+        print graph_width, graph_height
+        self.graph_fig = Figure((graph_width, graph_height))
         self.graph_fig.set_facecolor('white')
+        self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
         self.graph_axes = self.graph_fig.add_subplot(111)
-
         self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
         self.graph_vbox.Add(self.graph_canvas)
 
@@ -79,32 +83,35 @@ class French75(wx.Frame):
         self.graph_panel.SetSizer(self.graph_vbox)
         self.graph_vbox.Fit(self)
 
-        self.legend = Legend(self.model_panel)
+        self.legend = Legend(self.legend_panel)
 
         self.SetMenuBar(self.build_menu_bar())
 
-        self.splitter_two.SplitVertically(self.model_panel, self.splitter)
-        self.splitter_two.SetSashPosition(_LEFT_SASH_POS)
+        self.splitter_left.SplitVertically(self.legend_panel, self.splitter_right)
+        self.splitter_left.SetSashPosition(_LEFT_SASH_POS)
+        self.splitter_right.SplitVertically(self.graph_panel, self.model_panel)
+        self.splitter_right.SetSashPosition(_RIGHT_SASH_POS)
 
-        self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
-        self.splitter.SetSashPosition(_RIGHT_SASH_POS)
-
-        #self.SetSize(wx.DisplaySize())
+        #Not really sure how much of this is necessary.
+        #Its purpose it to maximise the main window and then set the components
+        #at the appropriate sizes - relative to total size
         self.SetSize((_WIDTH, _HEIGHT))
         self.Maximize()
-        (winW, winH) = self.GetSize()
-        print winW, winH
-        print winW/5
+        (self.winW, self.winH) = self.GetSize()
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
-        self.splitter_two.SetSashPosition(winW/6)
-        self.splitter.SetSashPosition(4 * winW/6)
+        self.splitter_left.SetSashPosition(self.winW/6)
+        self.splitter_right.SetSashPosition(4 * self.winW/6)
+
+        #Not sure if I'm going to allow for resizing given that it now
+        #starts maximised.  Its there if I do
         #self.Bind(wx.EVT_SIZE, self.foobar)
 
-    def foobar(self, e):
-        print "resizing"
-
+    """
+    Getting rid of the toolbar buttons that user doesn't need
+    Could take this out to be its own class
+    """
     def build_tool_bar(self):
         toolbar = NavigationToolbar(self.graph_canvas)
         toolbar.DeleteToolByPos(7)
@@ -112,15 +119,21 @@ class French75(wx.Frame):
         toolbar.DeleteToolByPos(6)
         return toolbar
 
+    """
+    The menu bar.
+    Again could take this out to be its own class
+    Need to organise the menu a bit better - look at mac style guidelines
+    """
     def build_menu_bar(self):
         menubar = wx.MenuBar()
         menubar.SetBackgroundColour(_BG_COLOUR)
 
         file_menu = wx.Menu()
         filem_open_results = file_menu.Append(wx.ID_OPEN, '&Open')
+        filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+        file_menu.AppendSeparator()
         filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
         filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
-        filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
 
         menubar.Append(file_menu, '&File')
 
@@ -145,10 +158,13 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
             self.plot_graphs()
-            self.model_panel.Parent.Refresh()
+            self.legend_panel.Parent.Refresh()
         else:
             file_chooser.Destroy()
 
+    """
+    Which biopepa model to display
+    """
     def open_model_file(self, e):
         file_chooser = wx.FileDialog(
             self,
@@ -160,17 +176,18 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
             self.model_parser = Biopepa_Model_Parser()
-            self.model_parser.open_model(self.paths[0])
-            self.model_parser.get_locations()
-            self.model_parser.parse_location()
+            self.model_parser.parse(self.paths[0])
             self.model_parser.build_graph()
 
-            self.legend_panel.Bind(wx.EVT_PAINT, self.on_paint)
-            self.legend_panel.Parent.Refresh()
-            self.Show(False)
-            self.Show(True)
+            self.refresh_legend_panel()
         else:
             file_chooser.Destroy()
+
+    def refresh_legend_panel(self):
+        self.model_panel.Bind(wx.EVT_PAINT, self.on_paint)
+        self.model_panel.Parent.Refresh()
+        self.Show(False)
+        self.Show(True)
 
     """
     Get the data then plot it
@@ -183,11 +200,14 @@ class French75(wx.Frame):
             results[path.split('/')[-1]] = parser.results_dict
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
-        self.splitter_two.SetSashPosition(201)
-        self.splitter_two.SetSashPosition(200)
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
 
+    """
+    Handles drawing of the model
+    """
     def on_paint(self, e):
-        self.dc = wx.PaintDC(self.legend_panel)
+        self.dc = wx.PaintDC(self.model_panel)
         if self.first_time:
             self.model_parser.tree.build_tree()
             self.tree = self.model_parser.tree.draw_tree_one(self.dc)
@@ -195,6 +215,9 @@ class French75(wx.Frame):
         else:
             self.tree = self.model_parser.tree.draw_tree_one(self.dc)
 
+    """
+    Save the graph
+    """
     def on_save_plot(self, event):
         file_choices = "PNG (*.png)|*.png"
 
@@ -214,8 +237,11 @@ class French75(wx.Frame):
             self.draw_plot.mpl_legend = False
             self.draw_plot.plot()
 
+    """
+    Save a picture of the model
+    based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
+    """
     def save_snapshot(self, e):
-        # based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
         dcSource = self.dc
         size = dcSource.Size
         bmp = wx.EmptyBitmap(200, 200)

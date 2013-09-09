@@ -9,6 +9,11 @@ class Biopepa_Model_Parser():
         self.loc_results = {}
         self.loc_tree = {}
 
+    def parse(self, path):
+        self.open_model(path)
+        self.get_locations()
+        self.parse_location()
+
     def open_model(self, model):
         with open(model, 'r') as f:
             self.data = f.read()
