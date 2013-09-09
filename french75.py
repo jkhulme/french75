@@ -55,6 +55,7 @@ class French75(wx.Frame):
     Draws the main window
     """
     def launch_gui(self):
+        print wx.DisplaySize()
         self.splitter_two = wx.SplitterWindow(self, -1)
         self.model_panel = wx.Panel(self.splitter_two, -1)
         self.splitter = wx.SplitterWindow(self.splitter_two, -1)
@@ -88,10 +89,21 @@ class French75(wx.Frame):
         self.splitter.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter.SetSashPosition(_RIGHT_SASH_POS)
 
+        #self.SetSize(wx.DisplaySize())
         self.SetSize((_WIDTH, _HEIGHT))
+        self.Maximize()
+        (winW, winH) = self.GetSize()
+        print winW, winH
+        print winW/5
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
+        self.splitter_two.SetSashPosition(winW/6)
+        self.splitter.SetSashPosition(4 * winW/6)
+        #self.Bind(wx.EVT_SIZE, self.foobar)
+
+    def foobar(self, e):
+        print "resizing"
 
     def build_tool_bar(self):
         toolbar = NavigationToolbar(self.graph_canvas)
