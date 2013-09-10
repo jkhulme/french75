@@ -23,18 +23,15 @@ _NUM_OF_SIDEBARS = 2
 class French75(wx.Frame):
 
     """
-    self.results - data to be plotted
-    self.panel - container for the drawn graph
-    self.graph_fig - container for the canvas
     self.graph_canvas - container where we draw the graph
     self.graph_axes - container that holds the data about what has been plotted
-    self.graph_vbox - another layout container
-    self.splitter_right - splits the windows
-    self.graph_panel - where the standard graph is drawn
     self.model_panel - where the legend for the standard graph is drawn
     self.legend - what is drawn on the legend panel
     self.paths - all the files to be read
-    self.parser - csv parser
+    self.splitter_left - where the legend goes
+    self.legend_panel - panel the legend goes on
+    self.dc - drawing context
+    self.draw_plot - the plotter which we use to draw lines
     """
 
     def __init__(self, *args, **kwargs):
@@ -59,44 +56,44 @@ class French75(wx.Frame):
         #the containers
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
-        self.splitter_right = wx.SplitterWindow(self.splitter_left, -1)
-        self.graph_panel = wx.Panel(self.splitter_right, -1)
-        self.model_panel = wx.Panel(self.splitter_right, -1)
+        splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        graph_panel = wx.Panel(splitter_right, -1)
+        self.model_panel = wx.Panel(splitter_right, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
-        self.graph_panel.SetBackgroundColour(_BG_COLOUR)
+        graph_panel.SetBackgroundColour(_BG_COLOUR)
 
         #graph stuff - This assumes a typical top or bottom status bar.
         #Systems with a side bar will not work with this
         graph_width = int(((dispW/_COLS)*(_COLS -_NUM_OF_SIDEBARS))/_DPI)
         graph_height = int(graph_width/_PHI)
-        self.graph_fig = Figure((graph_width, graph_height))
-        self.graph_fig.set_facecolor('white')
-        self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
-        self.graph_axes = self.graph_fig.add_subplot(111)
-        self.graph_vbox = wx.BoxSizer(wx.VERTICAL)
-        self.graph_vbox.Add(self.graph_canvas)
+        graph_fig = Figure((graph_width, graph_height))
+        graph_fig.set_facecolor('white')
+        self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
+        self.graph_axes = graph_fig.add_subplot(111)
+        graph_vbox = wx.BoxSizer(wx.VERTICAL)
+        graph_vbox.Add(self.graph_canvas)
 
         toolbar = self.build_tool_bar()
-        self.graph_vbox.Add(toolbar)
+        graph_vbox.Add(toolbar)
 
-        self.graph_panel.SetSizer(self.graph_vbox)
-        self.graph_vbox.Fit(self)
+        graph_panel.SetSizer(graph_vbox)
+        graph_vbox.Fit(self)
 
         self.legend = Legend(self.legend_panel)
 
         self.SetMenuBar(self.build_menu_bar())
 
-        self.splitter_left.SplitVertically(self.legend_panel, self.splitter_right)
-        self.splitter_right.SplitVertically(self.graph_panel, self.model_panel)
+        self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
+        splitter_right.SplitVertically(graph_panel, self.model_panel)
 
         #Its purpose it to maximise the main window and then set the components
         #at the appropriate sizes - relative to total size
         self.Maximize()
         (self.winW, self.winH) = self.GetSize()
         self.splitter_left.SetSashPosition(self.winW/6)
-        self.splitter_right.SetSashPosition(4 * self.winW/6)
+        splitter_right.SetSashPosition(4 * self.winW/6)
 
         #Display everything
         self.SetTitle(_TITLE)
@@ -149,10 +146,10 @@ class French75(wx.Frame):
             wildcard="*.csv",
             style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
-            self.paths = file_chooser.GetPaths()
+            paths = file_chooser.GetPaths()
             file_chooser.Destroy()
 
-            self.plot_graphs()
+            self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
         else:
             file_chooser.Destroy()
@@ -167,18 +164,22 @@ class French75(wx.Frame):
             wildcard="*.biopepa",
             style=wx.OPEN | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
-            self.paths = file_chooser.GetPaths()
+            paths = file_chooser.GetPaths()
             file_chooser.Destroy()
 
             self.model_parser = Biopepa_Model_Parser()
-            self.model_parser.parse(self.paths[0])
+            self.model_parser.parse(paths[0])
             self.model_parser.build_graph()
 
-            self.refresh_legend_panel()
+            self.refresh_model_panel()
         else:
             file_chooser.Destroy()
 
-    def refresh_legend_panel(self):
+    """
+    Why can't I just use refresh parent like with the legend?
+    TODO: see above
+    """
+    def refresh_model_panel(self):
         self.model_panel.Bind(wx.EVT_PAINT, self.on_paint)
         self.model_panel.Parent.Refresh()
         self.Show(False)
@@ -187,10 +188,10 @@ class French75(wx.Frame):
     """
     Get the data then plot it
     """
-    def plot_graphs(self):
+    def plot_graphs(self, paths):
         results = {}
         parser = BioPepaCsvParser()
-        for path in self.paths:
+        for path in paths:
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
@@ -205,10 +206,10 @@ class French75(wx.Frame):
         self.dc = wx.PaintDC(self.model_panel)
         if self.first_time:
             self.model_parser.tree.build_tree()
-            self.tree = self.model_parser.tree.draw_tree_one(self.dc)
+            self.model_parser.tree.draw_tree_one(self.dc)
             self.first_time = False
         else:
-            self.tree = self.model_parser.tree.draw_tree_one(self.dc)
+            self.model_parser.tree.draw_tree_one(self.dc)
 
     """
     Save the graph
@@ -228,7 +229,7 @@ class French75(wx.Frame):
             path = dlg.GetPath()
             self.draw_plot.mpl_legend = True
             self.draw_plot.plot()
-            self.graph_canvas.print_figure(path, dpi=self.dpi)
+            self.graph_canvas.print_figure(path, dpi=_DPI)
             self.draw_plot.mpl_legend = False
             self.draw_plot.plot()
 
