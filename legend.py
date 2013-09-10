@@ -88,7 +88,6 @@ class Legend(object):
 
     """
     Need to use a different element depending on OS.
-    TODO: make this its own class?
     """
     def select_coll_pane(self, result):
         if (platform.system() == "Linux"):

@@ -6,12 +6,7 @@ class Plot_Dialog(wx.Dialog):
 
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
-        self.InitUI()
-        (dispW, dispH) = wx.DisplaySize()
-        self.SetSize((dispW/4, dispH/2))
-        self.Centre()
 
-    def InitUI(self):
         dialog_panel = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -48,6 +43,10 @@ class Plot_Dialog(wx.Dialog):
 
         okButton.Bind(wx.EVT_BUTTON, self.on_ok)
         closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
+
+        (dispW, dispH) = wx.DisplaySize()
+        self.SetSize((dispW/4, dispH/2))
+        self.Centre()
 
     """
     Set dialog ui elements to values from line

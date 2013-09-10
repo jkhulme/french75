@@ -5,12 +5,12 @@ import wx
 import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_wxagg import \
-    FigureCanvasWxAgg as FigCanvas, \
-    NavigationToolbar2WxAgg as NavigationToolbar
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from legend import Legend
 import sys
 import os
+from custom_ui_elements import BioPepaToolbar
+from session_creator import SessionDialog
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -45,12 +45,6 @@ class French75(wx.Frame):
         else:
             self.xkcd = False
 
-        self.launch_gui()
-
-    """
-    Draws the main window
-    """
-    def launch_gui(self):
         (dispW, dispH) = wx.DisplaySize()
 
         #the containers
@@ -75,7 +69,7 @@ class French75(wx.Frame):
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
 
-        toolbar = self.build_tool_bar()
+        toolbar = BioPepaToolbar(self.graph_canvas)
         graph_vbox.Add(toolbar)
 
         graph_panel.SetSizer(graph_vbox)
@@ -101,17 +95,6 @@ class French75(wx.Frame):
         self.Show(True)
 
     """
-    Getting rid of the toolbar buttons that user doesn't need
-    Could take this out to be its own class
-    """
-    def build_tool_bar(self):
-        toolbar = NavigationToolbar(self.graph_canvas)
-        toolbar.DeleteToolByPos(7)
-        toolbar.DeleteToolByPos(6)
-        toolbar.DeleteToolByPos(6)
-        return toolbar
-
-    """
     The menu bar.
     Again could take this out to be its own class
     Need to organise the menu a bit better - look at mac style guidelines
@@ -121,6 +104,8 @@ class French75(wx.Frame):
         menubar.SetBackgroundColour(_BG_COLOUR)
 
         file_menu = wx.Menu()
+        filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
+        file_menu.AppendSeparator()
         filem_open_results = file_menu.Append(wx.ID_OPEN, '&Open')
         filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
         file_menu.AppendSeparator()
@@ -129,12 +114,18 @@ class French75(wx.Frame):
 
         menubar.Append(file_menu, '&File')
 
+        self.Bind(wx.EVT_MENU, self.new_session, filem_new_session)
         self.Bind(wx.EVT_MENU, self.open_results_file, filem_open_results)
         self.Bind(wx.EVT_MENU, self.open_model_file, filem_open_results_open_model)
         self.Bind(wx.EVT_MENU, self.save_snapshot, filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, filem_open_results_save_plot)
 
         return menubar
+
+    def new_session(self, e):
+        session_dialog = SessionDialog(None, title='New Session')
+        session_dialog.ShowModal()
+        session_dialog.Destroy()
 
     """
     selects which csv files to use
