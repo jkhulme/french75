@@ -12,13 +12,12 @@ from legend import Legend
 import sys
 import os
 
-_DPI = 100
+_DPI = 80
 _BG_COLOUR = 'white'
-_HEIGHT = 540
-_WIDTH = 1210
 _TITLE = 'French75'
-_LEFT_SASH_POS = 200
-_RIGHT_SASH_POS = 800
+_PHI = 1.618
+_COLS = 6
+_NUM_OF_SIDEBARS = 2
 
 
 class French75(wx.Frame):
@@ -55,6 +54,8 @@ class French75(wx.Frame):
     Draws the main window
     """
     def launch_gui(self):
+        (dispW, dispH) = wx.DisplaySize()
+
         #the containers
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -66,10 +67,10 @@ class French75(wx.Frame):
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         self.graph_panel.SetBackgroundColour(_BG_COLOUR)
 
-        #graph stuff - TODO - Get rid of the magic 1440
-        graph_width = int(((1440/6)*4)/80)
-        graph_height = int(graph_width/1.618)
-        print graph_width, graph_height
+        #graph stuff - This assumes a typical top or bottom status bar.
+        #Systems with a side bar will not work with this
+        graph_width = int(((dispW/_COLS)*(_COLS -_NUM_OF_SIDEBARS))/_DPI)
+        graph_height = int(graph_width/_PHI)
         self.graph_fig = Figure((graph_width, graph_height))
         self.graph_fig.set_facecolor('white')
         self.graph_canvas = FigCanvas(self.graph_panel, -1, self.graph_fig)
@@ -88,25 +89,19 @@ class French75(wx.Frame):
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, self.splitter_right)
-        self.splitter_left.SetSashPosition(_LEFT_SASH_POS)
         self.splitter_right.SplitVertically(self.graph_panel, self.model_panel)
-        self.splitter_right.SetSashPosition(_RIGHT_SASH_POS)
 
-        #Not really sure how much of this is necessary.
         #Its purpose it to maximise the main window and then set the components
         #at the appropriate sizes - relative to total size
-        self.SetSize((_WIDTH, _HEIGHT))
         self.Maximize()
         (self.winW, self.winH) = self.GetSize()
-        self.SetTitle(_TITLE)
-        self.Centre()
-        self.Show(True)
         self.splitter_left.SetSashPosition(self.winW/6)
         self.splitter_right.SetSashPosition(4 * self.winW/6)
 
-        #Not sure if I'm going to allow for resizing given that it now
-        #starts maximised.  Its there if I do
-        #self.Bind(wx.EVT_SIZE, self.foobar)
+        #Display everything
+        self.SetTitle(_TITLE)
+        self.Centre()
+        self.Show(True)
 
     """
     Getting rid of the toolbar buttons that user doesn't need
