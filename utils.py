@@ -10,6 +10,11 @@ def rgb_to_hex(rgb):
 def euclid_distance(p1, p2):
     return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
+"""
+Blend the colour of the line segment with the background - ration specified by
+alpha value.  This prevents the blending with the other line segment
+Taken from stack overflow:
+"""
 def rgba_to_rgb((r,g,b), a):
     bg = tuple([255 * (1 - a)] * 3)
     fg = (r * a, g * a, b * a)

@@ -12,42 +12,40 @@ class Legend(object):
 
     """
     self.legend_panel - where this is drawn
-    self.vbox_leg - sizer for the panel
     self.results - the data
     self.plotter - for redrawing the graph
     """
 
     def __init__(self, leg_panel):
         self.legend_panel = leg_panel
-        self.vbox_leg = wx.BoxSizer(wx.VERTICAL)
 
     """
     Handles the legend, one collapsible pane for each file, one set of controls
     for each plot within that
     """
     def draw_legend(self, plotter, results):
+        vbox_leg = wx.BoxSizer(wx.VERTICAL)
+
         self.results = results
         self.plotter = plotter
 
+        #If we don't destroy them first they will just get redrawn everytime.
         for child in self.legend_panel.GetChildren():
             child.Destroy()
 
         title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_CENTER)
         font = wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD)
         title.SetFont(font)
-        self.vbox_leg.Add(title, flag=wx.CENTER)
+        vbox_leg.Add(title, flag=wx.CENTER)
 
+        #For each results file add a collapsible pane
+        #for each species in the file add a 'line' into the collpane
         for result in self.results:
-            if (platform.system() == "Linux"):
-                collpane = PCP.PyCollapsiblePane(self.legend_panel, wx.ID_ANY, result)
-            else:
-                collpane = wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
-
-            self.vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
-
+            collpane = self.select_coll_pane(result)
+            vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
             collpane_body = collpane.GetPane()
             collpane_body.SetBackgroundColour(_BG_COLOUR)
-            self.vbox_collpane = wx.BoxSizer(wx.VERTICAL)
+            vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             for key in self.results[result]:
                 hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
@@ -74,19 +72,29 @@ class Legend(object):
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
                 hbox_collpane.Add(btn_props)
                 vbox_coll.Add(hbox_collpane)
-                self.vbox_collpane.Add(vbox_coll)
+                vbox_collpane.Add(vbox_coll)
 
-            collpane_body.SetSizer(self.vbox_collpane)
-            self.vbox_collpane.Fit(collpane_body)
+            collpane_body.SetSizer(vbox_collpane)
+            vbox_collpane.Fit(collpane_body)
 
-        self.legend_panel.SetSizer(self.vbox_leg)
-        self.vbox_leg.Fit(self.legend_panel)
+        self.legend_panel.SetSizer(vbox_leg)
+        vbox_leg.Fit(self.legend_panel)
 
         for child in self.legend_panel.GetChildren():
             try:
                 child.Expand()
             except:
                 print "can't expand"
+
+    """
+    Need to use a different element depending on OS.
+    TODO: make this its own class?
+    """
+    def select_coll_pane(self, result):
+        if (platform.system() == "Linux"):
+            return PCP.PyCollapsiblePane(self.legend_panel, wx.ID_ANY, result)
+        else:
+            return wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
 
     """
     Event for showing/hiding the plot

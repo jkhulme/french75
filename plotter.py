@@ -42,6 +42,9 @@ class Plotter(object):
         self.hard_colours = self.populate_colours()
         self.xkcdify = xkcdify
 
+        """
+        Create a line from each species.  Don't put time in there.
+        """
         for result in results:
             results_dict = results[result]
             self.results[result] = {}

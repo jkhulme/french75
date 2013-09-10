@@ -1,6 +1,8 @@
 from math import ceil
 from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 
+_MIN_INTENSITY = 70
+_MAX_INTENSITY = 255
 
 class Line(object):
 
@@ -8,31 +10,27 @@ class Line(object):
     self.axes - plots the data
     self.results - data to plot
     self.time - The time scale
-    self.min_intensity - for intensity plot
-    self.max_intensity - for intensity plot
     self.colour - holds the rgb tuple for plot colour
     self.species - species the data is results of
     self.plot_line - whether to display or not on the axes
     self.intense_plot - whether to do colour intensity or normal plot
     self.interval - for building sub plots - I think this has to be 2
-    self.plot_arrays - the sub plots for intensity plots
     """
 
     def __init__(self, axes, results, time, csv, key, colour):
         self.axes = axes
         self.results = results
         self.time = time
-        self.min_intensity = 70
-        self.max_intensity = 255
+        #magic values - but they get changes
         self.min = 0
         self.max = 0
         self.species = key
         self.plot_line = True
         self.intense_plot = False
         #see issue 40 if interval is too high
+        #TODO: make interval some function of number of points?
         self.interval = 20
         self.line_distance()
-        self.build_colour_plot_arrays()
         self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
@@ -79,7 +77,7 @@ class Line(object):
     def plot(self):
         if self.plot_line:
             if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species, color=self.flat_colour, alpha=1, lw=self.thickness)
+                self.axes.plot(self.time, self.results, label=self.species, color=rgb_to_hex(self.rgb_tuple), alpha=1, lw=self.thickness)
             else:
                 self.plot_sub_plots()
 
@@ -88,7 +86,7 @@ class Line(object):
     this is for colour intensity plot
     """
     def plot_sub_plots(self):
-        sub_plots = self.plot_arrays
+        sub_plots = self.build_colour_plot_arrays()
         for sub_plot in sub_plots:
             count = 0
             current = 0
@@ -97,10 +95,9 @@ class Line(object):
                     current = sub_plot[count]
                     break
                 count += 1
-            intensity = (((current - self.min) / float(self.max - self.min)) * (self.max_intensity - self.min_intensity)) + self.min_intensity
-            self.alpha = intensity/255
-            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, self.alpha))
-            #self.axes.plot(self.time, sub_plot, color=self.flat_colour, alpha=self.alpha, lw=self.thickness)
+            intensity = (((current - self.min) / float(self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
+            alpha = intensity/255
+            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
 
 
@@ -109,12 +106,13 @@ class Line(object):
     """
     def build_colour_plot_arrays(self):
         plot_data = self.results
-        self.plot_arrays = []
+        plot_arrays = []
         self.min = min(plot_data)
         self.max = max(plot_data)
         count = 0
         while True:
-            self.plot_arrays.append([None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count))
-            if (self.plot_arrays[-1][-1] is not None):
+            plot_arrays.append([None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count))
+            if (plot_arrays[-1][-1] is not None):
                 break
             count += self.interval - 1
+        return plot_arrays

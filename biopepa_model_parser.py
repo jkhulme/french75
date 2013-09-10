@@ -8,25 +8,27 @@ class Biopepa_Model_Parser():
     def __init__(self):
         self.loc_results = {}
         self.loc_tree = {}
+        self.tree = None
 
     def parse(self, path):
-        self.open_model(path)
-        self.get_locations()
-        self.parse_location()
+        data = self.open_model(path)
+        locations = self.get_locations(data)
+        self.parse_location(locations)
 
     def open_model(self, model):
         with open(model, 'r') as f:
-            self.data = f.read()
+            data = f.read()
+        return data
 
-    def get_locations(self):
-        self.locations = []
-        locations = re.findall("location (.*?)\n", self.data)
+    def get_locations(self, data):
+        locations = []
+        location_lines = re.findall("location (.*?)\n", data)
+        for location in location_lines:
+            locations.append("location " + location)
+        return locations
+
+    def parse_location(self, locations):
         for location in locations:
-            self.locations.append("location " + location)
-
-    def parse_location(self):
-        for location in self.locations:
-            print location
             try:
                 loc_type = re.findall("type = (.*?);", location)[0].strip()
                 loc_size = "Remove this"

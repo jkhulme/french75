@@ -7,10 +7,11 @@ class Plot_Dialog(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
         self.InitUI()
-        self.SetSize((250, 200))
+        (dispW, dispH) = wx.DisplaySize()
+        self.SetSize((dispW/4, dispH/2))
+        self.Centre()
 
     def InitUI(self):
-
         dialog_panel = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -48,6 +49,9 @@ class Plot_Dialog(wx.Dialog):
         okButton.Bind(wx.EVT_BUTTON, self.on_ok)
         closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
 
+    """
+    Set dialog ui elements to values from line
+    """
     def set_line(self, line):
         self.line = line
         self.cb_show_hide.SetValue(self.line.plot_line)
@@ -55,6 +59,9 @@ class Plot_Dialog(wx.Dialog):
         self.colour_picker.SetColour(self.line.flat_colour)
         self.thick_spin.SetValue(self.line.thickness)
 
+    """
+    Update the line to values from ui elements
+    """
     def on_ok(self, e):
         self.line.plot_line = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
