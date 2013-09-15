@@ -18,6 +18,7 @@ _TITLE = 'French75'
 _PHI = 1.618
 _COLS = 6
 _NUM_OF_SIDEBARS = 2
+_MY_MONITOR = True
 
 
 class French75(wx.Frame):
@@ -46,7 +47,9 @@ class French75(wx.Frame):
             self.xkcd = False
 
         (dispW, dispH) = wx.DisplaySize()
-
+        if _MY_MONITOR:
+            print "Thinks this is my desktop multi monitor setup"
+            dispW = 1920
         #the containers
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -62,6 +65,7 @@ class French75(wx.Frame):
         #Systems with a side bar will not work with this
         graph_width = int(((dispW/_COLS)*(_COLS -_NUM_OF_SIDEBARS))/_DPI)
         graph_height = int(graph_width/_PHI)
+        print dispW, _COLS, _NUM_OF_SIDEBARS, _DPI, _PHI, graph_width, graph_height
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
         self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
@@ -86,8 +90,13 @@ class French75(wx.Frame):
         #at the appropriate sizes - relative to total size
         self.Maximize()
         (self.winW, self.winH) = self.GetSize()
+        if _MY_MONITOR:
+            self.winW = 1920
         self.splitter_left.SetSashPosition(self.winW/6)
         splitter_right.SetSashPosition(4 * self.winW/6)
+        print self.winW
+        print self.winW/6
+        print 4*self.winW/6
 
         #Display everything
         self.SetTitle(_TITLE)
