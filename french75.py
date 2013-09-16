@@ -19,7 +19,7 @@ _PHI = 1.618
 _COLS = 6
 _NUM_OF_SIDEBARS = 2
 _MY_MONITOR = False
-_DICE = True
+_DICE = False
 
 
 class French75(wx.Frame):
@@ -47,7 +47,12 @@ class French75(wx.Frame):
         else:
             self.xkcd = False
 
-        (dispW, dispH) = wx.DisplaySize()
+        for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
+            (dispW, dispH) = monitor.GetGeometry().GetSize()
+            (mouseX, mouseY) = wx.GetMousePosition()
+            if (mouseX < dispW):
+                break
+
         if _MY_MONITOR:
             print "Thinks this is my desktop multi monitor setup"
             dispW = 1920
