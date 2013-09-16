@@ -18,7 +18,8 @@ _TITLE = 'French75'
 _PHI = 1.618
 _COLS = 6
 _NUM_OF_SIDEBARS = 2
-_MY_MONITOR = True
+_MY_MONITOR = False
+_DICE = True
 
 
 class French75(wx.Frame):
@@ -92,11 +93,14 @@ class French75(wx.Frame):
         (self.winW, self.winH) = self.GetSize()
         if _MY_MONITOR:
             self.winW = 1920
+        if _DICE:
+            self.winW = 1280
         self.splitter_left.SetSashPosition(self.winW/6)
         splitter_right.SetSashPosition(4 * self.winW/6)
+        print self.winH
         print self.winW
         print self.winW/6
-        print 4*self.winW/6
+        print 5*self.winW/6
 
         #Display everything
         self.SetTitle(_TITLE)
