@@ -2,6 +2,8 @@ from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Navigat
 from matplotlib.backends.backend_wx import _load_bitmap
 import wx
 import platform
+from worldstate import WorldState
+from large_plot import LargePlotDialog
 
 
 class BioPepaToolbar(NavigationToolbar):
@@ -14,6 +16,7 @@ class BioPepaToolbar(NavigationToolbar):
 
     def __init__(self, graph_canvas):
         super(BioPepaToolbar, self).__init__(graph_canvas)
+        self.world = WorldState.Instance()
         if (platform.system() == "Linux"):
             #save
             self.DeleteToolByPos(8)
@@ -23,4 +26,6 @@ class BioPepaToolbar(NavigationToolbar):
         wx.EVT_TOOL(self, self.ON_CUSTOM_ENLARGE, self._on_custom_enlarge)
 
     def _on_custom_enlarge(self, e):
-        print "zoom and enhance."
+        large_plot = LargePlotDialog(None, title='Big Plot')
+        large_plot.ShowModal()
+        large_plot.Destroy()

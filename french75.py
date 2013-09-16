@@ -11,6 +11,7 @@ import sys
 import os
 from custom_ui_elements import BioPepaToolbar
 from session_creator import SessionDialog
+from worldstate import WorldState
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -37,6 +38,7 @@ class French75(wx.Frame):
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
+        self.world = WorldState.Instance()
 
         self.first_time = True
         self.parse_args()
@@ -135,7 +137,7 @@ class French75(wx.Frame):
     Session starter dialogue
     """
     def new_session(self, e):
-        session_dialog = SessionDialog(None, title='New Session')
+        session_dialog = SessionDialog(None, title='Session Starter')
         session_dialog.ShowModal()
         session_dialog.Destroy()
 
@@ -197,6 +199,7 @@ class French75(wx.Frame):
         for path in paths:
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
+        self.world.results = results
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
