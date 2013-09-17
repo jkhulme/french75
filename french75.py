@@ -212,9 +212,9 @@ class French75(wx.Frame):
     def on_paint(self, e):
         self.dc = wx.PaintDC(self.model_panel)
         if self.first_time:
+            self.first_time = False
             self.model_parser.tree.build_tree()
             self.model_parser.tree.draw_tree_one(self.dc)
-            self.first_time = False
         else:
             self.model_parser.tree.draw_tree_one(self.dc)
 

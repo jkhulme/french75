@@ -20,7 +20,6 @@ class LocationTree:
                 self.tree[self.loc_data[loc].parent] = [self.loc_data[loc].name]
             else:
                 self.tree[self.loc_data[loc].parent] += [self.loc_data[loc].name]
-
         old_root = self.tree['root'][0]
         self.tree['root'] = self.tree[old_root]
         self.tree.pop(old_root, None)
@@ -29,16 +28,13 @@ class LocationTree:
 
     def draw_tree_one(self, dc):
         r = 90
-        self.circles['root'] = Circle((100, 100, r), dc)
-        self.circles['root'].paint()
+        self.circles[self.tree['root'][0]] = Circle((100, 100, r), dc)
+        self.circles[self.tree['root'][0]].paint()
 
         for key in self.tree['root']:
-            self.queue += [key]
-            new = self.circles['root'].give_birth(key)
-            self.circles[key] = Circle(new, dc)
-            self.circles[key].paint()
-        self.output = []
+            self.queue.extend(self.tree[key])
 
+        self.output = []
         while self.queue:
             node = self.queue.pop(0)
             self.output.append(node)

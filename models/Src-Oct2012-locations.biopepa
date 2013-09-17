@@ -16,9 +16,6 @@
 location cytoplasm in cell_membrane: size = 1, type = compartment;
 location external : size = 0.111, type = compartment;
 location cell_membrane in external: size = 0.2, type = membrane;
-location foo in external: size = 0.1, type = compartment;
-location bar in external: size = 0.1, type = compartment;
-
 
 
 // control parameters
