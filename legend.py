@@ -1,7 +1,6 @@
 import wx
-import wx.lib.agw.pycollapsiblepane as PCP
-import platform
 from plot_dialog import Plot_Dialog
+from custom_ui_elements import BioPepaCollapsiblePane
 
 _HEIGHT = 20
 _WIDTH = 20
@@ -41,7 +40,7 @@ class Legend(object):
         #For each results file add a collapsible pane
         #for each species in the file add a 'line' into the collpane
         for result in self.results:
-            collpane = self.select_coll_pane(result)
+            collpane = BioPepaCollapsiblePane(self.legend_panel, result)
             vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
             collpane_body = collpane.GetPane()
             collpane_body.SetBackgroundColour(_BG_COLOUR)
@@ -85,15 +84,6 @@ class Legend(object):
                 child.Expand()
             except:
                 print "can't expand"
-
-    """
-    Need to use a different element depending on OS.
-    """
-    def select_coll_pane(self, result):
-        if (platform.system() == "Linux"):
-            return PCP.PyCollapsiblePane(self.legend_panel, wx.ID_ANY, result)
-        else:
-            return wx.CollapsiblePane(self.legend_panel, wx.ID_ANY, result)
 
     """
     Event for showing/hiding the plot

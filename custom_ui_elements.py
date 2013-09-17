@@ -4,6 +4,7 @@ import wx
 import platform
 from worldstate import WorldState
 from large_plot import LargePlotDialog
+import wx.lib.agw.pycollapsiblepane as PCP
 
 
 class BioPepaToolbar(NavigationToolbar):
@@ -29,3 +30,12 @@ class BioPepaToolbar(NavigationToolbar):
         large_plot = LargePlotDialog(None, title='Big Plot')
         large_plot.ShowModal()
         large_plot.Destroy()
+
+if (platform.system() == "Linux"):
+    class BioPepaCollapsiblePane(PCP.PyCollapsiblePane):
+        def __init__(self, legend_panel, result):
+            super(BioPepaCollapsiblePane, self).__init__(legend_panel, wx.ID_ANY, result)
+else:
+    class BioPepaCollapsiblePane(wx.CollapsiblePane):
+        def __init__(self, legend_panel, result):
+            super(BioPepaCollapsiblePane, self).__init__(legend_panel, wx.ID_ANY, result)
