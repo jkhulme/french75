@@ -216,7 +216,7 @@ class French75(wx.Frame):
             self.model_parser.tree.build_tree()
             self.model_parser.tree.draw_tree_one(self.dc)
         else:
-            self.model_parser.tree.draw_tree_one(self.dc)
+            self.model_parser.tree.draw_tree_two(self.dc)
 
     """
     Save the graph

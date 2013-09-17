@@ -54,9 +54,7 @@ class LocationTree:
     """
     This was because it was redrawing cell positions every refresh - which
     were random and so hard to keep track of.  Its not doing it on the mac anymore.  I think it might have been linux only.  If it reappears then this should be integrated back into the other draw_tree method to aboid copy and paste code
-
-
-
+    """
     def draw_tree_two(self, dc):
         for key in self.loc_data:
             if (self.loc_data[key].l_type == 'membrane'):
@@ -79,4 +77,3 @@ class LocationTree:
                 self.circles[node].paint()
 
         return self.output
-    """
