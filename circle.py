@@ -28,9 +28,12 @@ class Circle:
             else:
                 y = self.y - (random.random() * (self.radius - (2 * radius)))
 
-            for (child_x, child_y, child_radius) in self.children:
-                if (euclid_distance([x, y], [child_x, child_y]) > (radius + child_radius)):
-                    dist_flag = False
+            if len(self.children) > 1:
+                for (child_x, child_y, child_radius) in self.children:
+                    if (euclid_distance([x, y], [child_x, child_y]) > (radius + child_radius)):
+                        dist_flag = False
+            else:
+                dist_flag = False
 
         child = (x, y, radius)
         self.children.append(child)
