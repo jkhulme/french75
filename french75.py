@@ -68,6 +68,7 @@ class French75(wx.Frame):
         graph_vbox.Fit(self)
 
         self.legend = Legend(self.legend_panel)
+        self.world.legend = self.legend
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
@@ -153,7 +154,6 @@ class French75(wx.Frame):
         if file_chooser.ShowModal() == wx.ID_OK:
             paths = file_chooser.GetPaths()
             file_chooser.Destroy()
-
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
         else:
@@ -200,6 +200,7 @@ class French75(wx.Frame):
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
         self.world.results = results
+        self.world.parser = parser
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
