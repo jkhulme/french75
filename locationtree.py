@@ -45,7 +45,10 @@ class LocationTree:
                     self.circles[node] = Circle(new, dc)
                     self.circles[node].paint()
             except:
-                new = self.circles[self.loc_data[node].parent].give_birth(node)
+                num_of_children = len(self.tree[self.loc_data[node].parent])
+                print num_of_children
+                new = self.circles[self.loc_data[node].parent].give_birth(node, num_of_children)
+
                 self.circles[node] = Circle(new, dc)
                 self.circles[node].paint()
 
@@ -67,7 +70,6 @@ class LocationTree:
 
         while (len(self.queue) > 0):
             node = self.queue.pop(0)
-            print node
             self.output += [node]
             try:
                 self.queue += self.tree[node]

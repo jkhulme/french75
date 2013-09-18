@@ -14,8 +14,8 @@ class Circle:
     def paint(self):
         self.dc.DrawCircle(self.x, self.y, self.radius)
 
-    def give_birth(self, node):
-        radius = self.radius/5
+    def give_birth(self, node, num_of_children=2):
+        radius = self.radius/float((num_of_children + 1.5))
         dist_flag = True
         while (dist_flag):
             if (random.random() < 0.5):
