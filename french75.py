@@ -97,6 +97,7 @@ class French75(wx.Frame):
         sys.argv = sys.argv[1:]
         for arg in sys.argv:
             if (arg == "--xkcd"):
+                matplotlib.pyplot.xkcd()
                 self.xkcd = True
                 break
         else:

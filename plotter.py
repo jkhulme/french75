@@ -5,7 +5,7 @@ from matplotlib.ticker import MultipleLocator
 try:
     from xkcd import XKCDify
 except:
-    print "scipi not installed"
+    print "scipy not installed"
 
 """
 Given the data, plot it on one graph
@@ -85,11 +85,6 @@ class Plotter(object):
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title('Graph')
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
-
-        if (self.xkcdify):
-            XKCDify(self.axes, xaxis_loc=0.0, yaxis_loc=1.0,
-                    xaxis_arrow='+-', yaxis_arrow='+-',
-                    expand_axes=True)
 
         self.canvas.draw()
 
