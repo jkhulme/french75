@@ -42,27 +42,33 @@ class French75(wx.Frame):
 
         self.first_time = True
         self.parse_args()
-        dispW = self.get_resolution()
+        (dispW, dispH) = self.get_resolution()
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
-        graph_panel = wx.Panel(splitter_right, -1)
+        splitter_middle = wx.SplitterWindow(splitter_right)
+        graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right, -1)
+        animation_panel = wx.Panel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
+        animation_panel.SetBackgroundColour('red')
 
         graph_width = int(((dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
         graph_fig = Figure((graph_width, graph_height))
+
         graph_fig.set_facecolor('white')
+
         self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
         toolbar = BioPepaToolbar(self.graph_canvas)
+        (toolW, toolH) = toolbar.GetSizeTuple()
         graph_vbox.Add(toolbar)
         graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
@@ -72,11 +78,13 @@ class French75(wx.Frame):
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
-        splitter_right.SplitVertically(graph_panel, self.model_panel)
+        splitter_right.SplitVertically(splitter_middle, self.model_panel)
+        splitter_middle.SplitHorizontally(graph_panel, animation_panel)
 
         self.Maximize()
         self.splitter_left.SetSashPosition(dispW/6)
         splitter_right.SetSashPosition(4 * dispW/6)
+        splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
@@ -104,7 +112,7 @@ class French75(wx.Frame):
             (dispW, dispH) = monitor.GetGeometry().GetSize()
             (mouseX, mouseY) = wx.GetMousePosition()
             if (mouseX < dispW):
-                return dispW
+                return (dispW, dispH)
 
     """
     The menu bar.
