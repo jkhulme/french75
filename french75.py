@@ -12,6 +12,7 @@ import os
 from custom_ui_elements import BioPepaToolbar
 from session_creator import SessionDialog
 from worldstate import WorldState
+from cell_segment import CellSegment
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -50,12 +51,12 @@ class French75(wx.Frame):
         splitter_middle = wx.SplitterWindow(splitter_right)
         graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right, -1)
-        animation_panel = wx.Panel(splitter_middle, -1)
+        self.animation_panel = wx.Panel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
-        animation_panel.SetBackgroundColour('red')
+        self.animation_panel.SetBackgroundColour(_BG_COLOUR)
 
         graph_width = int(((dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
@@ -79,7 +80,7 @@ class French75(wx.Frame):
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
         splitter_right.SplitVertically(splitter_middle, self.model_panel)
-        splitter_middle.SplitHorizontally(graph_panel, animation_panel)
+        splitter_middle.SplitHorizontally(graph_panel, self.animation_panel)
 
         self.Maximize()
         self.splitter_left.SetSashPosition(dispW/6)
@@ -165,6 +166,8 @@ class French75(wx.Frame):
             file_chooser.Destroy()
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
+
+            self.refresh_animation_panel()
         else:
             file_chooser.Destroy()
 
@@ -198,6 +201,17 @@ class French75(wx.Frame):
         self.model_panel.Parent.Refresh()
         self.Show(False)
         self.Show(True)
+
+    def refresh_animation_panel(self):
+        self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+        self.animation_panel.Parent.Refresh()
+        self.Show(False)
+        self.Show(True)
+
+    def animate_cell(self,e):
+        dc = wx.PaintDC(self.animation_panel)
+        cs = CellSegment((10,10), 120, dc)
+        cs.paint()
 
     """
     Get the data then plot it
