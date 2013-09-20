@@ -213,7 +213,10 @@ class French75(wx.Frame):
         cs.paint()
 
     def animate(self, n):
-        while True:
+        self.world.counter = 0
+        while self.world.counter <= 20:
+            print self.world.counter
+            self.world.counter += 1
             self.animation_panel.Refresh()
             time.sleep(n)
 
