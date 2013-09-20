@@ -23,6 +23,9 @@ class CellSegment(object):
         self.inner_brush_colour = 'green'
 
     def paint(self):
+        for key in self.world.lines:
+            for species in self.world.lines[key]:
+                print self.world.lines[key][species].colour_change_points
         self.dc.SetBrush(wx.Brush(self.outer_brush_colour))
         self.dc.DrawArc(self.outer_x1, self.outer_y1, self.outer_x2, self.outer_y2, self.centre_x, self.centre_y)
         self.dc.SetBrush(wx.Brush(self.middle_brush_colour))

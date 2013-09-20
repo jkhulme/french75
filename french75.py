@@ -208,7 +208,6 @@ class French75(wx.Frame):
         self.Show(True)
 
     def animate_cell(self,e):
-        print "foo"
         dc = wx.PaintDC(self.animation_panel)
         cs = CellSegment((10,10), 120, dc)
         cs.paint()

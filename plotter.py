@@ -6,6 +6,7 @@ try:
     from xkcd import XKCDify
 except:
     print "scipy not installed"
+from worldstate import WorldState
 
 """
 Given the data, plot it on one graph
@@ -31,6 +32,7 @@ class Plotter(object):
     Initialise what we need, and then create a line for each plot
     """
     def __init__(self, axes, canvas, results, parser, legend, redraw_legend, xkcdify):
+        self.world = WorldState.Instance()
         self.axes = axes
         self.canvas = canvas
         self.parser = parser
@@ -55,6 +57,7 @@ class Plotter(object):
                                                      results_dict['Time'],
                                                      result, key,
                                                      self.choose_colour())
+        self.world.lines = self.results
 
     """
     Attempt to plot each line.

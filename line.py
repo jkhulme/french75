@@ -34,6 +34,7 @@ class Line(object):
         self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
+        self.colour_change_points = []
 
     """
     Handles the details of what needs to be done to interpolate.  Then
@@ -75,6 +76,7 @@ class Line(object):
     Decides how we're going to plot
     """
     def plot(self):
+        self.intense_plot = not self.intense_plot
         if self.plot_line:
             if not self.intense_plot:
                 self.axes.plot(self.time, self.results, label=self.species, color=rgb_to_hex(self.rgb_tuple), alpha=1, lw=self.thickness)
@@ -98,6 +100,7 @@ class Line(object):
             intensity = (((current - self.min) / float(self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            self.colour_change_points.append((count, new_colour))
             self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
 
 
