@@ -1,9 +1,11 @@
 import wx
+from worldstate import WorldState
 
 
 class CellSegment(object):
 
     def __init__(self, (tl_x, tl_y), radius, dc):
+        self.world = WorldState.Instance()
         self.dc = dc
         self.centre_x, self.centre_y = tl_x, tl_y + radius
 

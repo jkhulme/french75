@@ -13,6 +13,8 @@ from custom_ui_elements import BioPepaToolbar
 from session_creator import SessionDialog
 from worldstate import WorldState
 from cell_segment import CellSegment
+import time
+from threading import Thread
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -40,7 +42,7 @@ class French75(wx.Frame):
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
         self.world = WorldState.Instance()
-
+        self.world.clock = 0
         self.first_time = True
         self.parse_args()
         (dispW, dispH) = self.get_resolution()
@@ -167,7 +169,10 @@ class French75(wx.Frame):
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
 
-            self.refresh_animation_panel()
+            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            self.animation_panel.Parent.Refresh()
+            t = Thread(target=self.animate, args=(1,))
+            t.start()
         else:
             file_chooser.Destroy()
 
@@ -202,16 +207,16 @@ class French75(wx.Frame):
         self.Show(False)
         self.Show(True)
 
-    def refresh_animation_panel(self):
-        self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-        self.animation_panel.Parent.Refresh()
-        self.Show(False)
-        self.Show(True)
-
     def animate_cell(self,e):
+        print "foo"
         dc = wx.PaintDC(self.animation_panel)
         cs = CellSegment((10,10), 120, dc)
         cs.paint()
+
+    def animate(self, n):
+        while True:
+            self.animation_panel.Refresh()
+            time.sleep(n)
 
     """
     Get the data then plot it
