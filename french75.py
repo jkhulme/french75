@@ -46,6 +46,7 @@ class French75(wx.Frame):
         self.first_time = True
         self.parse_args()
         (dispW, dispH) = self.get_resolution()
+        self.world.first_circle = True
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)

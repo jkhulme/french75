@@ -6,6 +6,19 @@ class CellSegment(object):
 
     def __init__(self, (tl_x, tl_y), radius, dc):
         self.world = WorldState.Instance()
+        if self.world.first_circle:
+            key = self.world.lines.keys()[0]
+            species = self.world.lines[key].keys()[0]
+            print self.world.lines[key][species].colour_change_points
+            print self.world.lines[key][species].time
+            time_points = []
+            for (time, colour) in self.world.lines[key][species].colour_change_points:
+                time_points.append(self.world.lines[key][species].time[time])
+            print time_points
+            time_diffs = [x - time_points[i-1] if i else None for i, x in enumerate(time_points)][1:]
+            print time_diffs
+            self.world.first_circle = False
+
         self.dc = dc
         self.centre_x, self.centre_y = tl_x, tl_y + radius
 
@@ -26,7 +39,6 @@ class CellSegment(object):
         key = self.world.lines.keys()[0]
         species = self.world.lines[key].keys()[0]
         colour = self.world.lines[key][species].colour_change_points[self.world.counter][1]
-        print colour
         self.dc.SetBrush(wx.Brush(colour))
         self.dc.DrawArc(self.outer_x1, self.outer_y1, self.outer_x2, self.outer_y2, self.centre_x, self.centre_y)
         self.dc.SetBrush(wx.Brush(colour))
