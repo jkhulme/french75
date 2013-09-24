@@ -213,7 +213,7 @@ class French75(wx.Frame):
         self.cs2.paint()
 
     def animate(self, n):
-        self.dc2 = wx.PaintDC(self.animation_panel)
+        self.dc2 = wx.ClientDC(self.animation_panel)
         self.cs = CellSegment((10,10), 120, self.dc2, 0)
         self.cs2 = CellSegment((150,10), 120, self.dc2, 1)
         while self.world.clock < 20000:
