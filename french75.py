@@ -172,7 +172,7 @@ class French75(wx.Frame):
 
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
             self.animation_panel.Parent.Refresh()
-            t = Thread(target=self.animate, args=(1,))
+            t = Thread(target=self.animate, args=(0.1,))
             t.start()
         else:
             file_chooser.Destroy()
@@ -215,9 +215,11 @@ class French75(wx.Frame):
 
     def animate(self, n):
         self.world.counter = 0
-        while self.world.counter <= 20:
+        while self.world.counter <= 600:
             print self.world.counter
             self.world.counter += 1
+            self.world.clock += 20000.0/600
+            print self.world.clock
             self.animation_panel.Refresh()
             time.sleep(n)
 
