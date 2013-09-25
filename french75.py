@@ -209,13 +209,14 @@ class French75(wx.Frame):
         self.Show(True)
 
     def animate_cell(self,e):
-        self.cs.paint()
-        self.cs2.paint()
+        dc2 = wx.PaintDC(self.animation_panel)
+        self.cs.paint(dc2)
+        self.cs2.paint(dc2)
 
     def animate(self, n):
-        self.dc2 = wx.ClientDC(self.animation_panel)
-        self.cs = CellSegment((10,10), 120, self.dc2, 0)
-        self.cs2 = CellSegment((150,10), 120, self.dc2, 1)
+
+        self.cs = CellSegment((10,10), 120, 0)
+        self.cs2 = CellSegment((150,10), 120, 1)
         while self.world.clock < 20000:
             self.world.clock += 20000.0/600
             self.animation_panel.Refresh()
