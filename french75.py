@@ -199,24 +199,29 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
     """
-    Why can't I just use refresh parent like with the legend?
-    TODO: see above
+    refresh the model view pane
     """
     def refresh_model_panel(self):
         self.model_panel.Bind(wx.EVT_PAINT, self.on_paint)
-        self.model_panel.Parent.Refresh()
-        self.Show(False)
-        self.Show(True)
+        self.model_panel.Refresh()
 
-    def animate_cell(self,e):
+    """
+    called when the animation pane is refreshed.
+    pane is refreshed by animate()
+    """
+    def animate_cell(self, e):
         dc2 = wx.PaintDC(self.animation_panel)
         self.cs.paint(dc2)
         self.cs2.paint(dc2)
 
+    """
+    Currently called on load
+    TODO: Make it be a 'play button'
+    TODO: Get rid of magic numbers
+    """
     def animate(self, n):
-
-        self.cs = CellSegment((10,10), 120, 0)
-        self.cs2 = CellSegment((150,10), 120, 1)
+        self.cs = CellSegment((10, 10), 120, 0)
+        self.cs2 = CellSegment((150, 10), 120, 1)
         while self.world.clock < 20000:
             self.world.clock += 20000.0/600
             self.animation_panel.Refresh()

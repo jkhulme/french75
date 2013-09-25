@@ -7,6 +7,8 @@ class CellSegment(object):
     def __init__(self, (tl_x, tl_y), radius, index):
         self.world = WorldState.Instance()
 
+        #Get an array of tuples of times when the colour changes and what
+        #colour it changes to.
         self.key = self.world.lines.keys()[0]
         self.species = self.world.lines[self.key].keys()[index]
         self.result = self.world.lines[self.key][self.species]
@@ -14,6 +16,9 @@ class CellSegment(object):
         self.time_points = []
         for (time, colour) in self.result.colour_change_points:
             self.time_points.append(self.result.time[time])
+
+        #Calculate the top and right points of the arc based on centre and
+        #radius.  Arc goes CCW.
 
         self.centre_x, self.centre_y = tl_x, tl_y + radius
 
@@ -25,10 +30,6 @@ class CellSegment(object):
 
         self.inner_x1, self.inner_y1 = tl_x + (radius/3), self.centre_y
         self.inner_x2, self.inner_y2 = tl_x, tl_y + 2*(radius/3)
-
-        self.outer_brush_colour = 'red'
-        self.middle_brush_colour = 'blue'
-        self.inner_brush_colour = 'green'
 
     def paint(self, dc):
         #Work out whether we should change brush colour and what it should be set to
