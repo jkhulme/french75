@@ -67,9 +67,11 @@ class French75(wx.Frame):
         btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
         btn_animate_pause = wx.Button(self.animation_panel, -1, 'Pause')
         btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
+        self.slider_time = wx.Slider(self.animation_panel, -1, value = 0, minValue = 0, maxValue = 20000, size=(250, -1), style = wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(btn_animate_play)
         animation_hbox.Add(btn_animate_pause)
+        animation_hbox.Add(self.slider_time)
         self.animation_panel.SetSizer(animation_hbox)
         animation_hbox.Fit(self)
 
@@ -244,6 +246,7 @@ class French75(wx.Frame):
             while self.world.clock_pause:
                 pass
             self.world.clock += 20000.0/600
+            self.slider_time.SetValue(self.world.clock)
             self.animation_panel.Refresh()
             time.sleep(n)
 
