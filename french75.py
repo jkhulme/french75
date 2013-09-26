@@ -232,6 +232,7 @@ class French75(wx.Frame):
     pane is refreshed by animate()
     """
     def animate_cell(self, e):
+        wx.CallAfter(self.draw_plot.vertical_line())
         dc2 = wx.PaintDC(self.animation_panel)
         self.cs.paint(dc2)
         self.cs2.paint(dc2)
@@ -248,6 +249,7 @@ class French75(wx.Frame):
             self.world.clock += 20000.0/600
             self.slider_time.SetValue(self.world.clock)
             self.animation_panel.Refresh()
+            #self.draw_plot.vertical_line()
             time.sleep(n)
 
     """
