@@ -47,6 +47,7 @@ class French75(wx.Frame):
         self.parse_args()
         (dispW, dispH) = self.get_resolution()
         self.world.first_circle = True
+        self.world.clock_pause = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -60,6 +61,11 @@ class French75(wx.Frame):
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
+
+        btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
+        btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
+        btn_animate_play = wx.Button(self.animation_panel, -1, 'Pause', pos=(100,0))
+        btn_animate_play.Bind(wx.EVT_BUTTON, self.pause_animation)
 
         graph_width = int(((dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
@@ -170,12 +176,20 @@ class French75(wx.Frame):
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
 
+            self.cs = CellSegment((10, 10), 120, 0)
+            self.cs2 = CellSegment((150, 10), 120, 1)
+
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-            self.animation_panel.Parent.Refresh()
-            t = Thread(target=self.animate, args=(0.1,))
-            t.start()
+            self.animation_panel.Refresh()
         else:
             file_chooser.Destroy()
+
+    def play_animation(self, e):
+        t = Thread(target=self.animate, args=(0.1,))
+        t.start()
+
+    def pause_animation(self, e):
+        self.world.clock_pause = not self.world.clock_pause
 
     """
     Which biopepa model to display
@@ -220,9 +234,9 @@ class French75(wx.Frame):
     TODO: Get rid of magic numbers
     """
     def animate(self, n):
-        self.cs = CellSegment((10, 10), 120, 0)
-        self.cs2 = CellSegment((150, 10), 120, 1)
         while self.world.clock < 20000:
+            while self.world.clock_pause:
+                pass
             self.world.clock += 20000.0/600
             self.animation_panel.Refresh()
             time.sleep(n)
