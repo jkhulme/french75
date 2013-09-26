@@ -62,10 +62,16 @@ class French75(wx.Frame):
         graph_panel.SetBackgroundColour(_BG_COLOUR)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
 
+
         btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
-        btn_animate_play = wx.Button(self.animation_panel, -1, 'Pause', pos=(100,0))
-        btn_animate_play.Bind(wx.EVT_BUTTON, self.pause_animation)
+        btn_animate_pause = wx.Button(self.animation_panel, -1, 'Pause')
+        btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
+        animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        animation_hbox.Add(btn_animate_play)
+        animation_hbox.Add(btn_animate_pause)
+        self.animation_panel.SetSizer(animation_hbox)
+        animation_hbox.Fit(self)
 
         graph_width = int(((dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
@@ -176,8 +182,8 @@ class French75(wx.Frame):
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
 
-            self.cs = CellSegment((10, 10), 120, 0)
-            self.cs2 = CellSegment((150, 10), 120, 1)
+            self.cs = CellSegment((10, 40), 120, 0)
+            self.cs2 = CellSegment((150, 40), 120, 1)
 
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
             self.animation_panel.Refresh()
