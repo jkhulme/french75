@@ -35,6 +35,7 @@ class Line(object):
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
         self.colour_change_points = []
+        self.plot_sub_plots()
 
     """
     Handles the details of what needs to be done to interpolate.  Then
@@ -76,12 +77,12 @@ class Line(object):
     Decides how we're going to plot
     """
     def plot(self):
-        self.intense_plot = not self.intense_plot
         if self.plot_line:
             if not self.intense_plot:
                 self.axes.plot(self.time, self.results, label=self.species, color=rgb_to_hex(self.rgb_tuple), alpha=1, lw=self.thickness)
             else:
-                self.plot_sub_plots()
+                for (sub_plot, new_colour) in self.sub_plot_tuples:
+                    self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
 
     """
     Plots the sub plots and works out what colour the line should be
@@ -89,6 +90,7 @@ class Line(object):
     """
     def plot_sub_plots(self):
         sub_plots = self.build_colour_plot_arrays()
+        self.sub_plot_tuples = []
         for sub_plot in sub_plots:
             count = 0
             current = 0
@@ -101,8 +103,7 @@ class Line(object):
             alpha = intensity/255
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             self.colour_change_points.append((count, new_colour))
-            self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
-
+            self.sub_plot_tuples.append((sub_plot, new_colour))
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
