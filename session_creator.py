@@ -1,4 +1,5 @@
 import wx
+from biopepa_csv_parser import BioPepaCsvParser
 
 
 class SessionDialog(wx.Dialog):
@@ -34,12 +35,22 @@ class SessionDialog(wx.Dialog):
         file_toolbar.Add(btn_rem_file)
         panel_vbox.Add(file_toolbar, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
 
-        model_list = wx.ListBox(session_panel, -1, size=(300, -1), style=wx.LB_SINGLE)
+        self.model_list = wx.ListBox(session_panel, -1, size=(300, -1), style=wx.LB_SINGLE)
         model_label = wx.StaticText(session_panel, -1, "Model: ")
         model_sizer = wx.BoxSizer(wx.HORIZONTAL)
         model_sizer.Add(model_label)
-        model_sizer.Add(model_list)
+        model_sizer.Add(self.model_list)
         panel_vbox.Add(model_sizer, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
+        model_button = wx.Button(session_panel, -1, "Select")
+        model_button.Bind(wx.EVT_BUTTON, self.select_model)
+        panel_vbox.Add(model_button, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
+
+        self.species_list = wx.CheckListBox(session_panel, -1, size=(300, -1), style=wx.LB_MULTIPLE)
+        species_label = wx.StaticText(session_panel, -1, "Species: ")
+        species_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        species_sizer.Add(species_label)
+        species_sizer.Add(self.species_list)
+        panel_vbox.Add(species_sizer, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
 
         session_panel.SetSizer(panel_vbox)
         panel_vbox.Fit(session_panel)
@@ -62,8 +73,34 @@ class SessionDialog(wx.Dialog):
         else:
             file_chooser.Destroy()
 
+        results = {}
+        parser = BioPepaCsvParser()
+        for path in paths:
+            parser.parse_csv(path)
+            results[path.split('/')[-1]] = parser.results_dict
+        keys = []
+        for key in results.keys():
+            for species in results[key].keys():
+                if species != 'Time':
+                    keys.append(species)
+        for key in keys:
+            self.species_list.Append(key)
+
     def remove_files(self, e):
         self.chosen_paths = [path for i, path in enumerate(self.chosen_paths) if i not in self.file_list.GetSelections()]
         self.file_list.Clear()
         for path in self.chosen_paths:
             self.file_list.Append(path.split('/')[-1])
+
+    def select_model(self, e):
+        file_chooser = wx.FileDialog(
+            self,
+            message="Choose a file",
+            wildcard="*.biopepa",
+            style=wx.OPEN | wx.CHANGE_DIR)
+        if file_chooser.ShowModal() == wx.ID_OK:
+            path = file_chooser.GetPaths()[0]
+            self.model_list.Append(path.split('/')[-1])
+            file_chooser.Destroy()
+        else:
+            file_chooser.Destroy()
