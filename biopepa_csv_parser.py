@@ -22,13 +22,14 @@ class BioPepaCsvParser(object):
         self.xmin = 1000000
         self.ymax = 0
         self.xmax = 0
-        self.results_dict = {}
+
 
     """
     Returns a dictionary - 1 key for each species, and 1 for time, returning an array of integers.
     i.e. {"foo": [1,4,9,16,25], "bar":[1,8,27,64,125], "Time":[1,2,3,4,5]}
     """
     def parse_csv(self, csv):
+        self.results_dict = {}
         with open(csv, 'r') as f:
             contents = f.read().strip()
             self.results_dict['simulator'] = re.findall('Simulator: (.*?)\n', contents)[0]

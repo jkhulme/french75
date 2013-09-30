@@ -105,6 +105,8 @@ class Plotter(object):
                 accept = True
                 temp_colour = self.random_colour()
                 for colour in self.colours:
+                    print temp_colour
+                    print colour
                     if (euclid_distance(temp_colour, colour) < 50):
                         accept = False
                         break

@@ -48,7 +48,6 @@ class Line(object):
         for i in range(0, len(self.results) - 1):
             p1 = (self.time[i], self.results[i])
             p2 = (self.time[i + 1], self.results[i + 1])
-
             if (euclid_distance(p1, p2) > dist):
                 step = ceil(euclid_distance(p1, p2) / dist)
                 output_time.extend([self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step))
