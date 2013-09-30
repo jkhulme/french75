@@ -122,7 +122,6 @@ class Plotter(object):
                 (0, 0, 255)]
 
     def vertical_line(self):
-        print "draw a vertical line"
         self.axes.plot([self.world.clock, self.world.clock],[0,120000], label="cunt", color='red', lw=3)
         self.canvas.draw()
         self.axes.lines.pop()

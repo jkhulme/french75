@@ -16,6 +16,8 @@ class CellSegment(object):
         self.time_points = []
         for (time, colour) in self.result.colour_change_points:
             self.time_points.append(self.result.time[time])
+        self.past_points = []
+        self.counter = 0
 
         #Calculate the top and right points of the arc based on centre and
         #radius.  Arc goes CCW.
@@ -34,9 +36,11 @@ class CellSegment(object):
     def paint(self, dc):
         #Work out whether we should change brush colour and what it should be set to
         if len(self.time_points) > 0:
-            if self.world.clock >= self.time_points[0]:
-                self.time_points.pop(0)
-                self.seg_colour = self.result.colour_change_points.pop(0)[1]
+            if self.world.clock >= self.time_points[self.counter]:
+                time = self.time_points[self.counter]
+                self.seg_colour = self.result.colour_change_points[self.counter][1]
+                self.counter += 1
+                self.past_points.append((time, self.seg_colour))
 
         #eventually this will be done for each segment I think - once species are in multiple locations in cell i.e. nucleus, perinucleus etc
         dc.SetBrush(wx.Brush(self.seg_colour))
