@@ -264,9 +264,6 @@ class French75(wx.Frame):
         for path in paths:
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
-        print len(results.keys())
-        for result in results.keys():
-            print len(results[result].keys())
         self.world.results = results
         self.world.parser = parser
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)

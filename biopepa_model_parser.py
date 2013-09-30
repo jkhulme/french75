@@ -47,3 +47,6 @@ class Biopepa_Model_Parser():
 
     def build_graph(self):
         self.tree = LocationTree(self.loc_results)
+
+    def get_species(self, data):
+        pass

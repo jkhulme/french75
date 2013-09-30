@@ -45,17 +45,36 @@ class SessionDialog(wx.Dialog):
         model_button.Bind(wx.EVT_BUTTON, self.select_model)
         panel_vbox.Add(model_button, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
 
-        self.species_list = wx.CheckListBox(session_panel, -1, size=(300, -1), style=wx.LB_MULTIPLE)
-        species_label = wx.StaticText(session_panel, -1, "Species: ")
         species_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        species_sizer.Add(species_label)
-        species_sizer.Add(self.species_list)
+
+        self.species_list_peri = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        species_label_peri = wx.StaticText(session_panel, -1, "Perinucleus\n Species: ")
+        species_sizer_peri = wx.BoxSizer(wx.HORIZONTAL)
+        species_sizer_peri.Add(species_label_peri)
+        species_sizer_peri.Add(self.species_list_peri)
+        species_sizer.Add(species_sizer_peri, border=7)
+
+        self.species_list_mid = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        species_label_mid = wx.StaticText(session_panel, -1, "No Man's Land\n Species: ")
+        species_sizer_mid = wx.BoxSizer(wx.HORIZONTAL)
+        species_sizer_mid.Add(species_label_mid)
+        species_sizer_mid.Add(self.species_list_mid)
+        species_sizer.Add(species_sizer_mid, border=7)
+
+
+        self.species_list_api = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        species_label_api = wx.StaticText(session_panel, -1, "Apinucleus\n Species: ")
+        species_sizer_api = wx.BoxSizer(wx.HORIZONTAL)
+        species_sizer_api.Add(species_label_api)
+        species_sizer_api.Add(self.species_list_api)
+        species_sizer.Add(species_sizer_api, border=7)
+
         panel_vbox.Add(species_sizer, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
 
         session_panel.SetSizer(panel_vbox)
         panel_vbox.Fit(session_panel)
         (dispW, dispH) = wx.DisplaySize()
-        self.SetSize((dispW/2, dispH/2))
+        self.SetSize((dispW/1.3, dispH/2))
         self.Centre()
 
     def add_files(self, e):
