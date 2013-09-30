@@ -51,3 +51,10 @@ class CellSegment(object):
         dc.DrawArc(self.middle_x1, self.middle_y1, self.middle_x2, self.middle_y2, self.centre_x, self.centre_y)
 
         dc.DrawArc(self.inner_x1, self.inner_y1, self.inner_x2, self.inner_y2, self.centre_x, self.centre_y)
+
+    def update_clock(self):
+        self.counter = 0
+        for (time, colour) in self.past_points:
+            if self.world.clock >= time:
+                self.counter += 1
+        self.past_points = self.past_points[:self.counter]

@@ -322,7 +322,7 @@ class French75(wx.Frame):
 
     def move_animation(self, e):
         self.world.clock = self.slider_time.GetValue()
-        self.cs.counter = 0
+        self.cs.update_clock()
 
 
 if __name__ == '__main__':
