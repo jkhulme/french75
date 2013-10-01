@@ -86,7 +86,7 @@ class Plotter(object):
         self.axes.set_xlabel('Time')
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
-        self.axes.set_title('Graph')
+        self.axes.set_title(self.world.title)
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
         self.canvas.draw()

@@ -1,5 +1,6 @@
 import wx
 from biopepa_csv_parser import BioPepaCsvParser
+from worldstate import WorldState
 
 
 class SessionDialog(wx.Dialog):
@@ -8,15 +9,18 @@ class SessionDialog(wx.Dialog):
         super(SessionDialog, self).__init__(*args, **kw)
 
         self.chosen_paths = []
+        self.species_dict = {}
+
+        self.world = WorldState.Instance()
 
         session_panel = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
-        title_text = wx.TextCtrl(session_panel, -1, size=(300, -1))
+        self.title_text = wx.TextCtrl(session_panel, -1, size=(300, -1))
         title_label = wx.StaticText(session_panel, -1, "Title: ")
         title_sizer = wx.BoxSizer(wx.HORIZONTAL)
         title_sizer.Add(title_label)
-        title_sizer.Add(title_text)
+        title_sizer.Add(self.title_text)
         panel_vbox.Add(title_sizer, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
 
         self.file_list = wx.ListBox(session_panel, -1, size=(300, -1), style=wx.LB_MULTIPLE)
@@ -61,7 +65,6 @@ class SessionDialog(wx.Dialog):
         species_sizer_mid.Add(self.species_list_mid)
         species_sizer.Add(species_sizer_mid, border=7)
 
-
         self.species_list_api = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         species_label_api = wx.StaticText(session_panel, -1, "Apinucleus\n Species: ")
         species_sizer_api = wx.BoxSizer(wx.HORIZONTAL)
@@ -70,6 +73,10 @@ class SessionDialog(wx.Dialog):
         species_sizer.Add(species_sizer_api, border=7)
 
         panel_vbox.Add(species_sizer, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
+
+        btn_submit = wx.Button(session_panel, -1, "Lets Go!")
+        panel_vbox.Add(btn_submit, flag=wx.ALIGN_CENTER | wx.TOP, border=7)
+        btn_submit.Bind(wx.EVT_BUTTON, self.go)
 
         session_panel.SetSizer(panel_vbox)
         panel_vbox.Fit(session_panel)
@@ -94,24 +101,37 @@ class SessionDialog(wx.Dialog):
 
         results = {}
         parser = BioPepaCsvParser()
+        self.world.session_parser = parser
         for path in paths:
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
-        keys = []
         for key in results.keys():
+            self.species_dict[key] = []
             for species in results[key].keys():
                 if species != 'Time':
-                    keys.append(species)
-        for key in keys:
-            self.species_list_peri.Append(key)
-            self.species_list_mid.Append(key)
-            self.species_list_api.Append(key)
+                    self.species_dict[key].append(species)
+        self.populate_species_lists()
+        self.world.session_results = results
 
     def remove_files(self, e):
+        old_paths = [path for i, path in enumerate(self.chosen_paths) if i in self.file_list.GetSelections()]
         self.chosen_paths = [path for i, path in enumerate(self.chosen_paths) if i not in self.file_list.GetSelections()]
+        for path in old_paths:
+            del self.species_dict[path.split('/')[-1]]
         self.file_list.Clear()
         for path in self.chosen_paths:
             self.file_list.Append(path.split('/')[-1])
+        self.populate_species_lists()
+
+    def populate_species_lists(self):
+        self.species_list_peri.Clear()
+        self.species_list_mid.Clear()
+        self.species_list_api.Clear()
+        for key in self.species_dict.keys():
+            for species in self.species_dict[key]:
+                self.species_list_peri.Append(species)
+                self.species_list_mid.Append(species)
+                self.species_list_api.Append(species)
 
     def select_model(self, e):
         file_chooser = wx.FileDialog(
@@ -125,3 +145,7 @@ class SessionDialog(wx.Dialog):
             file_chooser.Destroy()
         else:
             file_chooser.Destroy()
+
+    def go(self, e):
+        self.world.title = self.title_text.GetLineText(0)
+        self.Close()

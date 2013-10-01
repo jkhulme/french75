@@ -169,6 +169,21 @@ class French75(wx.Frame):
         session_dialog = SessionDialog(None, title='Session Starter')
         session_dialog.ShowModal()
         session_dialog.Destroy()
+        self.world.results = self.world.session_results
+        results = self.world.results
+        self.world.parser = self.world.session_parser
+        parser = self.world.parser
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
+        self.draw_plot.plot()
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
+        self.legend_panel.Parent.Refresh()
+
+        self.cs = CellSegment((10, 40), 120, 0)
+        self.cs2 = CellSegment((150, 40), 120, 1)
+
+        self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+        self.animation_panel.Refresh()
 
     """
     selects which csv files to use
