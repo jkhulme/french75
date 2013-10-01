@@ -103,7 +103,9 @@ class SessionDialog(wx.Dialog):
                 if species != 'Time':
                     keys.append(species)
         for key in keys:
-            self.species_list.Append(key)
+            self.species_list_peri.Append(key)
+            self.species_list_mid.Append(key)
+            self.species_list_api.Append(key)
 
     def remove_files(self, e):
         self.chosen_paths = [path for i, path in enumerate(self.chosen_paths) if i not in self.file_list.GetSelections()]
