@@ -43,12 +43,13 @@ class French75(wx.Frame):
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
         self.world = WorldState.Instance()
-        self.world.clock = 0
+
         self.first_time = True
+        self.cell_segments = []
+
         self.parse_args()
-        (dispW, dispH) = self.get_resolution()
-        self.world.first_circle = True
-        self.world.clock_pause = False
+
+        (self.world.dispW, self.world.dispH) = self.get_resolution()
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -69,6 +70,7 @@ class French75(wx.Frame):
         btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=20000, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
+
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(btn_animate_play)
         animation_hbox.Add(btn_animate_pause)
@@ -76,24 +78,24 @@ class French75(wx.Frame):
         self.animation_panel.SetSizer(animation_hbox)
         animation_hbox.Fit(self)
 
-        graph_width = int(((dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
+        graph_width = int(((self.world.dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
         graph_fig = Figure((graph_width, graph_height))
-
         graph_fig.set_facecolor('white')
 
         self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
+
         toolbar = BioPepaToolbar(self.graph_canvas)
         (toolW, toolH) = toolbar.GetSizeTuple()
         graph_vbox.Add(toolbar)
+
         graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
 
-        self.legend = Legend(self.legend_panel)
-        self.world.legend = self.legend
+        self.world.legend = Legend(self.legend_panel)
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
@@ -101,8 +103,8 @@ class French75(wx.Frame):
         splitter_middle.SplitHorizontally(graph_panel, self.animation_panel)
 
         self.Maximize()
-        self.splitter_left.SetSashPosition(dispW/6)
-        splitter_right.SetSashPosition(4 * dispW/6)
+        self.splitter_left.SetSashPosition(self.world.dispW/6)
+        splitter_right.SetSashPosition(4 * self.world.dispW/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
         self.SetTitle(_TITLE)
         self.Centre()
@@ -129,10 +131,10 @@ class French75(wx.Frame):
     """
     def get_resolution(self):
         for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
-            (dispW, dispH) = monitor.GetGeometry().GetSize()
+            (self.world.dispW, self.world.dispH) = monitor.GetGeometry().GetSize()
             (mouseX, mouseY) = wx.GetMousePosition()
-            if (mouseX < dispW):
-                return (dispW, dispH)
+            if (mouseX < self.world.dispW):
+                return (self.world.dispW, self.world.dispH)
 
     """
     The menu bar.
@@ -169,18 +171,17 @@ class French75(wx.Frame):
         session_dialog = SessionDialog(None, title='Session Starter')
         session_dialog.ShowModal()
         session_dialog.Destroy()
+
         self.world.results = self.world.session_results
-        results = self.world.results
         self.world.parser = self.world.session_parser
-        parser = self.world.parser
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
+
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
         self.legend_panel.Parent.Refresh()
 
-        self.cs = CellSegment((10, 40), 120, 0)
-        self.cs2 = CellSegment((150, 40), 120, 1)
+        self.cell_segments.append(CellSegment((10, 40), 120, 0), CellSegment((150, 40), 120, 1))
 
         self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
         self.animation_panel.Refresh()
@@ -200,8 +201,7 @@ class French75(wx.Frame):
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
 
-            self.cs = CellSegment((10, 40), 120, 0)
-            self.cs2 = CellSegment((150, 40), 120, 1)
+            self.cell_segments.append(CellSegment((10, 40), 120, 0), CellSegment((150, 40), 120, 1))
 
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
             self.animation_panel.Refresh()
@@ -248,11 +248,12 @@ class French75(wx.Frame):
     pane is refreshed by animate()
     """
     def animate_cell(self, e):
+        #TODO Post in mailing list as to why this doesn't work on mac
         if (platform.system() == "Linux"):
             wx.CallAfter(self.draw_plot.vertical_line())
         dc2 = wx.PaintDC(self.animation_panel)
-        self.cs.paint(dc2)
-        self.cs2.paint(dc2)
+        for segment in self.cell_segments:
+            segment.paint(dc2)
 
     """
     Currently called on load
@@ -260,10 +261,10 @@ class French75(wx.Frame):
     TODO: Get rid of magic numbers
     """
     def animate(self, n):
-        while self.world.clock < 20000:
+        while self.world.clock < self.world.max_time:
             while self.world.clock_pause:
                 pass
-            self.world.clock += 20000.0/600
+            self.world.clock += self.world.clock_increment
             self.slider_time.SetValue(self.world.clock)
             self.animation_panel.Refresh()
             if (platform.system() != "Linux"):
@@ -281,7 +282,7 @@ class French75(wx.Frame):
             results[path.split('/')[-1]] = parser.results_dict
         self.world.results = results
         self.world.parser = parser
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, results, parser, self.legend, True, self.xkcd)
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)

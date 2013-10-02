@@ -2,10 +2,6 @@ from line import Line
 from utils import euclid_distance
 from random import randrange
 from matplotlib.ticker import MultipleLocator
-try:
-    from xkcd import XKCDify
-except:
-    print "scipy not installed"
 from worldstate import WorldState
 
 """
@@ -25,24 +21,23 @@ class Plotter(object):
     self.parser - the csv parser
     self.results - the results data
     self.redraw_legend - do we need to redraw the legend or not
-    self.legend - Will plot the legend
     """
 
     """
     Initialise what we need, and then create a line for each plot
     """
-    def __init__(self, axes, canvas, results, parser, legend, redraw_legend, xkcdify):
+    def __init__(self, axes, canvas, redraw_legend, xkcdify):
         self.world = WorldState.Instance()
         self.axes = axes
         self.canvas = canvas
-        self.parser = parser
-        self.legend = legend
+        self.parser = self.world.parser
         self.results = {}
         self.redraw_legend = redraw_legend
         self.mpl_legend = False
         self.colours = []
         self.hard_colours = self.populate_colours()
         self.xkcdify = xkcdify
+        results = self.world.results
 
         """
         Create a line from each species.  Don't put time in there.
@@ -72,7 +67,7 @@ class Plotter(object):
 
         #my interactive legend
         if (self.redraw_legend):
-            self.legend.draw_legend(self, self.results)
+            self.world.legend.draw_legend(self, self.results)
 
         #matplotlib legend - for saving with a legend
         if (self.mpl_legend):

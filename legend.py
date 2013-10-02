@@ -83,8 +83,7 @@ class Legend(object):
             try:
                 child.Expand()
             except:
-                print "can't expand"
-
+                pass
     """
     Event for showing/hiding the plot
     """
