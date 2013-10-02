@@ -1,5 +1,6 @@
 import wx
 from utils import rgb_to_hex
+from worldstate import WorldState
 
 
 class Plot_Dialog(wx.Dialog):
@@ -7,6 +8,7 @@ class Plot_Dialog(wx.Dialog):
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
 
+        self.world = WorldState.Instance()
         dialog_panel = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -44,8 +46,7 @@ class Plot_Dialog(wx.Dialog):
         okButton.Bind(wx.EVT_BUTTON, self.on_ok)
         closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
 
-        (dispW, dispH) = wx.DisplaySize()
-        self.SetSize((dispW/4, dispH/2))
+        self.SetSize((self.world.dispW/4, self.world.dispH/2))
         self.Centre()
 
     """

@@ -14,14 +14,14 @@ class CellSegment(object):
         self.result = self.world.lines[self.key][self.species]
         self.seg_colour = self.result.colour_change_points[0][1]
         self.time_points = []
-        for (time, colour) in self.result.colour_change_points:
-            self.time_points.append(self.result.time[time])
         self.past_points = []
         self.counter = 0
 
+        for (time, colour) in self.result.colour_change_points:
+            self.time_points.append(self.result.time[time])
+
         #Calculate the top and right points of the arc based on centre and
         #radius.  Arc goes CCW.
-
         self.centre_x, self.centre_y = tl_x, tl_y + radius
 
         self.outer_x1, self.outer_y1 = tl_x + radius, self.centre_y
