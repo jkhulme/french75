@@ -189,9 +189,11 @@ class French75(wx.Frame):
     """
     def open_results_file(self, e):
         open_results_file(self)
+
         self.slider_time.SetMax(self.world.max_time)
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
+
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
 

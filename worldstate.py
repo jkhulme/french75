@@ -16,3 +16,6 @@ class WorldState:
         self.max_time = 1
         self.clock_increment = self.max_time / 600.0
         self.parser = None
+
+    def update_clock_increment(self):
+        self.clock_increment = self.max_time / 600.0

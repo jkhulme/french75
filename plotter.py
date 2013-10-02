@@ -100,8 +100,6 @@ class Plotter(object):
                 accept = True
                 temp_colour = self.random_colour()
                 for colour in self.colours:
-                    print temp_colour
-                    print colour
                     if (euclid_distance(temp_colour, colour) < 50):
                         accept = False
                         break
@@ -119,7 +117,6 @@ class Plotter(object):
                 (0, 0, 255)]
 
     def vertical_line(self):
-        print "blarg"
         self.axes.plot([self.world.clock, self.world.clock],[0,120000], label="time_line", color='red', lw=3)
         self.canvas.draw()
         self.axes.lines.pop()
