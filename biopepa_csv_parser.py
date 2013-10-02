@@ -1,4 +1,5 @@
 import re
+from worldstate import WorldState
 """
 Parse results data from BioPEPA csv files
 
@@ -18,6 +19,7 @@ Expected Structure
 class BioPepaCsvParser(object):
 
     def __init__(self):
+        self.world = WorldState.Instance()
         self.ymin = 1000000
         self.xmin = 1000000
         self.ymax = 0
@@ -59,3 +61,4 @@ class BioPepaCsvParser(object):
             else:
                 self.xmin = min(self.xmin, min(self.results_dict[result]))
                 self.xmax = max(self.xmax, max(self.results_dict[result]))
+        self.world.max_time = self.xmax

@@ -13,6 +13,5 @@ class WorldState:
         self.title = "Graph"
         self.dispW = 0
         self.dispH = 0
-        #Take this from results
-        self.max_time = 20000
+        self.max_time = 1
         self.clock_increment = self.max_time / 600.0

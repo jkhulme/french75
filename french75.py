@@ -68,7 +68,7 @@ class French75(wx.Frame):
         btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
         btn_animate_pause = wx.Button(self.animation_panel, -1, 'Pause')
         btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
-        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=20000, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -180,8 +180,10 @@ class French75(wx.Frame):
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
         self.legend_panel.Parent.Refresh()
+        self.slider_time.SetMax(self.world.max_time)
 
-        self.cell_segments.append(CellSegment((10, 40), 120, 0), CellSegment((150, 40), 120, 1))
+        self.cell_segments.append(CellSegment((10, 40), 120, 0))
+        self.cell_segments.append(CellSegment((150, 40), 120, 1))
 
         self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
         self.animation_panel.Refresh()
@@ -201,7 +203,8 @@ class French75(wx.Frame):
             self.plot_graphs(paths)
             self.legend_panel.Parent.Refresh()
 
-            self.cell_segments.append(CellSegment((10, 40), 120, 0), CellSegment((150, 40), 120, 1))
+            self.cell_segments.append(CellSegment((10, 40), 120, 0))
+            self.cell_segments.append(CellSegment((150, 40), 120, 1))
 
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
             self.animation_panel.Refresh()
@@ -280,6 +283,7 @@ class French75(wx.Frame):
         for path in paths:
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
+        self.slider_time.SetMax(self.world.max_time)
         self.world.results = results
         self.world.parser = parser
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
@@ -338,9 +342,8 @@ class French75(wx.Frame):
 
     def move_animation(self, e):
         self.world.clock = self.slider_time.GetValue()
-        self.cs.update_clock()
-        self.cs2.update_clock()
-
+        for segment in self.cell_segments:
+            segment.update_clock()
 
 if __name__ == '__main__':
     app = wx.App()
