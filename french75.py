@@ -1,4 +1,3 @@
-from biopepa_csv_parser import BioPepaCsvParser
 from biopepa_model_parser import Biopepa_Model_Parser
 from plotter import Plotter
 import wx

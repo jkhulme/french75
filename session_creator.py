@@ -1,5 +1,4 @@
 import wx
-from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
 from utils import open_results_file
 
@@ -81,8 +80,7 @@ class SessionDialog(wx.Dialog):
 
         session_panel.SetSizer(panel_vbox)
         panel_vbox.Fit(session_panel)
-        (dispW, dispH) = wx.DisplaySize()
-        self.SetSize((dispW/1.3, dispH/2))
+        self.SetSize((self.world.dispW/1.3, self.world.dispH/2))
         self.Centre()
 
     def add_files(self, e):
