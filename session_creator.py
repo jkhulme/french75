@@ -1,6 +1,7 @@
 import wx
 from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
+from utils import open_results_file
 
 
 class SessionDialog(wx.Dialog):
@@ -85,33 +86,15 @@ class SessionDialog(wx.Dialog):
         self.Centre()
 
     def add_files(self, e):
-        file_chooser = wx.FileDialog(
-            self,
-            message="Choose a file",
-            wildcard="*.csv",
-            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR)
-        if file_chooser.ShowModal() == wx.ID_OK:
-            paths = file_chooser.GetPaths()
-            for path in paths:
-                self.chosen_paths.append(path)
-                self.file_list.Append(path.split('/')[-1])
-            file_chooser.Destroy()
-        else:
-            file_chooser.Destroy()
-
-        results = {}
-        parser = BioPepaCsvParser()
-        self.world.session_parser = parser
-        for path in paths:
-            parser.parse_csv(path)
-            results[path.split('/')[-1]] = parser.results_dict
-        for key in results.keys():
+        open_results_file(self)
+        for key in self.world.results.keys():
             self.species_dict[key] = []
-            for species in results[key].keys():
+            for species in self.world.results[key].keys():
                 if species != 'Time':
                     self.species_dict[key].append(species)
-        self.populate_species_lists()
-        self.world.session_results = results
+            self.populate_species_lists()
+            self.chosen_paths.append(key)
+            self.file_list.Append(key)
 
     def remove_files(self, e):
         old_paths = [path for i, path in enumerate(self.chosen_paths) if i in self.file_list.GetSelections()]

@@ -15,3 +15,4 @@ class WorldState:
         self.dispH = 0
         self.max_time = 1
         self.clock_increment = self.max_time / 600.0
+        self.parser = None

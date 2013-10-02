@@ -16,6 +16,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
+from utils import open_results_file
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -171,10 +172,6 @@ class French75(wx.Frame):
         session_dialog = SessionDialog(None, title='Session Starter')
         session_dialog.ShowModal()
         session_dialog.Destroy()
-
-        self.world.results = self.world.session_results
-        self.world.parser = self.world.session_parser
-
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
@@ -192,24 +189,18 @@ class French75(wx.Frame):
     selects which csv files to use
     """
     def open_results_file(self, e):
-        file_chooser = wx.FileDialog(
-            self,
-            message="Choose a file",
-            wildcard="*.csv",
-            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR)
-        if file_chooser.ShowModal() == wx.ID_OK:
-            paths = file_chooser.GetPaths()
-            file_chooser.Destroy()
-            self.plot_graphs(paths)
-            self.legend_panel.Parent.Refresh()
+        open_results_file(self)
+        self.slider_time.SetMax(self.world.max_time)
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
+        self.draw_plot.plot()
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
+        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
 
-            self.cell_segments.append(CellSegment((10, 40), 120, 0))
-            self.cell_segments.append(CellSegment((150, 40), 120, 1))
+        self.cell_segments.append(CellSegment((10, 40), 120, 0))
+        self.cell_segments.append(CellSegment((150, 40), 120, 1))
 
-            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-            self.animation_panel.Refresh()
-        else:
-            file_chooser.Destroy()
+        self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+        self.animation_panel.Refresh()
 
     def play_animation(self, e):
         t = Thread(target=self.animate, args=(0.1,))
@@ -273,23 +264,6 @@ class French75(wx.Frame):
             if (platform.system() != "Linux"):
                 self.draw_plot.vertical_line()
             time.sleep(n)
-
-    """
-    Get the data then plot it
-    """
-    def plot_graphs(self, paths):
-        results = {}
-        parser = BioPepaCsvParser()
-        for path in paths:
-            parser.parse_csv(path)
-            results[path.split('/')[-1]] = parser.results_dict
-        self.slider_time.SetMax(self.world.max_time)
-        self.world.results = results
-        self.world.parser = parser
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
-        self.draw_plot.plot()
-        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
-        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
 
     """
     Handles drawing of the model
