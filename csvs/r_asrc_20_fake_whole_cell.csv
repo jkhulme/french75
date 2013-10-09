@@ -5,7 +5,7 @@
 # Start time: 0.0
 # Model Parameters
 # Run time = 105.82099914550781
-# Time, aSrc_total_MB_peri", aSrc_total_MB_mid", aSrc_total_MB_api"
+# Time, aSrc_total_MB@peri", aSrc_total_MB@cyto", aSrc_total_MB_api@membrane"
 0.0,750.0,750.0,750.0
 202.02020202020202,760.1,750.0,750.0
 404.04040404040404,734.0,750.0,750.0

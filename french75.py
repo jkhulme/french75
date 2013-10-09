@@ -70,8 +70,10 @@ class French75(wx.Frame):
         btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
+        self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY | wx.CB_SORT)
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(btn_animate_play)
         animation_hbox.Add(btn_animate_pause)
         animation_hbox.Add(self.slider_time)
