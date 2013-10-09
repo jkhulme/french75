@@ -134,15 +134,28 @@ class SessionDialog(wx.Dialog):
 
     def parse_species(self):
         self.world.species_dict = {}
+        inner = self.species_list_peri.GetCheckedStrings()[0]
+        middle = self.species_list_mid.GetCheckedStrings()[0]
+        outer = self.species_list_api.GetCheckedStrings()[0]
+        loc_flag = 0
         for file_name in self.world.results.keys():
             for result in self.world.results[file_name].keys():
                 if not result == "Time":
+                    print result
+                    print inner
+                    if result == inner:
+                        loc_flag = 1
+                    elif result == middle:
+                        loc_flag = 2
+                    elif result == outer:
+                        loc_flag = 3
                     try:
-                        (species, location) = result.split("@")
+                        (name, loc) = result.split("@")
+                        (species, location, flag) = (name, loc, loc_flag)
                     except:
-                        (species, location) = (result, None)
+                        (species, location, flag) = (result, None, loc_flag)
 
                     if species not in self.world.species_dict.keys():
-                        self.world.species_dict[species] = [location]
+                        self.world.species_dict[species] = [(species,location,flag)]
                     else:
-                        self.world.species_dict[species].append(location)
+                        self.world.species_dict[species].append((species,location,flag))

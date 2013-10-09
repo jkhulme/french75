@@ -184,7 +184,7 @@ class French75(wx.Frame):
         for species in self.world.species_dict.keys():
             for file_name in self.draw_plot.results.keys():
                 for loc in self.world.species_dict[species]:
-                    print self.draw_plot.results[file_name][species+"@"+loc]
+                    print self.draw_plot.results[file_name][species+"@"+loc[1]]
             self.drop_down_species.Append(species)
 
         self.drop_down_species.SetSelection(0)

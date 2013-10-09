@@ -9,10 +9,16 @@ class CellSegment(object):
         #Get an array of tuples of times when the colour changes and what
         #colour it changes to.
         self.key = file_name
-
-        self.species_inner = species+"@"+self.world.species_dict[species][0]
-        self.species_middle = species+"@"+self.world.species_dict[species][1]
-        self.species_outer = species+"@"+self.world.species_dict[species][2]
+        print self.world.species_dict
+        for i, (name, loc, l_flag) in enumerate(self.world.species_dict[species]):
+            print name, loc, l_flag
+            if l_flag == 1:
+                print self.world.species_dict[species]
+                self.species_inner = species+"@"+self.world.species_dict[species][i][1]
+            elif l_flag == 2:
+                self.species_middle = species+"@"+self.world.species_dict[species][i][1]
+            elif l_flag == 3:
+                self.species_outer = species+"@"+self.world.species_dict[species][i][1]
 
         self.result_inner = self.world.lines[self.key][self.species_inner]
         self.result_middle = self.world.lines[self.key][self.species_middle]
