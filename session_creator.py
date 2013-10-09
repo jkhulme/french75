@@ -129,4 +129,20 @@ class SessionDialog(wx.Dialog):
 
     def go(self, e):
         self.world.title = self.title_text.GetLineText(0)
+        self.parse_species()
         self.Close()
+
+    def parse_species(self):
+        self.world.species_dict = {}
+        for file_name in self.world.results.keys():
+            for result in self.world.results[file_name].keys():
+                if not result == "Time":
+                    try:
+                        (species, location) = result.split("@")
+                    except:
+                        (species, location) = (result, None)
+
+                    if species not in self.world.species_dict.keys():
+                        self.world.species_dict[species] = [location]
+                    else:
+                        self.world.species_dict[species].append(location)

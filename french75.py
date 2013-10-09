@@ -173,6 +173,7 @@ class French75(wx.Frame):
         session_dialog = SessionDialog(None, title='Session Starter')
         session_dialog.ShowModal()
         session_dialog.Destroy()
+
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
         self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
@@ -180,8 +181,22 @@ class French75(wx.Frame):
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.max_time)
 
-        self.cell_segments.append(CellSegment((10, 40), 120, 0))
-        self.cell_segments.append(CellSegment((150, 40), 120, 1))
+        for species in self.world.species_dict.keys():
+            for file_name in self.draw_plot.results.keys():
+                for loc in self.world.species_dict[species]:
+                    print self.draw_plot.results[file_name][species+"@"+loc]
+            self.drop_down_species.Append(species)
+
+        self.drop_down_species.SetSelection(0)
+
+        a = 10
+        b = 40
+        c = 120
+        d = 0
+        for file_name in self.world.results.keys():
+            self.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+            a += 140
+            d += 1
 
         self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
         self.animation_panel.Refresh()
