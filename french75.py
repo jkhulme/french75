@@ -67,16 +67,13 @@ class French75(wx.Frame):
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
-        btn_animate_pause = wx.Button(self.animation_panel, -1, 'Pause')
-        btn_animate_pause.Bind(wx.EVT_BUTTON, self.pause_animation)
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
-        self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY | wx.CB_SORT)
+        self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY )
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
-        animation_hbox.Add(btn_animate_pause)
         animation_hbox.Add(self.slider_time)
         self.animation_panel.SetSizer(animation_hbox)
         animation_hbox.Fit(self)
@@ -239,9 +236,6 @@ class French75(wx.Frame):
     def change_button_text(self, title):
         print title
         self.btn_animate_play.SetLabel(title)
-
-    def pause_animation(self, e):
-        self.world.clock_pause = not self.world.clock_pause
 
     """
     Which biopepa model to display
