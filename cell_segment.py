@@ -94,8 +94,20 @@ class CellSegment(object):
         dc.DrawArc(self.inner_x1, self.inner_y1, self.inner_x2, self.inner_y2, self.centre_x, self.centre_y)
 
     def update_clock(self):
-        self.counter = 0
-        for (time, colour) in self.past_points:
+        self.counter_inner = 0
+        for (time, colour) in self.past_points_inner:
             if self.world.clock >= time:
-                self.counter += 1
-        self.past_points = self.past_points[:self.counter]
+                self.counter_inner += 1
+        self.past_points_inner = self.past_points_inner[:self.counter_inner]
+
+        self.counter_middle = 0
+        for (time, colour) in self.past_points_middle:
+            if self.world.clock >= time:
+                self.counter_middle += 1
+        self.past_points_middle = self.past_points_middle[:self.counter_middle]
+
+        self.counter_outer = 0
+        for (time, colour) in self.past_points_outer:
+            if self.world.clock >= time:
+                self.counter_outer += 1
+        self.past_points_outer = self.past_points_outer[:self.counter_outer]
