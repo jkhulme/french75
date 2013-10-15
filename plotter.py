@@ -3,6 +3,7 @@ from utils import euclid_distance
 from random import randrange
 from matplotlib.ticker import MultipleLocator
 from worldstate import WorldState
+import wx
 
 """
 Given the data, plot it on one graph
@@ -84,7 +85,30 @@ class Plotter(object):
         self.axes.set_title(self.world.title)
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
+        #self.canvas.mpl_connect('button_press_event', self.onclick)
+
         self.canvas.draw()
+
+    def onclick(self, event):
+        print "win"
+
+    def onContext(self, e):
+        print "context menu"
+        # only do this part the first time so the events are only bound once
+        if not hasattr(self, "popupID1"):
+            self.annotateId = wx.NewId()
+            self.Bind(wx.EVT_MENU, self.annotate, id=self.annotateId)
+
+        # build the menu
+        menu = wx.Menu()
+        menu.Append(self.annotateId, "ItemOne")
+
+        # show the popup menu
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def annotate(self, e):
+        print "annotating like a mofo"
 
     """
     Work through the list of set colours first.  Then start generating new
@@ -117,6 +141,6 @@ class Plotter(object):
                 (0, 0, 255)]
 
     def vertical_line(self):
-        self.axes.plot([self.world.clock, self.world.clock],[0,120000], label="time_line", color='red', lw=3)
+        self.axes.plot([self.world.clock, self.world.clock], [0, 120000], label="time_line", color='red', lw=3)
         self.canvas.draw()
         self.axes.lines.pop()

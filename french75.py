@@ -69,7 +69,7 @@ class French75(wx.Frame):
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
-        self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY )
+        self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_species)
@@ -106,9 +106,17 @@ class French75(wx.Frame):
         self.splitter_left.SetSashPosition(self.world.dispW/6)
         splitter_right.SetSashPosition(4 * self.world.dispW/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
+
+        #self.graph_canvas.Bind(wx.EVT_CONTEXT_MENU, self.onContext)
+        self.graph_canvas.mpl_connect('button_press_event', self.onclick)
+
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
+
+    def onclick(self, event):
+        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
+        event.button, event.x, event.y, event.xdata, event.ydata)
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
@@ -348,6 +356,26 @@ class French75(wx.Frame):
         self.world.clock = self.slider_time.GetValue()
         for segment in self.cell_segments:
             segment.update_clock()
+"""
+    def onContext(self, e):
+        # only do this part the first time so the events are only bound once
+        print "help"
+        if not hasattr(self, "annotateId"):
+            self.annotateId = wx.NewId()
+            self.Bind(wx.EVT_MENU, self.annotate, id=self.annotateId)
+
+        # build the menu
+        menu = wx.Menu()
+        menu.Append(self.annotateId, "Annotate")
+
+        # show the popup menu
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def annotate(self, e):
+        panel_pos = self.graph_canvas.ScreenToClient(wx.GetMousePosition())
+        print panel_pos
+"""
 
 if __name__ == '__main__':
     app = wx.App()

@@ -59,14 +59,14 @@ class SessionDialog(wx.Dialog):
         species_sizer.Add(species_sizer_peri, border=7)
 
         self.species_list_mid = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-        species_label_mid = wx.StaticText(session_panel, -1, "No Man's Land\n Species: ")
+        species_label_mid = wx.StaticText(session_panel, -1, "Cytoplasm\n Species: ")
         species_sizer_mid = wx.BoxSizer(wx.HORIZONTAL)
         species_sizer_mid.Add(species_label_mid)
         species_sizer_mid.Add(self.species_list_mid)
         species_sizer.Add(species_sizer_mid, border=7)
 
         self.species_list_api = wx.CheckListBox(session_panel, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-        species_label_api = wx.StaticText(session_panel, -1, "Apinucleus\n Species: ")
+        species_label_api = wx.StaticText(session_panel, -1, "Cell Membrane\n Species: ")
         species_sizer_api = wx.BoxSizer(wx.HORIZONTAL)
         species_sizer_api.Add(species_label_api)
         species_sizer_api.Add(self.species_list_api)
