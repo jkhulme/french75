@@ -221,8 +221,10 @@ class French75(wx.Frame):
     def play_animation(self, e):
         if not self.start_playing:
             self.start_playing = True
+            t4 = Thread(target=self.change_button_text, args=("Pause",))
             t = Thread(target=self.animate, args=(0.1,))
             t.start()
+            t4.start()
         else:
             if self.world.clock_pause:
                 self.world.clock_pause = False
