@@ -33,5 +33,5 @@ class LargePlotDialog(wx.Dialog):
         graph_vbox.Fit(self)
         self.SetSize((self.world.dispW - 10, ((self.world.dispW) / _PHI) + 50))
         self.Centre()
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, self.world.results, self.world.parser, self.world.legend, True, False)
+        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, False, False)
         self.draw_plot.plot()
