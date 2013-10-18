@@ -10,7 +10,10 @@ import wx.lib.agw.pycollapsiblepane as PCP
 class BioPepaToolbar(NavigationToolbar):
 
     ON_CUSTOM_ENLARGE = wx.NewId()
-    ANNOTATE = wx.NewId()
+    ANNOTATE_ARROW = wx.NewId()
+    ANNOTATE_TEXT = wx.NewId()
+    ANNOTATE_TEXT_ARROW = wx.NewId()
+    ANNOTATE_CIRCLE = wx.NewId()
 
     if (platform.system() != "Linux"):
         #None is for the separators
@@ -24,18 +27,42 @@ class BioPepaToolbar(NavigationToolbar):
             self.DeleteToolByPos(8)
             #subplots
             self.DeleteToolByPos(7)
-        self.AddSimpleTool(self.ON_CUSTOM_ENLARGE, _load_bitmap('stock_left.xpm'), 'Pan to the left', 'Pan graph to the left')
+
+        self.AddSimpleTool(self.ON_CUSTOM_ENLARGE, _load_bitmap('/home/s0901522/french75/icons/full_screen.xpm'), 'Enlarge Graph', 'Enlarge Graph')
         wx.EVT_TOOL(self, self.ON_CUSTOM_ENLARGE, self._on_custom_enlarge)
-        self.AddSimpleTool(self.ANNOTATE, _load_bitmap('stock_right.xpm'), 'Pan to the left', 'Pan graph to the left')
-        wx.EVT_TOOL(self, self.ANNOTATE, self._on_custom_annotate)
+
+        self.AddSimpleTool(self.ANNOTATE_ARROW, _load_bitmap('/home/s0901522/french75/icons/arrow.xpm'), 'Annotate with an Arrow', 'Annotate with an Arrow')
+        wx.EVT_TOOL(self, self.ANNOTATE_ARROW, self._on_custom_annotate_arrow)
+
+        self.AddSimpleTool(self.ANNOTATE_TEXT, _load_bitmap('/home/s0901522/french75/icons/text.xpm'), 'Annotate with Text', 'Annotate with Text')
+        wx.EVT_TOOL(self, self.ANNOTATE_TEXT, self._on_custom_annotate_text)
+
+        self.AddSimpleTool(self.ANNOTATE_TEXT_ARROW, _load_bitmap('/home/s0901522/french75/icons/text_arrow.xpm'), 'Annotate with an Arrow and Text', 'Annotate with an Arrow and Text')
+        wx.EVT_TOOL(self, self.ANNOTATE_TEXT_ARROW, self._on_custom_annotate_text_arrow)
+
+        self.AddSimpleTool(self.ANNOTATE_CIRCLE, _load_bitmap('/home/s0901522/french75/icons/circle.xpm'), 'Annotate with a circle', 'Annotate with a circle')
+        wx.EVT_TOOL(self, self.ANNOTATE_CIRCLE, self._on_custom_annotate_circle)
 
     def _on_custom_enlarge(self, e):
         large_plot = LargePlotDialog(None, title='Big Plot')
         large_plot.ShowModal()
         large_plot.Destroy()
 
-    def _on_custom_annotate(self, e):
-        print "foobar"
+    def _on_custom_annotate_arrow(self, e):
+        self.world.annotate = not self.world.annotate
+        self.world.annotation_mode = self.world._ARROW
+
+    def _on_custom_annotate_text(self, e):
+        self.world.annotate = not self.world.annotate
+        self.world.annotation_mode = self.world._TEXT
+
+    def _on_custom_annotate_text_arrow(self, e):
+        self.world.annotate = not self.world.annotate
+        self.world.annotation_mode = self.world._TEXT_ARROW
+
+    def _on_custom_annotate_circle(self, e):
+        self.world.annotate = not self.world.annotate
+        self.world.annotation_mode = self.world._CIRCLE
 
 if (platform.system() == "Linux"):
     class BioPepaCollapsiblePane(PCP.PyCollapsiblePane):

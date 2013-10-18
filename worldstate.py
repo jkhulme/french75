@@ -5,6 +5,12 @@ from singleton import Singleton
 class WorldState:
 
     def __init__(self):
+        self._NONE       = 0
+        self._ARROW      = 1
+        self._TEXT       = 2
+        self._TEXT_ARROW = 3
+        self._CIRCLE     = 4
+
         self.results = None
         self.clock = 0
         self.first_circle = True
@@ -16,6 +22,7 @@ class WorldState:
         self.max_time = 1
         self.clock_increment = self.max_time / 600.0
         self.parser = None
+        self.annotate = False
 
     def update_clock_increment(self):
         self.clock_increment = self.max_time / 600.0

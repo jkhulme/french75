@@ -47,6 +47,7 @@ class French75(wx.Frame):
         self.first_time = True
         self.cell_segments = []
         self.start_playing = False
+        self.click_one = False
 
         self.parse_args()
 
@@ -117,6 +118,34 @@ class French75(wx.Frame):
     def onclick(self, event):
         print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
         event.button, event.x, event.y, event.xdata, event.ydata)
+        if self.world.annotation_mode == self.world._ARROW:
+            if self.world.annotate and not self.click_one:
+                self.click_one_x = event.xdata
+                self.click_one_y = event.ydata
+                self.click_one = True
+                return
+            if self.click_one:
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+                self.click_one = False
+                return
+        elif self.world.annotation_mode == self.world._TEXT:
+            if self.world.annotate:
+                self.draw_plot.annotate_text((event.xdata, event.ydata))
+                return
+        elif self.world.annotation_mode == self.world._TEXT_ARROW:
+            if self.world.annotate and not self.click_one:
+                self.click_one_x = event.xdata
+                self.click_one_y = event.ydata
+                self.click_one = True
+                return
+            if self.click_one:
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text="Annotation")
+                self.click_one = False
+                return
+        elif self.world.annotation_mode == self.world._CIRCLE:
+            if self.world.annotate:
+                self.draw_plot.annotate_circle((event.xdata, event.ydata))
+                return
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
@@ -356,26 +385,6 @@ class French75(wx.Frame):
         self.world.clock = self.slider_time.GetValue()
         for segment in self.cell_segments:
             segment.update_clock()
-"""
-    def onContext(self, e):
-        # only do this part the first time so the events are only bound once
-        print "help"
-        if not hasattr(self, "annotateId"):
-            self.annotateId = wx.NewId()
-            self.Bind(wx.EVT_MENU, self.annotate, id=self.annotateId)
-
-        # build the menu
-        menu = wx.Menu()
-        menu.Append(self.annotateId, "Annotate")
-
-        # show the popup menu
-        self.PopupMenu(menu)
-        menu.Destroy()
-
-    def annotate(self, e):
-        panel_pos = self.graph_canvas.ScreenToClient(wx.GetMousePosition())
-        print panel_pos
-"""
 
 if __name__ == '__main__':
     app = wx.App()
