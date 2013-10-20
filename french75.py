@@ -360,6 +360,7 @@ class French75(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.draw_plot.mpl_legend = True
+            self.draw_plot.redraw_legend = False
             self.draw_plot.plot()
             self.graph_canvas.print_figure(path, dpi=_DPI)
             self.draw_plot.mpl_legend = False
