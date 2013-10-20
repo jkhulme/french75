@@ -116,8 +116,7 @@ class French75(wx.Frame):
         self.Show(True)
 
     def onclick(self, event):
-        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
-        event.button, event.x, event.y, event.xdata, event.ydata)
+        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % (event.button, event.x, event.y, event.xdata, event.ydata)
         if self.world.annotation_mode == self.world._ARROW:
             if self.world.annotate and not self.click_one:
                 self.click_one_x = event.xdata

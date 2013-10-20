@@ -4,6 +4,8 @@ from random import randrange
 from matplotlib.ticker import MultipleLocator
 import matplotlib.pyplot as plt
 from worldstate import WorldState
+from annotation import Annotation
+
 
 """
 Given the data, plot it on one graph
@@ -85,25 +87,42 @@ class Plotter(object):
         self.axes.set_title(self.world.title)
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
+        self.redraw_annotations()
+
         self.canvas.draw()
 
+    def redraw_annotations(self):
+        for annotation in self.world.annotations:
+            if annotation.type == self.world._TEXT_ARROW:
+                self.axes.annotate(annotation.text, xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor='black', shrink=0.05))
+            elif annotation.type == self.world._ARROW:
+                self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor='black', shrink=0.05))
+            elif annotation.type == self.world._CIRCLE:
+                circle1 = plt.Circle((annotation.x1, annotation.y1), 0.2, facecolor='w', edgecolor='black')
+                self.axes.add_artist(circle1)
+            elif annotation.type == self.world._TEXT:
+                self.axes.text(annotation.x1, annotation.y1, annotation.text)
 
-    def annotate_arrow(self, (x1,y1), (x2,y2), text=""):
-        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1),
-            arrowprops=dict(facecolor='black', shrink=0.05),
-            )
+    def annotate_arrow(self, (x1, y1), (x2, y2), text=""):
+        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor='black', shrink=0.05))
         self.world.annotate = False
+        if text:
+            self.world.annotations.append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text))
+        else:
+            self.world.annotations.append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
         self.canvas.draw()
 
-    def annotate_text(self, (x, y)):
-        self.axes.text(x,y,"Annotation")
+    def annotate_text(self, (x, y), text="Annotation"):
+        self.axes.text(x, y, text)
         self.world.annotate = False
+        self.world.annotations.append(Annotation(self.world._TEXT, (x, y), text=text))
         self.canvas.draw()
 
     def annotate_circle(self, (x, y)):
-        circle1=plt.Circle((x,y),0.2,facecolor='w',edgecolor='black')
+        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor='black')
         self.axes.add_artist(circle1)
         self.world.annotate = False
+        self.world.annotations.append(Annotation(self.world._CIRCLE, (x, y)))
         self.canvas.draw()
 
     """

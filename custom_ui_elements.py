@@ -5,6 +5,7 @@ import platform
 from worldstate import WorldState
 from large_plot import LargePlotDialog
 import wx.lib.agw.pycollapsiblepane as PCP
+import os
 
 
 class BioPepaToolbar(NavigationToolbar):
@@ -21,6 +22,7 @@ class BioPepaToolbar(NavigationToolbar):
 
     def __init__(self, graph_canvas):
         super(BioPepaToolbar, self).__init__(graph_canvas)
+        cwd = os.getcwd()
         self.world = WorldState.Instance()
         if (platform.system() == "Linux"):
             #save
@@ -28,19 +30,19 @@ class BioPepaToolbar(NavigationToolbar):
             #subplots
             self.DeleteToolByPos(7)
 
-        self.AddSimpleTool(self.ON_CUSTOM_ENLARGE, _load_bitmap('/home/s0901522/french75/icons/full_screen.xpm'), 'Enlarge Graph', 'Enlarge Graph')
+        self.AddSimpleTool(self.ON_CUSTOM_ENLARGE, _load_bitmap(cwd + '/icons/full_screen.xpm'), 'Enlarge Graph', 'Enlarge Graph')
         wx.EVT_TOOL(self, self.ON_CUSTOM_ENLARGE, self._on_custom_enlarge)
 
-        self.AddSimpleTool(self.ANNOTATE_ARROW, _load_bitmap('/home/s0901522/french75/icons/arrow.xpm'), 'Annotate with an Arrow', 'Annotate with an Arrow')
+        self.AddSimpleTool(self.ANNOTATE_ARROW, _load_bitmap(cwd + '/icons/arrow.xpm'), 'Annotate with an Arrow', 'Annotate with an Arrow')
         wx.EVT_TOOL(self, self.ANNOTATE_ARROW, self._on_custom_annotate_arrow)
 
-        self.AddSimpleTool(self.ANNOTATE_TEXT, _load_bitmap('/home/s0901522/french75/icons/text.xpm'), 'Annotate with Text', 'Annotate with Text')
+        self.AddSimpleTool(self.ANNOTATE_TEXT, _load_bitmap(cwd + '/icons/text.xpm'), 'Annotate with Text', 'Annotate with Text')
         wx.EVT_TOOL(self, self.ANNOTATE_TEXT, self._on_custom_annotate_text)
 
-        self.AddSimpleTool(self.ANNOTATE_TEXT_ARROW, _load_bitmap('/home/s0901522/french75/icons/text_arrow.xpm'), 'Annotate with an Arrow and Text', 'Annotate with an Arrow and Text')
+        self.AddSimpleTool(self.ANNOTATE_TEXT_ARROW, _load_bitmap(cwd + '/icons/text_arrow.xpm'), 'Annotate with an Arrow and Text', 'Annotate with an Arrow and Text')
         wx.EVT_TOOL(self, self.ANNOTATE_TEXT_ARROW, self._on_custom_annotate_text_arrow)
 
-        self.AddSimpleTool(self.ANNOTATE_CIRCLE, _load_bitmap('/home/s0901522/french75/icons/circle.xpm'), 'Annotate with a circle', 'Annotate with a circle')
+        self.AddSimpleTool(self.ANNOTATE_CIRCLE, _load_bitmap(cwd + '/icons/circle.xpm'), 'Annotate with a circle', 'Annotate with a circle')
         wx.EVT_TOOL(self, self.ANNOTATE_CIRCLE, self._on_custom_annotate_circle)
 
     def _on_custom_enlarge(self, e):
