@@ -310,6 +310,8 @@ class French75(wx.Frame):
     def animate_cell(self, e):
         #TODO Post in mailing list as to why this doesn't work on mac
         if (platform.system() == "Linux"):
+            wx.CallAfter(self.draw_plot.vertical_line())
+        else:
             wx.CallAfter(self.draw_plot.vertical_line)
         dc2 = wx.PaintDC(self.animation_panel)
         for segment in self.cell_segments:
@@ -327,8 +329,6 @@ class French75(wx.Frame):
             self.world.clock += self.world.clock_increment
             self.slider_time.SetValue(self.world.clock)
             self.animation_panel.Refresh()
-            if (platform.system() != "Linux"):
-                self.draw_plot.vertical_line()
             time.sleep(n)
 
     """
