@@ -310,7 +310,7 @@ class French75(wx.Frame):
     def animate_cell(self, e):
         #TODO Post in mailing list as to why this doesn't work on mac
         if (platform.system() == "Linux"):
-            wx.CallAfter(self.draw_plot.vertical_line())
+            wx.CallAfter(self.draw_plot.vertical_line)
         dc2 = wx.PaintDC(self.animation_panel)
         for segment in self.cell_segments:
             segment.paint(dc2)
