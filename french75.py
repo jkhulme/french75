@@ -14,8 +14,8 @@ from worldstate import WorldState
 from cell_segment import CellSegment
 import time
 from threading import Thread
-import platform
 from utils import open_results_file
+from subprocess import call
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -48,6 +48,7 @@ class French75(wx.Frame):
         self.cell_segments = []
         self.start_playing = False
         self.click_one = False
+        self.attached_file_locations = []
 
         self.parse_args()
 
@@ -56,21 +57,40 @@ class French75(wx.Frame):
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
         graph_panel = wx.Panel(splitter_middle, -1)
-        self.model_panel = wx.Panel(splitter_right, -1)
+        self.model_panel = wx.Panel(splitter_right_middle, -1)
+        self.files_panel = wx.Panel(splitter_right_middle, -1)
         self.animation_panel = wx.Panel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
+        self.files_panel.SetBackgroundColour(_BG_COLOUR)
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
+
+        attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
+        attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
+        attached_files_vbox.Add(attached_label)
+        self.attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, 400))
+        attached_files_vbox.Add(self.attached_file_list)
+        attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+        add_files_button = wx.Button(self.files_panel, -1, "Add")
+        add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
+        open_files_button = wx.Button(self.files_panel, -1, "Open")
+        open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
+        attached_file_toolbar.Add(add_files_button)
+        attached_file_toolbar.Add(open_files_button)
+        attached_files_vbox.Add(attached_file_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.files_panel.SetSizer(attached_files_vbox)
+        attached_files_vbox.Fit(self)
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_species)
@@ -85,6 +105,7 @@ class French75(wx.Frame):
         graph_fig.set_facecolor('white')
 
         self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
+        self.world.graph_canvas = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
@@ -100,8 +121,9 @@ class French75(wx.Frame):
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
-        splitter_right.SplitVertically(splitter_middle, self.model_panel)
+        splitter_right.SplitVertically(splitter_middle, splitter_right_middle)
         splitter_middle.SplitHorizontally(graph_panel, self.animation_panel)
+        splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         self.Maximize()
         self.splitter_left.SetSashPosition(self.world.dispW/6)
@@ -115,6 +137,27 @@ class French75(wx.Frame):
         self.Centre()
         self.Show(True)
 
+    def open_file(self, event):
+        i = self.attached_file_list.GetSelection()
+        call(["gnome-open", self.attached_file_locations[i]])
+
+    def attach_file(self, event):
+        file_chooser = wx.FileDialog(
+            self,
+            message="Choose a file to attach",
+            style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)
+        if file_chooser.ShowModal() == wx.ID_OK:
+            paths = file_chooser.GetPaths()
+            file_chooser.Destroy()
+            for path in paths:
+                file_name = path.split('/')[-1]
+                self.attached_file_locations.append(path)
+                self.attached_file_list.Append(file_name)
+
+            self.refresh_model_panel()
+        else:
+            file_chooser.Destroy()
+
     def onclick(self, event):
         print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % (event.button, event.x, event.y, event.xdata, event.ydata)
         if self.world.annotation_mode == self.world._ARROW:
@@ -124,12 +167,16 @@ class French75(wx.Frame):
                 self.click_one = True
                 return
             if self.click_one:
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+                click_two_x = event.xdata
+                click_two_y = event.ydata
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y))
                 self.click_one = False
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._TEXT:
             if self.world.annotate:
-                self.draw_plot.annotate_text((event.xdata, event.ydata))
+                self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._TEXT_ARROW:
             if self.world.annotate and not self.click_one:
@@ -138,12 +185,14 @@ class French75(wx.Frame):
                 self.click_one = True
                 return
             if self.click_one:
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text="Annotation")
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
                 self.click_one = False
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._CIRCLE:
             if self.world.annotate:
                 self.draw_plot.annotate_circle((event.xdata, event.ydata))
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
 
     """
@@ -309,10 +358,7 @@ class French75(wx.Frame):
     """
     def animate_cell(self, e):
         #TODO Post in mailing list as to why this doesn't work on mac
-        if (platform.system() == "Linux"):
-            wx.CallAfter(self.draw_plot.vertical_line())
-        else:
-            wx.CallAfter(self.draw_plot.vertical_line)
+        wx.CallAfter(self.draw_plot.vertical_line)
         dc2 = wx.PaintDC(self.animation_panel)
         for segment in self.cell_segments:
             segment.paint(dc2)
@@ -385,6 +431,8 @@ class French75(wx.Frame):
         self.world.clock = self.slider_time.GetValue()
         for segment in self.cell_segments:
             segment.update_clock()
+
+
 
 if __name__ == '__main__':
     app = wx.App()

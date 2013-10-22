@@ -15,6 +15,7 @@ class BioPepaToolbar(NavigationToolbar):
     ANNOTATE_TEXT = wx.NewId()
     ANNOTATE_TEXT_ARROW = wx.NewId()
     ANNOTATE_CIRCLE = wx.NewId()
+    TEXTBOX_DIALOG = wx.NewId()
 
     if (platform.system() != "Linux"):
         #None is for the separators
@@ -45,24 +46,35 @@ class BioPepaToolbar(NavigationToolbar):
         self.AddSimpleTool(self.ANNOTATE_CIRCLE, _load_bitmap(cwd + '/icons/circle.xpm'), 'Annotate with a circle', 'Annotate with a circle')
         wx.EVT_TOOL(self, self.ANNOTATE_CIRCLE, self._on_custom_annotate_circle)
 
+    def get_label(self):
+        dialog = wx.TextEntryDialog(None, "What kind of text would you like to enter?","Text Entry", "Default Value", style=wx.OK|wx.CANCEL)
+        if dialog.ShowModal() == wx.ID_OK:
+            self.world.annotation_text = dialog.GetValue()
+
     def _on_custom_enlarge(self, e):
         large_plot = LargePlotDialog(None, title='Big Plot')
         large_plot.ShowModal()
         large_plot.Destroy()
 
     def _on_custom_annotate_arrow(self, e):
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._ARROW
 
     def _on_custom_annotate_text(self, e):
+        self.get_label()
+        self.world.change_cursor(wx.CURSOR_IBEAM)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._TEXT
 
     def _on_custom_annotate_text_arrow(self, e):
+        self.get_label()
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._TEXT_ARROW
 
     def _on_custom_annotate_circle(self, e):
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._CIRCLE
 
