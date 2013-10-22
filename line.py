@@ -98,7 +98,7 @@ class Line(object):
                     current = sub_plot[count]
                     break
                 count += 1
-            intensity = (((current - self.min) / float(self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
+            intensity = (((current - self.min) / float(self.max + 1 - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             self.colour_change_points.append((count, new_colour))
