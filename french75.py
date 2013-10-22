@@ -75,6 +75,16 @@ class French75(wx.Frame):
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
+        attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
+        attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
+        attached_files_vbox.Add(attached_label)
+        attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, -1), style=wx.LB_MULTIPLE)
+        attached_files_vbox.Add(attached_file_list)
+        add_files_button = wx.Button(self.files_panel, -1, "Add")
+        attached_files_vbox.Add(add_files_button)
+        self.files_panel.SetSizer(attached_files_vbox)
+        attached_files_vbox.Fit(self)
+
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
