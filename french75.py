@@ -14,8 +14,8 @@ from worldstate import WorldState
 from cell_segment import CellSegment
 import time
 from threading import Thread
-import platform
 from utils import open_results_file
+from textbox_dialog import TextBoxDialog
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -124,12 +124,14 @@ class French75(wx.Frame):
                 self.click_one = True
                 return
             if self.click_one:
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+                click_two_x = event.xdata
+                click_two_y = event.ydata
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y))
                 self.click_one = False
                 return
         elif self.world.annotation_mode == self.world._TEXT:
             if self.world.annotate:
-                self.draw_plot.annotate_text((event.xdata, event.ydata))
+                self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
                 return
         elif self.world.annotation_mode == self.world._TEXT_ARROW:
             if self.world.annotate and not self.click_one:
@@ -138,7 +140,7 @@ class French75(wx.Frame):
                 self.click_one = True
                 return
             if self.click_one:
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text="Annotation")
+                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
                 self.click_one = False
                 return
         elif self.world.annotation_mode == self.world._CIRCLE:
@@ -382,6 +384,8 @@ class French75(wx.Frame):
         self.world.clock = self.slider_time.GetValue()
         for segment in self.cell_segments:
             segment.update_clock()
+
+
 
 if __name__ == '__main__':
     app = wx.App()
