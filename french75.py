@@ -56,15 +56,18 @@ class French75(wx.Frame):
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
         graph_panel = wx.Panel(splitter_middle, -1)
-        self.model_panel = wx.Panel(splitter_right, -1)
+        self.model_panel = wx.Panel(splitter_right_middle, -1)
+        self.files_panel = wx.Panel(splitter_right_middle, -1)
         self.animation_panel = wx.Panel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
+        self.files_panel.SetBackgroundColour(_BG_COLOUR)
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
@@ -101,8 +104,9 @@ class French75(wx.Frame):
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
-        splitter_right.SplitVertically(splitter_middle, self.model_panel)
+        splitter_right.SplitVertically(splitter_middle, splitter_right_middle)
         splitter_middle.SplitHorizontally(graph_panel, self.animation_panel)
+        splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         self.Maximize()
         self.splitter_left.SetSashPosition(self.world.dispW/6)
