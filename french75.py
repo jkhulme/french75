@@ -15,7 +15,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 from utils import open_results_file
-from textbox_dialog import TextBoxDialog
+from subprocess import call
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -48,6 +48,7 @@ class French75(wx.Frame):
         self.cell_segments = []
         self.start_playing = False
         self.click_one = False
+        self.attached_file_locations = []
 
         self.parse_args()
 
@@ -78,10 +79,16 @@ class French75(wx.Frame):
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
         attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
         attached_files_vbox.Add(attached_label)
-        attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, -1), style=wx.LB_MULTIPLE)
-        attached_files_vbox.Add(attached_file_list)
+        self.attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, 400))
+        attached_files_vbox.Add(self.attached_file_list)
+        attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
         add_files_button = wx.Button(self.files_panel, -1, "Add")
-        attached_files_vbox.Add(add_files_button)
+        add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
+        open_files_button = wx.Button(self.files_panel, -1, "Open")
+        open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
+        attached_file_toolbar.Add(add_files_button)
+        attached_file_toolbar.Add(open_files_button)
+        attached_files_vbox.Add(attached_file_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
         self.files_panel.SetSizer(attached_files_vbox)
         attached_files_vbox.Fit(self)
 
@@ -129,6 +136,27 @@ class French75(wx.Frame):
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
+
+    def open_file(self, event):
+        i = self.attached_file_list.GetSelection()
+        call(["gnome-open", self.attached_file_locations[i]])
+
+    def attach_file(self, event):
+        file_chooser = wx.FileDialog(
+            self,
+            message="Choose a file to attach",
+            style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)
+        if file_chooser.ShowModal() == wx.ID_OK:
+            paths = file_chooser.GetPaths()
+            file_chooser.Destroy()
+            for path in paths:
+                file_name = path.split('/')[-1]
+                self.attached_file_locations.append(path)
+                self.attached_file_list.Append(file_name)
+
+            self.refresh_model_panel()
+        else:
+            file_chooser.Destroy()
 
     def onclick(self, event):
         print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % (event.button, event.x, event.y, event.xdata, event.ydata)
