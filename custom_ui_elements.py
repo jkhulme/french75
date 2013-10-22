@@ -57,20 +57,24 @@ class BioPepaToolbar(NavigationToolbar):
         large_plot.Destroy()
 
     def _on_custom_annotate_arrow(self, e):
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._ARROW
 
     def _on_custom_annotate_text(self, e):
         self.get_label()
+        self.world.change_cursor(wx.CURSOR_IBEAM)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._TEXT
 
     def _on_custom_annotate_text_arrow(self, e):
         self.get_label()
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._TEXT_ARROW
 
     def _on_custom_annotate_circle(self, e):
+        self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._CIRCLE
 

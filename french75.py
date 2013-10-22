@@ -85,6 +85,7 @@ class French75(wx.Frame):
         graph_fig.set_facecolor('white')
 
         self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
+        self.world.graph_canvas = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
@@ -128,10 +129,12 @@ class French75(wx.Frame):
                 click_two_y = event.ydata
                 self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y))
                 self.click_one = False
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._TEXT:
             if self.world.annotate:
                 self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._TEXT_ARROW:
             if self.world.annotate and not self.click_one:
@@ -142,10 +145,12 @@ class French75(wx.Frame):
             if self.click_one:
                 self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
                 self.click_one = False
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
         elif self.world.annotation_mode == self.world._CIRCLE:
             if self.world.annotate:
                 self.draw_plot.annotate_circle((event.xdata, event.ydata))
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
 
     """

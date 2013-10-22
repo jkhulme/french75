@@ -112,8 +112,6 @@ class Plotter(object):
             self.world.annotations.append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
         self.canvas.draw()
 
-
-
     def annotate_text(self, (x, y), text="Annotation"):
         self.axes.text(x, y, text)
         self.world.annotate = False
