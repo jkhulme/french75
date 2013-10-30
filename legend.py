@@ -3,7 +3,7 @@ from plot_dialog import Plot_Dialog
 from custom_ui_elements import BioPepaCollapsiblePane
 
 _HEIGHT = 20
-_WIDTH = 20
+_WIDTH = 45
 _BG_COLOUR = 'white'
 
 
@@ -57,17 +57,17 @@ class Legend(object):
                 btn_colour.SetBackgroundColour(self.results[result][key].flat_colour)
                 hbox_collpane.Add(btn_colour)
 
-                cb_show_hide = wx.CheckBox(collpane_body, -1, 'S')
+                cb_show_hide = wx.CheckBox(collpane_body, -1, 'Show')
                 hbox_collpane.Add(cb_show_hide)
                 cb_show_hide.SetValue(self.results[result][key].plot_line)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
-                cb_intense = wx.CheckBox(collpane_body, -1, 'I')
+                cb_intense = wx.CheckBox(collpane_body, -1, 'Ints')
                 hbox_collpane.Add(cb_intense)
                 cb_intense.SetValue(self.results[result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
-                btn_props = wx.Button(collpane_body, -1, 'P', size=(_WIDTH, _HEIGHT))
+                btn_props = wx.Button(collpane_body, -1, 'Prefs', size=(_WIDTH, _HEIGHT))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
                 hbox_collpane.Add(btn_props)
                 vbox_coll.Add(hbox_collpane)

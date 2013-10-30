@@ -59,6 +59,7 @@ class French75(wx.Frame):
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
         splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
+        splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right_middle, -1)
         self.files_panel = wx.Panel(splitter_right_middle, -1)
@@ -141,11 +142,9 @@ class French75(wx.Frame):
         i = self.attached_file_list.GetSelection()
         call(["gnome-open", self.attached_file_locations[i]])
 
+
     def attach_file(self, event):
-        file_chooser = wx.FileDialog(
-            self,
-            message="Choose a file to attach",
-            style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)
+        file_chooser = wx.FileDialog(self, message="Choose a file to attach", style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)
         if file_chooser.ShowModal() == wx.ID_OK:
             paths = file_chooser.GetPaths()
             file_chooser.Destroy()
@@ -183,6 +182,7 @@ class French75(wx.Frame):
                 self.click_one_x = event.xdata
                 self.click_one_y = event.ydata
                 self.click_one = True
+                self.world.change_cursor(wx.CURSOR_ARROW)
                 return
             if self.click_one:
                 self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
