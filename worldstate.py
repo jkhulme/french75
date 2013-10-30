@@ -1,4 +1,5 @@
 from singleton import Singleton
+import wx
 
 
 @Singleton
@@ -27,3 +28,6 @@ class WorldState:
 
     def update_clock_increment(self):
         self.clock_increment = self.max_time / 600.0
+
+    def change_cursor(self, cursor):
+        self.graph_canvas.SetCursor(wx.StockCursor(cursor))
