@@ -140,7 +140,10 @@ class French75(wx.Frame):
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
-        call(["gnome-open", self.attached_file_locations[i]])
+        if platform.system() == "Linux":
+            call(["gnome-open", self.attached_file_locations[i]])
+        else:
+            call(["open", self.attached_file_locations[i]])
 
     def attach_file(self, event):
         file_chooser = wx.FileDialog(self, message="Choose a file to attach", style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)

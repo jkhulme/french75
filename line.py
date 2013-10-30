@@ -104,6 +104,7 @@ class Line(object):
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
 
+
     """
     Split the data into multiple lists padded with None to enable the intensity plot
     """
