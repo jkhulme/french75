@@ -233,7 +233,11 @@ class French75(wx.Frame):
         annotate_menu.Destroy()
 
     def edit_annotation_text(self, event):
-        print "Editing text"
+        self.get_label()
+        if self.world.annotation_text != "":
+            self.selected_annotation.text = self.world.annotation_text
+            if self.selected_annotation.type == self.world._ARROW:
+                self.selected_annotation.type = self.world._TEXT_ARROW
 
     def delete_annotation(self, event):
         new_annotation_list = []
@@ -241,6 +245,14 @@ class French75(wx.Frame):
             if annotation != self.selected_annotation:
                 new_annotation_list.append(annotation)
         self.world.annotations = new_annotation_list
+
+    def get_label(self):
+         dialog = wx.TextEntryDialog(None, "What kind of text would you like to enter?","Text Entry", "Default Value", style=wx.OK|wx.CANCEL)
+         self.txtctrl = dialog.FindWindowById(3000)
+         #Not the right thing
+         #self.txtctrl.Bind(wx.EVT_LEFT_DOWN, self.clear_text_box)
+         if dialog.ShowModal() == wx.ID_OK:
+             self.world.annotation_text = dialog.GetValue()
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be

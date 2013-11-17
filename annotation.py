@@ -1,7 +1,7 @@
 class Annotation(object):
 
-    def __init__(self, type, start, finish=None, text="", colour="black"):
-        self.type = type
+    def __init__(self, a_type, start, finish=None, text="", colour="black"):
+        self.type = a_type
         (self.x1, self.y1) = start
         if finish:
             (self.x2, self.y2) = finish
