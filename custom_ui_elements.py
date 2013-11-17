@@ -48,6 +48,9 @@ class BioPepaToolbar(NavigationToolbar):
 
     def get_label(self):
          dialog = wx.TextEntryDialog(None, "What kind of text would you like to enter?","Text Entry", "Default Value", style=wx.OK|wx.CANCEL)
+         self.txtctrl = dialog.FindWindowById(3000)
+         #Not the right thing
+         self.txtctrl.Bind(wx.EVT_LEFT_DOWN, self.clear_text_box)
          if dialog.ShowModal() == wx.ID_OK:
              self.world.annotation_text = dialog.GetValue()
 
@@ -77,6 +80,9 @@ class BioPepaToolbar(NavigationToolbar):
         self.world.change_cursor(wx.CURSOR_HAND)
         self.world.annotate = not self.world.annotate
         self.world.annotation_mode = self.world._CIRCLE
+
+    def clear_text_box(self, e):
+        self.txtctrl.SetValue("")
 
 if (platform.system() == "Linux"):
     class BioPepaCollapsiblePane(PCP.PyCollapsiblePane):

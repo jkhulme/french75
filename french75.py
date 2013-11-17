@@ -160,7 +160,6 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
     def onclick(self, event):
-        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % (event.button, event.x, event.y, event.xdata, event.ydata)
         if self.world.annotation_mode == self.world._ARROW:
             if self.world.annotate and not self.click_one:
                 self.click_one_x = event.xdata
@@ -173,11 +172,13 @@ class French75(wx.Frame):
                 self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y))
                 self.click_one = False
                 self.world.change_cursor(wx.CURSOR_ARROW)
+                self.world.annotation_mode = self.world._NONE
                 return
         elif self.world.annotation_mode == self.world._TEXT:
             if self.world.annotate:
                 self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
                 self.world.change_cursor(wx.CURSOR_ARROW)
+                self.world.annotation_mode = self.world._NONE
                 return
         elif self.world.annotation_mode == self.world._TEXT_ARROW:
             if self.world.annotate and not self.click_one:
@@ -190,11 +191,16 @@ class French75(wx.Frame):
                 self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
                 self.click_one = False
                 self.world.change_cursor(wx.CURSOR_ARROW)
+                self.world.annotation_mode = self.world._NONE
                 return
         elif self.world.annotation_mode == self.world._CIRCLE:
             if self.world.annotate:
                 self.draw_plot.annotate_circle((event.xdata, event.ydata))
+                self.world.annotation_mode = self.world._NONE
                 return
+        else:
+            for annotation in self.world.annotations:
+                print annotation
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
