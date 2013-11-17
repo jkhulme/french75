@@ -306,7 +306,21 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.save_snapshot, filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, filem_open_results_save_plot)
 
+        annotation_menu = wx.Menu()
+        annotationm_toggle = annotation_menu.Append(wx.ID_NEW, '&Toggle')
+
+        menubar.Append(annotation_menu, '&Annotations')
+
+        self.Bind(wx.EVT_MENU, self.toggle_annotations, annotationm_toggle)
+
         return menubar
+
+    def toggle_annotations(self, event):
+        self.draw_plot.draw_annotations = not self.draw_plot.draw_annotations
+        self.draw_plot.redraw_legend = False
+        self.draw_plot.plot()
+        self.draw_plot.redraw_legend = True
+
 
     """
     Session starter dialogue

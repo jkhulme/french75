@@ -41,6 +41,7 @@ class Plotter(object):
         self.hard_colours = self.populate_colours()
         self.xkcdify = xkcdify
         results = self.world.results
+        self.draw_annotations = True
 
         """
         Create a line from each species.  Don't put time in there.
@@ -87,7 +88,8 @@ class Plotter(object):
         self.axes.set_title(self.world.title)
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
-        self.redraw_annotations()
+        if self.draw_annotations:
+            self.redraw_annotations()
 
         self.canvas.draw()
 
