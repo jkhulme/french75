@@ -201,22 +201,22 @@ class French75(wx.Frame):
                     self.world.annotation_mode = self.world._NONE
                     return
         elif event.button == _RIGHT_BUTTON:
-            selected_annotation = None
+            self.selected_annotation = None
             for annotation in self.world.annotations:
                 dist = euclid_distance((event.xdata, event.ydata), (annotation.x1, annotation.y1))
                 if dist < 0.5:
-                    if selected_annotation is None:
-                        selected_annotation = annotation
-                    elif euclid_distance((event.xdata, event.ydata), (selected_annotation.x1, selected_annotation.ys)):
-                        selected_annotation = annotation
-            if selected_annotation is not None:
-                selected_annotation.colour = 'red'
+                    if self.selected_annotation is None:
+                        self.selected_annotation = annotation
+                    elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
+                        self.selected_annotation = annotation
+            if self.selected_annotation is not None:
+                self.selected_annotation.colour = 'red'
                 print "Updated colour"
                 self.draw_plot.redraw_legend = False
                 self.draw_plot.plot()
                 self.draw_plot.redraw_legend = True
                 self.annotation_menu()
-                selected_annotation.colour = 'black'
+                self.selected_annotation.colour = 'black'
                 self.draw_plot.redraw_legend = False
                 self.draw_plot.plot()
                 self.draw_plot.redraw_legend = True
@@ -236,7 +236,11 @@ class French75(wx.Frame):
         print "Editing text"
 
     def delete_annotation(self, event):
-        print "Deleting annotation"
+        new_annotation_list = []
+        for annotation in self.world.annotations:
+            if annotation != self.selected_annotation:
+                new_annotation_list.append(annotation)
+        self.world.annotations = new_annotation_list
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
