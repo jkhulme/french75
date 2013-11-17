@@ -134,10 +134,14 @@ class French75(wx.Frame):
 
         #self.graph_canvas.Bind(wx.EVT_CONTEXT_MENU, self.onContext)
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
+        self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
         self.SetTitle(_TITLE)
         self.Centre()
         self.Show(True)
+
+    def move_mouse(self, event):
+        print('you moved to ', event.xdata, event.ydata)
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
@@ -162,6 +166,7 @@ class French75(wx.Frame):
 
     def onclick(self, event):
         if event.button == _LEFT_BUTTON:
+            print event.xdata, event.ydata
             if self.world.annotation_mode == self.world._ARROW:
                 if self.world.annotate and not self.click_one:
                     self.click_one_x = event.xdata
