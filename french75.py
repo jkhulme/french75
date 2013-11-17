@@ -15,7 +15,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import open_results_file
+from utils import open_results_file, euclid_distance
 from subprocess import call
 
 _DPI = 80
@@ -24,6 +24,8 @@ _TITLE = 'French75'
 _PHI = 1.618
 _COLS = 6
 _NUM_OF_SIDEBARS = 2
+_LEFT_BUTTON = 1
+_RIGHT_BUTTON = 3
 
 
 class French75(wx.Frame):
@@ -160,47 +162,48 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
     def onclick(self, event):
-        if self.world.annotation_mode == self.world._ARROW:
-            if self.world.annotate and not self.click_one:
-                self.click_one_x = event.xdata
-                self.click_one_y = event.ydata
-                self.click_one = True
-                return
-            if self.click_one:
-                click_two_x = event.xdata
-                click_two_y = event.ydata
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y))
-                self.click_one = False
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.annotation_mode = self.world._NONE
-                return
-        elif self.world.annotation_mode == self.world._TEXT:
-            if self.world.annotate:
-                self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.annotation_mode = self.world._NONE
-                return
-        elif self.world.annotation_mode == self.world._TEXT_ARROW:
-            if self.world.annotate and not self.click_one:
-                self.click_one_x = event.xdata
-                self.click_one_y = event.ydata
-                self.click_one = True
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                return
-            if self.click_one:
-                self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text)
-                self.click_one = False
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.annotation_mode = self.world._NONE
-                return
-        elif self.world.annotation_mode == self.world._CIRCLE:
-            if self.world.annotate:
-                self.draw_plot.annotate_circle((event.xdata, event.ydata))
-                self.world.annotation_mode = self.world._NONE
-                return
-        else:
+        if event.button == _LEFT_BUTTON:
+            if self.world.annotation_mode == self.world._ARROW:
+                if self.world.annotate and not self.click_one:
+                    self.click_one_x = event.xdata
+                    self.click_one_y = event.ydata
+                    self.click_one = True
+                    return
+                if self.click_one:
+                    click_two_x = event.xdata
+                    click_two_y = event.ydata
+                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y), colour='red')
+                    self.click_one = False
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.annotation_mode = self.world._NONE
+                    return
+            elif self.world.annotation_mode == self.world._TEXT:
+                if self.world.annotate:
+                    self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.annotation_mode = self.world._NONE
+                    return
+            elif self.world.annotation_mode == self.world._TEXT_ARROW:
+                if self.world.annotate and not self.click_one:
+                    self.click_one_x = event.xdata
+                    self.click_one_y = event.ydata
+                    self.click_one = True
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    return
+                if self.click_one:
+                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text, colour='red')
+                    self.click_one = False
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.annotation_mode = self.world._NONE
+                    return
+            elif self.world.annotation_mode == self.world._CIRCLE:
+                if self.world.annotate:
+                    self.draw_plot.annotate_circle((event.xdata, event.ydata), colour='red')
+                    self.world.annotation_mode = self.world._NONE
+                    return
+        elif event.button == _RIGHT_BUTTON:
             for annotation in self.world.annotations:
-                print annotation
+                print euclid_distance((event.xdata, event.ydata), (annotation.x1, annotation.y1))
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be

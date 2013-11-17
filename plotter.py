@@ -94,20 +94,20 @@ class Plotter(object):
     def redraw_annotations(self):
         for annotation in self.world.annotations:
             if annotation.type == self.world._TEXT_ARROW:
-                self.axes.annotate(annotation.text, xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor='black', shrink=0.05))
+                self.axes.annotate(annotation.text, xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
             elif annotation.type == self.world._ARROW:
-                self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor='black', shrink=0.05))
+                self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
             elif annotation.type == self.world._CIRCLE:
-                circle1 = plt.Circle((annotation.x1, annotation.y1), 0.2, facecolor='w', edgecolor='black')
+                circle1 = plt.Circle((annotation.x1, annotation.y1), 0.2, facecolor='w', edgecolor=annotation.colour)
                 self.axes.add_artist(circle1)
             elif annotation.type == self.world._TEXT:
                 self.axes.text(annotation.x1, annotation.y1, annotation.text)
 
-    def annotate_arrow(self, (x1, y1), (x2, y2), text=""):
-        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor='black', shrink=0.05))
+    def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
+        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
         self.world.annotate = False
         if text:
-            self.world.annotations.append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text))
+            self.world.annotations.append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
         else:
             self.world.annotations.append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
         self.canvas.draw()
@@ -118,11 +118,11 @@ class Plotter(object):
         self.world.annotations.append(Annotation(self.world._TEXT, (x, y), text=text))
         self.canvas.draw()
 
-    def annotate_circle(self, (x, y)):
-        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor='black')
+    def annotate_circle(self, (x, y), colour="black"):
+        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
         self.axes.add_artist(circle1)
         self.world.annotate = False
-        self.world.annotations.append(Annotation(self.world._CIRCLE, (x, y)))
+        self.world.annotations.append(Annotation(self.world._CIRCLE, (x, y), colour))
         self.canvas.draw()
 
     """
