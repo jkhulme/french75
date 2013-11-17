@@ -26,12 +26,6 @@ _COLS = 6
 _NUM_OF_SIDEBARS = 2
 _LEFT_BUTTON = 1
 _RIGHT_BUTTON = 3
-_ANNOTATION_MENU = [ "Edit Text",
-                     "Delete"]
-
-_ANNOTATION_MENU_DICT = {}
-for title in _ANNOTATION_MENU:
-    _ANNOTATION_MENU_DICT[ wx.NewId() ] = title
 
 class French75(wx.Frame):
 
@@ -230,12 +224,19 @@ class French75(wx.Frame):
                 print "Missed annotation"
 
     def annotation_menu(self):
-        menu = wx.Menu()
-        for (id,title) in _ANNOTATION_MENU_DICT.items():
-            menu.Append( id, title )
+        annotate_menu = wx.Menu()
+        m_edit_annotation = annotate_menu.Append(wx.ID_ANY, 'Edit')
+        m_delete_annotation = annotate_menu.Append(wx.ID_ANY, 'Delete')
+        self.Bind(wx.EVT_MENU, self.edit_annotation_text, m_edit_annotation)
+        self.Bind(wx.EVT_MENU, self.delete_annotation, m_delete_annotation)
+        self.graph_panel.PopupMenu(annotate_menu)
+        annotate_menu.Destroy()
 
-        self.graph_panel.PopupMenu(menu)
-        menu.Destroy()
+    def edit_annotation_text(self, event):
+        print "Editing text"
+
+    def delete_annotation(self, event):
+        print "Deleting annotation"
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
