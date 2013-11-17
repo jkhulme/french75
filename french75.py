@@ -26,7 +26,12 @@ _COLS = 6
 _NUM_OF_SIDEBARS = 2
 _LEFT_BUTTON = 1
 _RIGHT_BUTTON = 3
+_ANNOTATION_MENU = [ "Edit Text",
+                     "Delete"]
 
+_ANNOTATION_MENU_DICT = {}
+for title in _ANNOTATION_MENU:
+    _ANNOTATION_MENU_DICT[ wx.NewId() ] = title
 
 class French75(wx.Frame):
 
@@ -62,14 +67,14 @@ class French75(wx.Frame):
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
         splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
-        graph_panel = wx.Panel(splitter_middle, -1)
+        self.graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right_middle, -1)
         self.files_panel = wx.Panel(splitter_right_middle, -1)
         self.animation_panel = wx.Panel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
-        graph_panel.SetBackgroundColour(_BG_COLOUR)
+        self.graph_panel.SetBackgroundColour(_BG_COLOUR)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
         self.files_panel.SetBackgroundColour(_BG_COLOUR)
 
@@ -107,7 +112,7 @@ class French75(wx.Frame):
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
 
-        self.graph_canvas = FigCanvas(graph_panel, -1, graph_fig)
+        self.graph_canvas = FigCanvas(self.graph_panel, -1, graph_fig)
         self.world.graph_canvas = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
@@ -117,7 +122,7 @@ class French75(wx.Frame):
         (toolW, toolH) = toolbar.GetSizeTuple()
         graph_vbox.Add(toolbar)
 
-        graph_panel.SetSizer(graph_vbox)
+        self.graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
 
         self.world.legend = Legend(self.legend_panel)
@@ -125,7 +130,7 @@ class French75(wx.Frame):
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
         splitter_right.SplitVertically(splitter_middle, splitter_right_middle)
-        splitter_middle.SplitHorizontally(graph_panel, self.animation_panel)
+        splitter_middle.SplitHorizontally(self.graph_panel, self.animation_panel)
         splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         self.Maximize()
@@ -172,7 +177,7 @@ class French75(wx.Frame):
                 if self.click_one:
                     click_two_x = event.xdata
                     click_two_y = event.ydata
-                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y), colour='red')
+                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (click_two_x, click_two_y), colour='black')
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
@@ -191,19 +196,46 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     return
                 if self.click_one:
-                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text, colour='red')
+                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text, colour='black')
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
                     return
             elif self.world.annotation_mode == self.world._CIRCLE:
                 if self.world.annotate:
-                    self.draw_plot.annotate_circle((event.xdata, event.ydata), colour='red')
+                    self.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.annotation_mode = self.world._NONE
                     return
         elif event.button == _RIGHT_BUTTON:
+            selected_annotation = None
             for annotation in self.world.annotations:
-                print euclid_distance((event.xdata, event.ydata), (annotation.x1, annotation.y1))
+                dist = euclid_distance((event.xdata, event.ydata), (annotation.x1, annotation.y1))
+                if dist < 0.5:
+                    if selected_annotation is None:
+                        selected_annotation = annotation
+                    elif euclid_distance((event.xdata, event.ydata), (selected_annotation.x1, selected_annotation.ys)):
+                        selected_annotation = annotation
+            if selected_annotation is not None:
+                selected_annotation.colour = 'red'
+                print "Updated colour"
+                self.draw_plot.redraw_legend = False
+                self.draw_plot.plot()
+                self.draw_plot.redraw_legend = True
+                self.annotation_menu()
+                selected_annotation.colour = 'black'
+                self.draw_plot.redraw_legend = False
+                self.draw_plot.plot()
+                self.draw_plot.redraw_legend = True
+            else:
+                print "Missed annotation"
+
+    def annotation_menu(self):
+        menu = wx.Menu()
+        for (id,title) in _ANNOTATION_MENU_DICT.items():
+            menu.Append( id, title )
+
+        self.graph_panel.PopupMenu(menu)
+        menu.Destroy()
 
     """
     currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
