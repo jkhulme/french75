@@ -186,6 +186,9 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
                     self.world.temp_annotation = None
+                    self.draw_plot.redraw_legend = False
+                    self.draw_plot.plot()
+                    self.draw_plot.redraw_legend = True
                     return
             elif self.world.annotation_mode == self.world._TEXT:
                 if self.world.annotate:
@@ -206,6 +209,9 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
                     self.world.temp_annotation = None
+                    self.draw_plot.redraw_legend = False
+                    self.draw_plot.plot()
+                    self.draw_plot.redraw_legend = True
                     return
             elif self.world.annotation_mode == self.world._CIRCLE:
                 if self.world.annotate:
