@@ -141,7 +141,8 @@ class French75(wx.Frame):
         self.Show(True)
 
     def move_mouse(self, event):
-        print('you moved to ', event.xdata, event.ydata)
+        if self.world.annotate and self.click_one:
+            self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), colour='black')
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
@@ -297,7 +298,6 @@ class French75(wx.Frame):
         file_menu = wx.Menu()
         filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
         file_menu.AppendSeparator()
-        filem_open_results = file_menu.Append(wx.ID_OPEN, '&Open')
         filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
         file_menu.AppendSeparator()
         filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
@@ -306,13 +306,12 @@ class French75(wx.Frame):
         menubar.Append(file_menu, '&File')
 
         self.Bind(wx.EVT_MENU, self.new_session, filem_new_session)
-        self.Bind(wx.EVT_MENU, self.open_results_file, filem_open_results)
         self.Bind(wx.EVT_MENU, self.open_model_file, filem_open_results_open_model)
         self.Bind(wx.EVT_MENU, self.save_snapshot, filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, filem_open_results_save_plot)
 
         annotation_menu = wx.Menu()
-        annotationm_toggle = annotation_menu.Append(wx.ID_NEW, '&Toggle')
+        annotationm_toggle = annotation_menu.Append(wx.ID_ANY, '&Toggle')
 
         menubar.Append(annotation_menu, '&Annotations')
 
