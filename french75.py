@@ -17,6 +17,7 @@ from threading import Thread
 import platform
 from utils import open_results_file, euclid_distance
 from subprocess import call
+from annotation import Annotation
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -141,8 +142,11 @@ class French75(wx.Frame):
         self.Show(True)
 
     def move_mouse(self, event):
-        if self.world.annotate and self.click_one:
-            self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), colour='black')
+        if self.click_one:
+            self.world.temp_annotation = Annotation(self.world._ARROW, (self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+        self.draw_plot.redraw_legend = False
+        self.draw_plot.plot()
+        self.draw_plot.redraw_legend = True
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
@@ -181,6 +185,7 @@ class French75(wx.Frame):
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
+                    self.world.temp_annotation = None
                     return
             elif self.world.annotation_mode == self.world._TEXT:
                 if self.world.annotate:
@@ -200,6 +205,7 @@ class French75(wx.Frame):
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
+                    self.world.temp_annotation = None
                     return
             elif self.world.annotation_mode == self.world._CIRCLE:
                 if self.world.annotate:
