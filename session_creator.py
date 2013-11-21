@@ -1,6 +1,7 @@
 import wx
 from worldstate import WorldState
 from utils import open_results_file
+import wx.wizard as wizmod
 
 
 class SessionDialog(wx.Dialog):
@@ -159,3 +160,57 @@ class SessionDialog(wx.Dialog):
                         self.world.species_dict[species] = [(species,location,flag)]
                     else:
                         self.world.species_dict[species].append((species,location,flag))
+
+padding = 5
+
+
+class SessionWizard(wx.wizard.Wizard):
+
+    def __init__(self, title, img_filename=""):
+        wx.wizard.Wizard.__init__(self, None, -1, title)
+        self.pages = []
+
+    def add_page(self, page):
+        if self.pages:
+            previous_page = self.pages[-1]
+            page.prev = previous_page
+            previous_page.next = page
+        self.pages.append(page)
+
+    def run(self):
+        self.RunWizard(self.pages[0])
+
+
+class wizard_page(wizmod.PyWizardPage):
+
+    def __init__(self, parent, title):
+        wx.wizard.PyWizardPage.__init__(self, parent)
+        self.next, self.prev = None
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        title = wx.StaticText(self, -1, title)
+        title.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
+        self.sizer.AddWindow(title, 0, wx.ALIGN_LEFT|wx.ALL, padding)
+        self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, padding)
+        self.SetSizer(self.sizer)
+
+    def add_widget(self, widget):
+        self.sizer.Add(widget, 0, wx.EXPAND|wx.ALL, padding)
+
+"""
+if __name__ == '__main__':
+    # Create wizard and add any kind pages you'd like
+    session_starter = SessionWizard('Simple Wizard', img_filename='wiz.png')
+    page1 = wizard_page(session_starter, 'Page 1')  # Create a first page
+    page1.add_stuff(wx.StaticText(page1, -1, 'Hola'))
+    session_starter.add_page(page1)
+
+    # Add some more pages
+    session_starter.add_page( wizard_page(session_starter, 'Page 2') )
+    session_starter.add_page( wizard_page(session_starter, 'Page 3') )
+
+    session_starter.run() # Show the main window
+
+    # Cleanup
+    session_starter.Destroy()
+"""
+
