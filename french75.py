@@ -9,7 +9,7 @@ from legend import Legend
 import sys
 import os
 from custom_ui_elements import BioPepaToolbar
-from session_creator import SessionDialog
+from session_creator import SessionWizard
 from worldstate import WorldState
 from cell_segment import CellSegment
 import time
@@ -342,8 +342,8 @@ class French75(wx.Frame):
     Session starter dialogue
     """
     def new_session(self, e):
-        session_dialog = SessionDialog(None, title='Session Starter')
-        session_dialog.ShowModal()
+        session_dialog = SessionWizard(title='Session Starter')
+        session_dialog.run()
         session_dialog.Destroy()
 
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)

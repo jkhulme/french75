@@ -3,7 +3,7 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 
-
+"""
 class SessionDialog(wx.Dialog):
 
     def __init__(self, *args, **kw):
@@ -160,6 +160,7 @@ class SessionDialog(wx.Dialog):
                         self.world.species_dict[species] = [(species,location,flag)]
                     else:
                         self.world.species_dict[species].append((species,location,flag))
+"""
 
 padding = 5
 
@@ -169,6 +170,53 @@ class SessionWizard(wx.wizard.Wizard):
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
         self.pages = []
+
+        print "YOU'RE A WIZARD HARRY"
+        self.chosen_paths = []
+        self.species_dict = {}
+
+        self.world = WorldState.Instance()
+
+        page1 = wizard_page(self, 'Enter Title')  # Create a first page
+        self.title_text = wx.TextCtrl(page1, -1, size=(300, -1))
+        page1.add_widget(self.title_text)
+        self.add_page(page1)
+
+        page2 = wizard_page(self, 'Select Results Files')
+        self.file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE)
+        page2.add_widget(self.file_list)
+        file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+        btn_add_file = wx.Button(page2, -1, "Add")
+        btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
+        btn_rem_file = wx.Button(page2, -1, "Remove")
+        btn_rem_file.Bind(wx.EVT_BUTTON, self.remove_files)
+        file_toolbar.Add(btn_add_file)
+        file_toolbar.Add(btn_rem_file)
+        page2.add_widget(file_toolbar)
+        self.add_page(page2)
+
+        page3 = wizard_page(self, 'Select Model File')
+        self.model_list = wx.ListBox(page3, -1, size=(300, -1), style=wx.LB_SINGLE)
+        model_button = wx.Button(page3, -1, "Select")
+        model_button.Bind(wx.EVT_BUTTON, self.select_model)
+        page3.add_widget(self.model_list)
+        page3.add_widget(model_button)
+        self.add_page(page3)
+
+        page4 = wizard_page(self, 'Perinuclear Species')
+        self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        page4.add_widget(self.species_list_peri)
+        self.add_page(page4)
+
+        page5 = wizard_page(self, 'Cytoplasmic Species')
+        self.species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        page5.add_widget(self.species_list_mid)
+        self.add_page(page5)
+
+        page6 = wizard_page(self, 'Cell Membrane Species')
+        self.species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        page6.add_widget(self.species_list_api)
+        self.add_page(page6)
 
     def add_page(self, page):
         '''Add a wizard page to the list.'''
@@ -180,6 +228,84 @@ class SessionWizard(wx.wizard.Wizard):
 
     def run(self):
         self.RunWizard(self.pages[0])
+
+    def add_files(self, e):
+        open_results_file(self)
+        for key in self.world.results.keys():
+            self.species_dict[key] = []
+            for species in self.world.results[key].keys():
+                if species != 'Time':
+                    self.species_dict[key].append(species)
+            self.populate_species_lists()
+            self.chosen_paths.append(key)
+            self.file_list.Append(key)
+
+    def remove_files(self, e):
+        old_paths = [path for i, path in enumerate(self.chosen_paths) if i in self.file_list.GetSelections()]
+        self.chosen_paths = [path for i, path in enumerate(self.chosen_paths) if i not in self.file_list.GetSelections()]
+        for path in old_paths:
+            del self.species_dict[path.split('/')[-1]]
+        self.file_list.Clear()
+        for path in self.chosen_paths:
+            self.file_list.Append(path.split('/')[-1])
+        self.populate_species_lists()
+
+    def populate_species_lists(self):
+        self.species_list_peri.Clear()
+        self.species_list_mid.Clear()
+        self.species_list_api.Clear()
+        for key in self.species_dict.keys():
+            for species in self.species_dict[key]:
+                self.species_list_peri.Append(species)
+                self.species_list_mid.Append(species)
+                self.species_list_api.Append(species)
+
+    def select_model(self, e):
+        file_chooser = wx.FileDialog(
+            self,
+            message="Choose a file",
+            wildcard="*.biopepa",
+            style=wx.OPEN | wx.CHANGE_DIR)
+        if file_chooser.ShowModal() == wx.ID_OK:
+            path = file_chooser.GetPaths()[0]
+            self.model_list.Append(path.split('/')[-1])
+            file_chooser.Destroy()
+        else:
+            file_chooser.Destroy()
+
+    def Destroy(self):
+        self.world.title = self.title_text.GetLineText(0)
+        self.parse_species()
+        self.Close()
+
+    def parse_species(self):
+        print "WAGAMAMA"
+        self.world.species_dict = {}
+        inner = self.species_list_peri.GetCheckedStrings()[0]
+        middle = self.species_list_mid.GetCheckedStrings()[0]
+        outer = self.species_list_api.GetCheckedStrings()[0]
+        loc_flag = 0
+        for file_name in self.world.results.keys():
+            for result in self.world.results[file_name].keys():
+                if not result == "Time":
+                    print result
+                    print inner
+                    if result == inner:
+                        loc_flag = 1
+                    elif result == middle:
+                        loc_flag = 2
+                    elif result == outer:
+                        loc_flag = 3
+                    try:
+                        (name, loc) = result.split("@")
+                        (species, location, flag) = (name, loc, loc_flag)
+                    except:
+                        (species, location, flag) = (result, None, loc_flag)
+
+                    if species not in self.world.species_dict.keys():
+                        self.world.species_dict[species] = [(species,location,flag)]
+                    else:
+                        self.world.species_dict[species].append((species,location,flag))
 
 padding = 5
 
@@ -216,52 +342,12 @@ class wizard_page(wizmod.PyWizardPage):
         '''Return the previous page'''
         return self.prev
 
+"""
 if __name__ == '__main__':
     app = wx.PySimpleApp()  # Start the application
 
     # Create wizard and add any kind pages you'd like
     session_starter = SessionWizard('Simple Wizard', img_filename='wiz.png')
-
-    page1 = wizard_page(session_starter, 'Enter Title')  # Create a first page
-    title_text = wx.TextCtrl(page1, -1, size=(300, -1))
-    page1.add_widget(title_text)
-    session_starter.add_page(page1)
-
-    page2 = wizard_page(session_starter, 'Select Results Files')
-    file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE)
-    page2.add_widget(file_list)
-    file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
-    btn_add_file = wx.Button(page2, -1, "Add")
-    #btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
-    btn_rem_file = wx.Button(page2, -1, "Remove")
-    #btn_rem_file.Bind(wx.EVT_BUTTON, self.remove_files)
-    file_toolbar.Add(btn_add_file)
-    file_toolbar.Add(btn_rem_file)
-    page2.add_widget(file_toolbar)
-    session_starter.add_page(page2)
-
-    page3 = wizard_page(session_starter, 'Select Model File')
-    model_list = wx.ListBox(page3, -1, size=(300, -1), style=wx.LB_SINGLE)
-    model_button = wx.Button(page3, -1, "Select")
-    #model_button.Bind(wx.EVT_BUTTON, self.select_model)
-    page3.add_widget(model_list)
-    page3.add_widget(model_button)
-    session_starter.add_page(page3)
-
-    page4 = wizard_page(session_starter, 'Perinuclear Species')
-    species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-    page4.add_widget(species_list_peri)
-    session_starter.add_page(page4)
-
-    page5 = wizard_page(session_starter, 'Cytoplasmic Species')
-    species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-    page5.add_widget(species_list_mid)
-    session_starter.add_page(page5)
-
-    page6 = wizard_page(session_starter, 'Cell Membrane Species')
-    species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-    page6.add_widget(species_list_api)
-    session_starter.add_page(page6)
 
     session_starter.run() # Show the main window
 
@@ -269,5 +355,5 @@ if __name__ == '__main__':
     session_starter.Destroy()
 
     app.MainLoop()
-
+"""
 
