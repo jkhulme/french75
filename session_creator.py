@@ -165,27 +165,30 @@ padding = 5
 
 
 class SessionWizard(wx.wizard.Wizard):
-
+    '''Add pages to this wizard object to make it useful.'''
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
         self.pages = []
 
     def add_page(self, page):
+        '''Add a wizard page to the list.'''
         if self.pages:
             previous_page = self.pages[-1]
-            page.prev = previous_page
-            previous_page.next = page
+            page.SetPrev(previous_page)
+            previous_page.SetNext(page)
         self.pages.append(page)
 
     def run(self):
         self.RunWizard(self.pages[0])
 
+padding = 5
 
 class wizard_page(wizmod.PyWizardPage):
-
+    ''' An extended panel obj with a few methods to keep track of its siblings.
+        This should be modified and added to the wizard.  Season to taste.'''
     def __init__(self, parent, title):
         wx.wizard.PyWizardPage.__init__(self, parent)
-        self.next, self.prev = None
+        self.next = self.prev = None
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         title = wx.StaticText(self, -1, title)
         title.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
@@ -193,24 +196,78 @@ class wizard_page(wizmod.PyWizardPage):
         self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, padding)
         self.SetSizer(self.sizer)
 
-    def add_widget(self, widget):
-        self.sizer.Add(widget, 0, wx.EXPAND|wx.ALL, padding)
+    def add_widget(self, stuff):
+        '''Add additional widgets to the bottom of the page'''
+        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, padding)
 
-"""
+    def SetNext(self, next):
+        '''Set the next page'''
+        self.next = next
+
+    def SetPrev(self, prev):
+        '''Set the previous page'''
+        self.prev = prev
+
+    def GetNext(self):
+        '''Return the next page'''
+        return self.next
+
+    def GetPrev(self):
+        '''Return the previous page'''
+        return self.prev
+
 if __name__ == '__main__':
+    app = wx.PySimpleApp()  # Start the application
+
     # Create wizard and add any kind pages you'd like
     session_starter = SessionWizard('Simple Wizard', img_filename='wiz.png')
-    page1 = wizard_page(session_starter, 'Page 1')  # Create a first page
-    page1.add_stuff(wx.StaticText(page1, -1, 'Hola'))
+
+    page1 = wizard_page(session_starter, 'Enter Title')  # Create a first page
+    title_text = wx.TextCtrl(page1, -1, size=(300, -1))
+    page1.add_widget(title_text)
     session_starter.add_page(page1)
 
-    # Add some more pages
-    session_starter.add_page( wizard_page(session_starter, 'Page 2') )
-    session_starter.add_page( wizard_page(session_starter, 'Page 3') )
+    page2 = wizard_page(session_starter, 'Select Results Files')
+    file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE)
+    page2.add_widget(file_list)
+    file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+    btn_add_file = wx.Button(page2, -1, "Add")
+    #btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
+    btn_rem_file = wx.Button(page2, -1, "Remove")
+    #btn_rem_file.Bind(wx.EVT_BUTTON, self.remove_files)
+    file_toolbar.Add(btn_add_file)
+    file_toolbar.Add(btn_rem_file)
+    page2.add_widget(file_toolbar)
+    session_starter.add_page(page2)
+
+    page3 = wizard_page(session_starter, 'Select Model File')
+    model_list = wx.ListBox(page3, -1, size=(300, -1), style=wx.LB_SINGLE)
+    model_button = wx.Button(page3, -1, "Select")
+    #model_button.Bind(wx.EVT_BUTTON, self.select_model)
+    page3.add_widget(model_list)
+    page3.add_widget(model_button)
+    session_starter.add_page(page3)
+
+    page4 = wizard_page(session_starter, 'Perinuclear Species')
+    species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+    page4.add_widget(species_list_peri)
+    session_starter.add_page(page4)
+
+    page5 = wizard_page(session_starter, 'Cytoplasmic Species')
+    species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+    page5.add_widget(species_list_mid)
+    session_starter.add_page(page5)
+
+    page6 = wizard_page(session_starter, 'Cell Membrane Species')
+    species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+    page6.add_widget(species_list_api)
+    session_starter.add_page(page6)
 
     session_starter.run() # Show the main window
 
     # Cleanup
     session_starter.Destroy()
-"""
+
+    app.MainLoop()
+
 
