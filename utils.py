@@ -38,6 +38,17 @@ def rgb_to_hex(rgb):
 def euclid_distance(p1, p2):
     return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
+def point_to_line_distance((l1_x, l1_y), (l2_x, l2_y), (p_x, p_y)):
+    m = float(l2_y - l1_y)/float(l2_x - l1_x)
+    a = -m
+    b = 1
+    c = l1_y - (m*l1_x)
+    print c
+    top = abs(a*p_x + b*p_y - c)
+    bottom = sqrt(a**2 + b**2)
+    return top/float(bottom)
+
+
 """
 Blend the colour of the line segment with the background - ration specified by
 alpha value.  This prevents the blending with the other line segment

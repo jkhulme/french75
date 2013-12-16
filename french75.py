@@ -15,7 +15,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import open_results_file, euclid_distance
+from utils import open_results_file, euclid_distance, point_to_line_distance
 from subprocess import call
 from annotation import Annotation
 
@@ -221,7 +221,9 @@ class French75(wx.Frame):
         elif event.button == _RIGHT_BUTTON:
             self.selected_annotation = None
             for annotation in self.world.annotations:
-                dist = euclid_distance((event.xdata/float(self.world.max_time), event.ydata/float(self.world.max_height)), (annotation.x1/float(self.world.max_time), annotation.y1/float(self.world.max_height)))
+                dist = point_to_line_distance((annotation.x1/float(self.world.max_time), annotation.y1/float(self.world.max_height)), (annotation.x2/float(self.world.max_time), annotation.y2/float(self.world.max_height)), (event.xdata/float(self.world.max_time), event.ydata/float(self.world.max_height)))
+                #dist = point_to_line_distance((annotation.x1, annotation.y1), (annotation.x2, annotation.y2), (event.xdata, event.ydata))
+                #print dist
                 if dist < 0.025:
                     if self.selected_annotation is None:
                         self.selected_annotation = annotation
