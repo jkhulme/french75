@@ -221,8 +221,8 @@ class French75(wx.Frame):
         elif event.button == _RIGHT_BUTTON:
             self.selected_annotation = None
             for annotation in self.world.annotations:
-                dist = euclid_distance((event.xdata, event.ydata), (annotation.x1, annotation.y1))
-                if dist < 0.5:
+                dist = euclid_distance((event.xdata/float(self.world.max_time), event.ydata/float(self.world.max_height)), (annotation.x1/float(self.world.max_time), annotation.y1/float(self.world.max_height)))
+                if dist < 0.025:
                     if self.selected_annotation is None:
                         self.selected_annotation = annotation
                     elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):

@@ -26,6 +26,8 @@ class WorldState:
         self.annotate = False
         self.annotations = []
         self.temp_annotation = None
+        self.annotation_mode = None
+        self.max_height = 0
 
     def update_clock_increment(self):
         self.clock_increment = self.max_time / 600.0
