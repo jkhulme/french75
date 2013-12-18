@@ -1,19 +1,43 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+import wx
+import matplotlib
+matplotlib.use('WXAgg')
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
-# simple.py
 
-import sys
-from PySide import QtGui
+class French75(wx.Frame):
 
-app = QtGui.QApplication(sys.argv)
-idx = QtGui.QApplication.desktop().primaryScreen()
-print QtGui.QApplication.desktop().availableGeometry()
-print QtGui.QApplication.desktop().screen(1).rect()
+    def __init__(self, *args, **kwargs):
+        wx.Frame.__init__(self,*args,**kwargs)
+        self.Maximize()
+        width, height = self.GetSize()
+        print width, height
 
-wid = QtGui.QWidget()
-wid.resize(250, 150)
-wid.setWindowTitle('Simple')
-wid.show()
+        main_panel = wx.Panel(self)
 
-sys.exit(app.exec_())
+        self.graph_panel = wx.Panel(main_panel)
+        self.model_panel = wx.Panel(main_panel)
+
+        main_panel.SetBackgroundColour('white')
+        self.model_panel.SetBackgroundColour('red')
+        self.graph_panel.SetBackgroundColour('green')
+
+        add_files_button = wx.Button(self.model_panel, -1, "Add")
+
+        layout = wx.BoxSizer(wx.VERTICAL)
+        layout.Add(self.graph_panel)
+        layout.Add(self.model_panel)
+        main_panel.SetSizerAndFit(layout)
+
+
+        self.Bind(wx.EVT_SIZE, self.OnSize)
+
+    def OnSize(self, event):
+        print self.GetSize()
+        self.graph_panel.SetSize(self.GetSize())
+
+if __name__ == '__main__':
+    app = wx.App()
+    gui = French75(None)
+    gui.Show()
+    app.MainLoop()

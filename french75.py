@@ -45,6 +45,8 @@ class French75(wx.Frame):
 
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
+        self.Maximize()
+        print self.GetSize()
         self.world = WorldState.Instance()
 
         self.first_time = True
@@ -52,10 +54,11 @@ class French75(wx.Frame):
         self.start_playing = False
         self.click_one = False
         self.attached_file_locations = []
+        self.draw_plot = None
 
         self.parse_args()
 
-        (self.world.dispW, self.world.dispH) = self.get_resolution()
+        (self.world.dispW, self.world.dispH) = self.GetSize()
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -128,7 +131,7 @@ class French75(wx.Frame):
         splitter_middle.SplitHorizontally(self.graph_panel, self.animation_panel)
         splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
-        self.Maximize()
+        #self.Maximize()
         self.splitter_left.SetSashPosition(self.world.dispW/6)
         splitter_right.SetSashPosition(4 * self.world.dispW/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
@@ -138,15 +141,15 @@ class French75(wx.Frame):
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
         self.SetTitle(_TITLE)
-        self.Centre()
-        self.Show(True)
+        self.Maximize()
 
     def move_mouse(self, event):
-        if self.click_one:
-            self.world.temp_annotation = Annotation(self.world._ARROW, (self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
-        self.draw_plot.redraw_legend = False
-        self.draw_plot.plot()
-        self.draw_plot.redraw_legend = True
+        if self.draw_plot:
+            if self.click_one:
+                self.world.temp_annotation = Annotation(self.world._ARROW, (self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+            self.draw_plot.redraw_legend = False
+            self.draw_plot.plot()
+            self.draw_plot.redraw_legend = True
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
