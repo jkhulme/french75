@@ -82,7 +82,6 @@ class BioPepaToolbar(NavigationToolbar):
         self.world.annotation_mode = self.world._CIRCLE
 
     def clear_text_box(self, e):
-        print "Semper Fi"
         self.txtctrl.ChangeValue("")
 
 if (platform.system() == "Linux"):

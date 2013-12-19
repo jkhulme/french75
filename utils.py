@@ -2,10 +2,7 @@ from math import sqrt
 import wx
 from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
-"""
-Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
-Taken from this thread: http://stackoverflow.com/questions/214359/converting-hex-color-to-rgb-and-vice-versa
-"""
+
 world = WorldState.Instance()
 
 
@@ -30,8 +27,11 @@ def open_results_file(self):
     else:
         file_chooser.Destroy()
 
-
 def rgb_to_hex(rgb):
+    """
+    Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
+    Taken from this thread: http://stackoverflow.com/questions/214359/converting-hex-color-to-rgb-and-vice-versa
+    """
     return '#%02x%02x%02x' % rgb
 
 
@@ -43,20 +43,16 @@ def point_to_line_distance((l1_x, l1_y), (l2_x, l2_y), (p_x, p_y)):
     a = -m
     b = 1
     c = l1_y - (m*l1_x)
-    print c
     top = abs(a*p_x + b*p_y - c)
     bottom = sqrt(a**2 + b**2)
     return top/float(bottom)
 
-
-"""
-Blend the colour of the line segment with the background - ration specified by
-alpha value.  This prevents the blending with the other line segment
-Taken from stack overflow:
-"""
-
-
 def rgba_to_rgb((r, g, b), a):
+    """
+    Blend the colour of the line segment with the background - ration specified by
+    alpha value.  This prevents the blending with the other line segment
+    Taken from stack overflow:
+    """
     bg = tuple([255 * (1 - a)] * 3)
     fg = (r * a, g * a, b * a)
     add_tuples = lambda (r1, g1, b1), (r2, g2, b2): (r1 + r2, g1 + g2, b1 + b2)

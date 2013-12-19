@@ -46,8 +46,8 @@ class French75(wx.Frame):
     def __init__(self, *args, **kwargs):
         super(French75, self).__init__(*args, **kwargs)
         self.Maximize()
-        print self.GetSize()
         self.world = WorldState.Instance()
+        (self.world.dispW, self.world.dispH) = self.GetSize()
 
         self.first_time = True
         self.cell_segments = []
@@ -55,10 +55,7 @@ class French75(wx.Frame):
         self.click_one = False
         self.attached_file_locations = []
         self.draw_plot = None
-
-        self.parse_args()
-
-        (self.world.dispW, self.world.dispH) = self.GetSize()
+        self.xkcd = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -278,20 +275,6 @@ class French75(wx.Frame):
              self.world.annotation_text = dialog.GetValue()
 
     """
-    currently only checks the xkcd parameter which is basically an easter egg - maybe there will be
-    more at some point
-    """
-    def parse_args(self):
-        sys.argv = sys.argv[1:]
-        for arg in sys.argv:
-            if (arg == "--xkcd"):
-                matplotlib.pyplot.xkcd()
-                self.xkcd = True
-                break
-        else:
-            self.xkcd = False
-
-    """
     because of cases where there are multiple monitors we need to go through
     all the monitors and decide which one to use - base this on mouse position.
     n/b - self.GetSize() might need to be used
@@ -334,7 +317,17 @@ class French75(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.toggle_annotations, annotationm_toggle)
 
+        xkcd_menu = wx.Menu()
+        xkcdm_toggle = xkcd_menu.Append(wx.ID_ANY, '&Toggle')
+        menubar.Append(xkcd_menu, '&XKCD Mode')
+        self.Bind(wx.EVT_MENU, self.toggle_xkcd, xkcdm_toggle)
         return menubar
+
+    def toggle_xkcd(self, event):
+        self.draw_plot.xkcdify = not self.draw_plot.xkcdify
+        self.draw_plot.redraw_legend = False
+        self.draw_plot.plot()
+        self.draw_plot.redraw_legend = True
 
     def toggle_annotations(self, event):
         self.draw_plot.draw_annotations = not self.draw_plot.draw_annotations

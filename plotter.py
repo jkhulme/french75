@@ -7,18 +7,15 @@ from worldstate import WorldState
 from annotation import Annotation
 
 
-"""
-Given the data, plot it on one graph
-
-Plots currently supported:
-    Intensity plot.
-    General line plots.
-"""
-
-
 class Plotter(object):
 
     """
+    Given the data, plot it on one graph
+
+    Plots currently supported:
+        Intensity plot.
+        General line plots.
+
     self.axes - Lines are plotted using this.
     self.canvas - Used to draw the axes/plots
     self.parser - the csv parser

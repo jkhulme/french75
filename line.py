@@ -4,6 +4,7 @@ from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 _MIN_INTENSITY = 70
 _MAX_INTENSITY = 255
 
+
 class Line(object):
 
     """
