@@ -3,16 +3,16 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 
-_PADDING = 5
+
+padding = 5
 
 
 class SessionWizard(wx.wizard.Wizard):
-    '''Add pages to this wizard object to make it useful.
-    Adapted from http://wiki.wxpython.org/wxWizard'''
-
+    '''Add pages to this wizard object to make it useful.'''
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
         self.pages = []
+
         self.chosen_paths = []
         self.species_dict = {}
 
@@ -63,8 +63,8 @@ class SessionWizard(wx.wizard.Wizard):
         '''Add a wizard page to the list.'''
         if self.pages:
             previous_page = self.pages[-1]
-            page.prev = previous_page
-            previous_page.next = page
+            page.SetPrev(previous_page)
+            previous_page.SetNext(page)
         self.pages.append(page)
 
     def run(self):
@@ -145,6 +145,8 @@ class SessionWizard(wx.wizard.Wizard):
                     else:
                         self.world.species_dict[species].append((species,location,flag))
 
+padding = 5
+
 class wizard_page(wizmod.PyWizardPage):
     ''' An extended panel obj with a few methods to keep track of its siblings.
         This should be modified and added to the wizard.  Season to taste.'''
@@ -154,11 +156,29 @@ class wizard_page(wizmod.PyWizardPage):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         title = wx.StaticText(self, -1, title)
         title.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
-        self.sizer.AddWindow(title, 0, wx.ALIGN_LEFT|wx.ALL, _PADDING)
-        self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, _PADDING)
+        self.sizer.AddWindow(title, 0, wx.ALIGN_LEFT|wx.ALL, padding)
+        self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, padding)
         self.SetSizer(self.sizer)
 
     def add_widget(self, stuff):
         '''Add additional widgets to the bottom of the page'''
-        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, _PADDING)
+        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, padding)
+
+    #Would like to get rid of the following methods, but they seem to be needed by some parent code
+    def SetNext(self, next):
+        '''Set the next page'''
+        self.next = next
+
+    def SetPrev(self, prev):
+        '''Set the previous page'''
+        self.prev = prev
+
+    def GetNext(self):
+        '''Return the next page'''
+        return self.next
+
+    def GetPrev(self):
+        '''Return the previous page'''
+        return self.prev
+
 

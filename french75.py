@@ -6,7 +6,6 @@ matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from legend import Legend
-import sys
 import os
 from custom_ui_elements import BioPepaToolbar
 from session_creator import SessionWizard
