@@ -343,32 +343,37 @@ class French75(wx.Frame):
         session_dialog.run()
         session_dialog.Destroy()
 
-        self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
-        self.draw_plot.plot()
-        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
-        self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
-        self.legend_panel.Parent.Refresh()
-        self.slider_time.SetMax(self.world.max_time)
+        print session_dialog.state
+        if session_dialog.state == session_dialog._FINISHED:
+            self.world.title = session_dialog.title_text.GetLineText(0)
+            session_dialog.parse_species()
 
-        for species in self.world.species_dict.keys():
-            for file_name in self.draw_plot.results.keys():
-                for loc in self.world.species_dict[species]:
-                    print self.draw_plot.results[file_name][species+"@"+loc[1]]
-            self.drop_down_species.Append(species)
+            self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
+            self.draw_plot.plot()
+            self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
+            self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
+            self.legend_panel.Parent.Refresh()
+            self.slider_time.SetMax(self.world.max_time)
 
-        self.drop_down_species.SetSelection(0)
+            for species in self.world.species_dict.keys():
+                for file_name in self.draw_plot.results.keys():
+                    for loc in self.world.species_dict[species]:
+                        print self.draw_plot.results[file_name][species+"@"+loc[1]]
+                self.drop_down_species.Append(species)
 
-        a = 10
-        b = 40
-        c = 120
-        d = 0
-        for file_name in self.world.results.keys():
-            self.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
-            a += 140
-            d += 1
+            self.drop_down_species.SetSelection(0)
 
-        self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-        self.animation_panel.Refresh()
+            a = 10
+            b = 40
+            c = 120
+            d = 0
+            for file_name in self.world.results.keys():
+                self.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+                a += 140
+                d += 1
+
+            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            self.animation_panel.Refresh()
 
     """
     selects which csv files to use

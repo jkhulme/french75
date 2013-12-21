@@ -7,11 +7,21 @@ import wx.wizard as wizmod
 padding = 5
 
 
+
 class SessionWizard(wx.wizard.Wizard):
     '''Add pages to this wizard object to make it useful.'''
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
+
+        self._FINISHED = 1
+        self._CANCELLED = 2
+        self._STARTED = 0
+
         self.pages = []
+        self.state = self._STARTED
+
+        self.Bind(wizmod.EVT_WIZARD_CANCEL, self.cancel_wizard)
+        self.Bind(wizmod.EVT_WIZARD_FINISHED, self.finish_wizard)
 
         self.chosen_paths = []
         self.species_dict = {}
@@ -115,9 +125,18 @@ class SessionWizard(wx.wizard.Wizard):
             file_chooser.Destroy()
 
     def Destroy(self):
-        self.world.title = self.title_text.GetLineText(0)
-        self.parse_species()
         self.Close()
+
+    def cancel_wizard(self, e):
+        print "Cancelling the wizard"
+        if self.state != self._FINISHED:
+            self.state = self._CANCELLED
+        self.Destroy()
+
+    def finish_wizard(self, e):
+        print "Finishing the wizard"
+        self.state = self._FINISHED
+        self.Destroy()
 
     def parse_species(self):
         self.world.species_dict = {}
