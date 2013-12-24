@@ -67,9 +67,10 @@ class Plot_Dialog(wx.Dialog):
         self.line.intense_plot = self.cb_intense.GetValue()
         self.line.thickness = self.thick_spin.GetValue()
         try:
-            print self.colour_picker.GetColour()
-            (r, g, b, a) = self.colour_picker.GetColour()
+            (r, g, b) = self.colour_picker.GetColour().Get()
+            print self.line.flat_colour
             self.line.flat_colour = rgb_to_hex((r, g, b))
+            print self.line.flat_colour
         except:
             print "No colour change"
         self.Close()
