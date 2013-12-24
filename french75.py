@@ -62,7 +62,6 @@ class French75(wx.Frame):
         splitter_middle = wx.SplitterWindow(splitter_right)
         splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         self.graph_panel = wx.Panel(splitter_middle, -1)
-        self.world.session_dict['graph_panel'] = self.graph_panel
         self.model_panel = wx.Panel(splitter_right_middle, -1)
         self.files_panel = wx.Panel(splitter_right_middle, -1)
         self.animation_panel = wx.Panel(splitter_middle, -1)
