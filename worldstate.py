@@ -1,7 +1,7 @@
 from singleton import Singleton
 import wx
 
-_DICT_ELEMS = [('results', None), ('clock', 0), ('first_circle', True), ('clock_pause', False), ('legend', None), ('title', "Graph"), ('dispW', 0), ('dispH', 0), ('max_time', 1), ('clock_increment', 1/600.0), ('parser', None), ('annotate', False), ('annotations', []), ('temp_annotation', None), ('annotation_mode', None), ('max_height', 0), ('graph_canvas', None), ('annotation_text', ""), ('species_dict', {}), ('results', None), ('lines', None)]
+_DICT_ELEMS = [('results', None), ('clock', 0), ('first_circle', True), ('clock_pause', False), ('legend', None), ('title', "Graph"), ('dispW', 0), ('dispH', 0), ('max_time', 1), ('clock_increment', 1/600.0), ('parser', None), ('annotate', False), ('annotations', []), ('temp_annotation', None), ('annotation_mode', None), ('max_height', 0), ('graph_canvas', None), ('annotation_text', ""), ('species_dict', {}), ('results', None), ('lines', None), ('graph_panel', None)]
 
 
 @Singleton

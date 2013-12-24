@@ -1,6 +1,7 @@
 import wx
 from plot_dialog import Plot_Dialog
 from custom_ui_elements import BioPepaCollapsiblePane
+from worldstate import WorldState
 
 _HEIGHT = 20
 _WIDTH = 45
@@ -17,6 +18,7 @@ class Legend(object):
 
     def __init__(self, leg_panel):
         self.legend_panel = leg_panel
+        self.world = WorldState.Instance()
 
     """
     Handles the legend, one collapsible pane for each file, one set of controls
@@ -124,6 +126,7 @@ class Legend(object):
         self.update(btn_props.GetParent(), file_key, species_key)
         self.plotter.redraw_legend = False
         self.plotter.plot()
+        self.world.session_dict['graph_panel'].Refresh()
 
     def update(self, csv, file_key, species_key):
         for child in csv.GetChildren():
@@ -137,3 +140,4 @@ class Legend(object):
                     child.SetValue(self.results[file_key][species_key].plot_line)
                 if child.GetLabel() == "I" and update:
                     child.SetValue(self.results[file_key][species_key].intense_plot)
+        self.legend_panel.Refresh()
