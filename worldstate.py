@@ -1,6 +1,8 @@
 from singleton import Singleton
 import wx
 
+_DICT_ELEMS = [('results', None), ('clock', 0), ('first_circle', True), ('clock_pause', False), ('legend', None), ('title', "Graph"), ('dispW', 0), ('dispH', 0), ('max_time', 1), ('clock_increment', 1/600.0), ('parser', None), ('annotate', False), ('annotations', []), ('temp_annotation', None), ('annotation_mode', None), ('max_height', 0), ('graph_canvas', None), ('annotation_text', ""), ('species_dict', {}), ('results', None), ('lines', None)]
+
 
 @Singleton
 class WorldState:
@@ -12,25 +14,15 @@ class WorldState:
         self._TEXT_ARROW = 3
         self._CIRCLE = 4
 
-        self.results = None
-        self.clock = 0
-        self.first_circle = True
-        self.clock_pause = False
-        self.legend = None
-        self.title = "Graph"
-        self.dispW = 0
-        self.dispH = 0
-        self.max_time = 1
-        self.clock_increment = self.max_time / 600.0
-        self.parser = None
-        self.annotate = False
-        self.annotations = []
-        self.temp_annotation = None
-        self.annotation_mode = None
-        self.max_height = 0
+        self.session_dict = dict(_DICT_ELEMS)
+
+    def reset_session(session_dict):
+        for (key, value) in _DICT_ELEMS:
+            session_dict[key] = value
+        return session_dict
 
     def update_clock_increment(self):
-        self.clock_increment = self.max_time / 600.0
+        self.session_dict['clock_increment'] = self.session_dict['max_time'] / 600.0
 
     def change_cursor(self, cursor):
-        self.graph_canvas.SetCursor(wx.StockCursor(cursor))
+        self.session_dict['graph_canvas'].SetCursor(wx.StockCursor(cursor))

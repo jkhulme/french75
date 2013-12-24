@@ -52,7 +52,7 @@ class BioPepaToolbar(NavigationToolbar):
          #Can't bind a left click into a text control
          #dialog.Bind(wx.EVT_LEFT_DOWN, self.clear_text_box)
          if dialog.ShowModal() == wx.ID_OK:
-             self.world.annotation_text = dialog.GetValue()
+             self.world.session_dict['annotation_text'] = dialog.GetValue()
 
     def _on_custom_enlarge(self, e):
         large_plot = LargePlotDialog(None, title='Big Plot')
@@ -61,25 +61,25 @@ class BioPepaToolbar(NavigationToolbar):
 
     def _on_custom_annotate_arrow(self, e):
         self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.annotate = not self.world.annotate
-        self.world.annotation_mode = self.world._ARROW
+        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
+        self.world.session_dict['annotation_mode'] = self.world._ARROW
 
     def _on_custom_annotate_text(self, e):
         self.get_label()
         self.world.change_cursor(wx.CURSOR_IBEAM)
-        self.world.annotate = not self.world.annotate
-        self.world.annotation_mode = self.world._TEXT
+        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
+        self.world.session_dict['annotation_mode'] = self.world._TEXT
 
     def _on_custom_annotate_text_arrow(self, e):
         self.get_label()
         self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.annotate = not self.world.annotate
-        self.world.annotation_mode = self.world._TEXT_ARROW
+        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
+        self.world.session_dict['annotation_mode'] = self.world._TEXT_ARROW
 
     def _on_custom_annotate_circle(self, e):
         self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.annotate = not self.world.annotate
-        self.world.annotation_mode = self.world._CIRCLE
+        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
+        self.world.session_dict['annotation_mode'] = self.world._CIRCLE
 
     def clear_text_box(self, e):
         self.txtctrl.ChangeValue("")

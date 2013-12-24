@@ -46,7 +46,7 @@ class Plot_Dialog(wx.Dialog):
         okButton.Bind(wx.EVT_BUTTON, self.on_ok)
         closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
 
-        self.SetSize((self.world.dispW/4, self.world.dispH/2))
+        self.SetSize((self.world.session_dict['dispW']/4, self.world.session_dict['dispH']/2))
         self.Centre()
 
     """

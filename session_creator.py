@@ -82,9 +82,9 @@ class SessionWizard(wx.wizard.Wizard):
 
     def add_files(self, e):
         open_results_file(self)
-        for key in self.world.results.keys():
+        for key in self.world.session_dict['results'].keys():
             self.species_dict[key] = []
-            for species in self.world.results[key].keys():
+            for species in self.world.session_dict['results'][key].keys():
                 if species != 'Time':
                     self.species_dict[key].append(species)
             self.populate_species_lists()
@@ -139,13 +139,13 @@ class SessionWizard(wx.wizard.Wizard):
         self.Destroy()
 
     def parse_species(self):
-        self.world.species_dict = {}
+        self.world.session_dict['species_dict'] = {}
         inner = self.species_list_peri.GetCheckedStrings()[0]
         middle = self.species_list_mid.GetCheckedStrings()[0]
         outer = self.species_list_api.GetCheckedStrings()[0]
         loc_flag = 0
-        for file_name in self.world.results.keys():
-            for result in self.world.results[file_name].keys():
+        for file_name in self.world.session_dict['results'].keys():
+            for result in self.world.session_dict['results'][file_name].keys():
                 if not result == "Time":
                     if result == inner:
                         loc_flag = 1
@@ -159,10 +159,10 @@ class SessionWizard(wx.wizard.Wizard):
                     except:
                         (species, location, flag) = (result, None, loc_flag)
 
-                    if species not in self.world.species_dict.keys():
-                        self.world.species_dict[species] = [(species,location,flag)]
+                    if species not in self.world.session_dict['species_dict'].keys():
+                        self.world.session_dict['species_dict'][species] = [(species,location,flag)]
                     else:
-                        self.world.species_dict[species].append((species,location,flag))
+                        self.world.session_dict['species_dict'][species].append((species,location,flag))
 
 padding = 5
 

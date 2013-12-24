@@ -61,6 +61,6 @@ class BioPepaCsvParser(object):
             else:
                 self.xmin = min(self.xmin, min(self.results_dict[result]))
                 self.xmax = max(self.xmax, max(self.results_dict[result]))
-        self.world.max_time = self.xmax
-        self.world.max_height = self.ymax
+        self.world.session_dict['max_time'] = self.xmax
+        self.world.session_dict['max_height'] = self.ymax
         self.world.update_clock_increment()

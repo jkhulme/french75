@@ -9,7 +9,7 @@ class CellSegment(object):
         #Get an array of tuples of times when the colour changes and what
         #colour it changes to.
         self.key = file_name
-        for i, (name, loc, l_flag) in enumerate(self.world.species_dict[species]):
+        for i, (name, loc, l_flag) in enumerate(self.world.session_dict['species_dict'][species]):
             if l_flag == 1:
                 self.species_inner = species+"@"+self.world.species_dict[species][i][1]
             elif l_flag == 2:
@@ -17,9 +17,9 @@ class CellSegment(object):
             elif l_flag == 3:
                 self.species_outer = species+"@"+self.world.species_dict[species][i][1]
 
-        self.result_inner = self.world.lines[self.key][self.species_inner]
-        self.result_middle = self.world.lines[self.key][self.species_middle]
-        self.result_outer = self.world.lines[self.key][self.species_outer]
+        self.result_inner = self.world.session_dict['lines'][self.key][self.species_inner]
+        self.result_middle = self.world.session_dict['lines'][self.key][self.species_middle]
+        self.result_outer = self.world.session_dict['lines'][self.key][self.species_outer]
 
         self.seg_colour_inner = self.result_inner.colour_change_points[0][1]
         self.seg_colour_middle = self.result_middle.colour_change_points[0][1]
@@ -60,19 +60,19 @@ class CellSegment(object):
     def paint(self, dc):
         #Work out whether we should change brush colour and what it should be set to
         if len(self.time_points_inner) > 0:
-            if self.world.clock >= self.time_points_inner[self.counter_inner]:
+            if self.world.session_dict['clock'] >= self.time_points_inner[self.counter_inner]:
                 time = self.time_points_inner[self.counter_inner]
                 self.seg_colour_inner = self.result_inner.colour_change_points[self.counter_inner][1]
                 self.counter_inner += 1
                 self.past_points_inner.append((time, self.seg_colour_inner))
         if len(self.time_points_middle) > 0:
-            if self.world.clock >= self.time_points_middle[self.counter_middle]:
+            if self.world.session_dict['clock'] >= self.time_points_middle[self.counter_middle]:
                 time = self.time_points_middle[self.counter_middle]
                 self.seg_colour_middle = self.result_middle.colour_change_points[self.counter_middle][1]
                 self.counter_middle += 1
                 self.past_points_middle.append((time, self.seg_colour_middle))
         if len(self.time_points_outer) > 0:
-            if self.world.clock >= self.time_points_outer[self.counter_outer]:
+            if self.world.session_dict['clock'] >= self.time_points_outer[self.counter_outer]:
                 time = self.time_points_outer[self.counter_outer]
                 self.seg_colour_outer = self.result_outer.colour_change_points[self.counter_outer][1]
                 self.counter_outer += 1
@@ -93,18 +93,18 @@ class CellSegment(object):
     def update_clock(self):
         self.counter_inner = 0
         for (time, colour) in self.past_points_inner:
-            if self.world.clock >= time:
+            if self.world.session_dict['clock'] >= time:
                 self.counter_inner += 1
         self.past_points_inner = self.past_points_inner[:self.counter_inner]
 
         self.counter_middle = 0
         for (time, colour) in self.past_points_middle:
-            if self.world.clock >= time:
+            if self.world.session_dict['clock'] >= time:
                 self.counter_middle += 1
         self.past_points_middle = self.past_points_middle[:self.counter_middle]
 
         self.counter_outer = 0
         for (time, colour) in self.past_points_outer:
-            if self.world.clock >= time:
+            if self.world.session_dict['clock'] >= time:
                 self.counter_outer += 1
         self.past_points_outer = self.past_points_outer[:self.counter_outer]

@@ -20,8 +20,8 @@ def open_results_file(self):
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
 
-        world.results = results
-        world.parser = parser
+        world.session_dict['results'] = results
+        world.session_dict['parser'] = parser
 
         file_chooser.Destroy()
     else:

@@ -46,7 +46,7 @@ class French75(wx.Frame):
         super(French75, self).__init__(*args, **kwargs)
         self.Maximize()
         self.world = WorldState.Instance()
-        (self.world.dispW, self.world.dispH) = self.GetSize()
+        (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
 
         self.first_time = True
         self.cell_segments = []
@@ -74,7 +74,7 @@ class French75(wx.Frame):
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
-        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.max_time, size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
@@ -101,13 +101,13 @@ class French75(wx.Frame):
         self.animation_panel.SetSizer(animation_hbox)
         animation_hbox.Fit(self)
 
-        graph_width = int(((self.world.dispW / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
+        graph_width = int(((self.world.session_dict['dispW'] / _COLS) * (_COLS - _NUM_OF_SIDEBARS)) / _DPI)
         graph_height = int(graph_width/_PHI)
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
 
         self.graph_canvas = FigCanvas(self.graph_panel, -1, graph_fig)
-        self.world.graph_canvas = self.graph_canvas
+        self.world.session_dict['graph_canvas'] = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
@@ -119,7 +119,7 @@ class French75(wx.Frame):
         self.graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
 
-        self.world.legend = Legend(self.legend_panel)
+        self.world.session_dict['legend'] = Legend(self.legend_panel)
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
@@ -128,8 +128,8 @@ class French75(wx.Frame):
         splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         #self.Maximize()
-        self.splitter_left.SetSashPosition(self.world.dispW/6)
-        splitter_right.SetSashPosition(4 * self.world.dispW/6)
+        self.splitter_left.SetSashPosition(self.world.session_dict['dispW']/6)
+        splitter_right.SetSashPosition(4 * self.world.session_dict['dispW']/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
 
         #self.graph_canvas.Bind(wx.EVT_CONTEXT_MENU, self.onContext)
@@ -142,7 +142,7 @@ class French75(wx.Frame):
     def move_mouse(self, event):
         if self.draw_plot:
             if self.click_one:
-                self.world.temp_annotation = Annotation(self.world._ARROW, (self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
+                self.world.session_dict['temp_annotation'] = Annotation(self.world._ARROW, (self.click_one_x, self.click_one_y), (event.xdata, event.ydata))
             self.draw_plot.redraw_legend = False
             self.draw_plot.plot()
             self.draw_plot.redraw_legend = True
@@ -171,8 +171,8 @@ class French75(wx.Frame):
     def onclick(self, event):
         if event.button == _LEFT_BUTTON:
             print event.xdata, event.ydata
-            if self.world.annotation_mode == self.world._ARROW:
-                if self.world.annotate and not self.click_one:
+            if self.world.session_dict['annotation_mode'] == self.world._ARROW:
+                if self.world.session_dict['annotate'] and not self.click_one:
                     self.click_one_x = event.xdata
                     self.click_one_y = event.ydata
                     self.click_one = True
@@ -184,43 +184,43 @@ class French75(wx.Frame):
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
-                    self.world.temp_annotation = None
+                    self.world.session_dict['temp_annotation'] = None
                     self.draw_plot.redraw_legend = False
                     self.draw_plot.plot()
                     self.draw_plot.redraw_legend = True
                     return
-            elif self.world.annotation_mode == self.world._TEXT:
-                if self.world.annotate:
-                    self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.annotation_text)
+            elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
+                if self.world.session_dict['annotate']:
+                    self.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
-                    self.world.annotation_mode = self.world._NONE
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
                     return
-            elif self.world.annotation_mode == self.world._TEXT_ARROW:
-                if self.world.annotate and not self.click_one:
+            elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
+                if self.world.session_dict['annotate'] and not self.click_one:
                     self.click_one_x = event.xdata
                     self.click_one_y = event.ydata
                     self.click_one = True
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     return
                 if self.click_one:
-                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.annotation_text, colour='black')
+                    self.draw_plot.annotate_arrow((self.click_one_x, self.click_one_y), (event.xdata, event.ydata), text=self.world.session_dict['annotation_text'], colour='black')
                     self.click_one = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
-                    self.world.annotation_mode = self.world._NONE
-                    self.world.temp_annotation = None
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.session_dict['temp_annotation'] = None
                     self.draw_plot.redraw_legend = False
                     self.draw_plot.plot()
                     self.draw_plot.redraw_legend = True
                     return
-            elif self.world.annotation_mode == self.world._CIRCLE:
-                if self.world.annotate:
+            elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
+                if self.world.session_dict['annotate']:
                     self.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
-                    self.world.annotation_mode = self.world._NONE
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
                     return
         elif event.button == _RIGHT_BUTTON:
             self.selected_annotation = None
-            for annotation in self.world.annotations:
-                dist = point_to_line_distance((annotation.x1/float(self.world.max_time), annotation.y1/float(self.world.max_height)), (annotation.x2/float(self.world.max_time), annotation.y2/float(self.world.max_height)), (event.xdata/float(self.world.max_time), event.ydata/float(self.world.max_height)))
+            for annotation in self.world.session_dict['annotations']:
+                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])), (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])), (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
                 #dist = point_to_line_distance((annotation.x1, annotation.y1), (annotation.x2, annotation.y2), (event.xdata, event.ydata))
                 #print dist
                 if dist < 0.025:
@@ -253,17 +253,17 @@ class French75(wx.Frame):
 
     def edit_annotation_text(self, event):
         self.get_label()
-        if self.world.annotation_text != "":
-            self.selected_annotation.text = self.world.annotation_text
+        if self.world.session_dict['annotation_text'] != "":
+            self.selected_annotation.text = self.world.session_dict['annotation_text']
             if self.selected_annotation.type == self.world._ARROW:
                 self.selected_annotation.type = self.world._TEXT_ARROW
 
     def delete_annotation(self, event):
         new_annotation_list = []
-        for annotation in self.world.annotations:
+        for annotation in self.world.session_dict['annotations']:
             if annotation != self.selected_annotation:
                 new_annotation_list.append(annotation)
-        self.world.annotations = new_annotation_list
+        self.world.session_dict['annotations'] = new_annotation_list
 
     def get_label(self):
          dialog = wx.TextEntryDialog(None, "What kind of text would you like to enter?","Text Entry", "Default Value", style=wx.OK|wx.CANCEL)
@@ -271,7 +271,7 @@ class French75(wx.Frame):
          #Not the right thing
          #self.txtctrl.Bind(wx.EVT_LEFT_DOWN, self.clear_text_box)
          if dialog.ShowModal() == wx.ID_OK:
-             self.world.annotation_text = dialog.GetValue()
+             self.world.session_dict['annotation_text'] = dialog.GetValue()
 
     """
     because of cases where there are multiple monitors we need to go through
@@ -280,10 +280,10 @@ class French75(wx.Frame):
     """
     def get_resolution(self):
         for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
-            (self.world.dispW, self.world.dispH) = monitor.GetGeometry().GetSize()
+            (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = monitor.GetGeometry().GetSize()
             (mouseX, mouseY) = wx.GetMousePosition()
-            if (mouseX < self.world.dispW):
-                return (self.world.dispW, self.world.dispH)
+            if (mouseX < self.world.session_dict['dispW']):
+                return (self.world.session_dict['dispW'], self.world.session_dict['dispH'])
 
     """
     The menu bar.
@@ -345,7 +345,7 @@ class French75(wx.Frame):
 
         print session_dialog.state
         if session_dialog.state == session_dialog._FINISHED:
-            self.world.title = session_dialog.title_text.GetLineText(0)
+            self.world.session_dict['title'] = session_dialog.title_text.GetLineText(0)
             session_dialog.parse_species()
 
             self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
@@ -353,11 +353,11 @@ class French75(wx.Frame):
             self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
             self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
             self.legend_panel.Parent.Refresh()
-            self.slider_time.SetMax(self.world.max_time)
+            self.slider_time.SetMax(self.world.session_dict['max_time'])
 
-            for species in self.world.species_dict.keys():
+            for species in self.world.session_dict['species_dict'].keys():
                 for file_name in self.draw_plot.results.keys():
-                    for loc in self.world.species_dict[species]:
+                    for loc in self.world.session_dict['species_dict'][species]:
                         print self.draw_plot.results[file_name][species+"@"+loc[1]]
                 self.drop_down_species.Append(species)
 
@@ -367,7 +367,7 @@ class French75(wx.Frame):
             b = 40
             c = 120
             d = 0
-            for file_name in self.world.results.keys():
+            for file_name in self.world.session_dict['results'].keys():
                 self.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
                 a += 140
                 d += 1
@@ -381,7 +381,7 @@ class French75(wx.Frame):
     def open_results_file(self, e):
         open_results_file(self)
 
-        self.slider_time.SetMax(self.world.max_time)
+        self.slider_time.SetMax(self.world.session_dict['max_time'])
         self.draw_plot = Plotter(self.graph_axes, self.graph_canvas, True, self.xkcd)
         self.draw_plot.plot()
 
@@ -402,12 +402,12 @@ class French75(wx.Frame):
             t.start()
             t4.start()
         else:
-            if self.world.clock_pause:
-                self.world.clock_pause = False
+            if self.world.session_dict['clock_pause']:
+                self.world.session_dict['clock_pause'] = False
                 t2 = Thread(target=self.change_button_text, args=("Pause",))
                 t2.start()
             else:
-                self.world.clock_pause = True
+                self.world.session_dict['clock_pause'] = True
                 t3 = Thread(target=self.change_button_text, args=("Play",))
                 t3.start()
 
@@ -461,11 +461,11 @@ class French75(wx.Frame):
     TODO: Get rid of magic numbers
     """
     def animate(self, n):
-        while self.world.clock < self.world.max_time:
-            while self.world.clock_pause:
+        while self.world.session_dict['clock'] < self.world.session_dict['max_time']:
+            while self.world.session_dict['clock_pause']:
                 pass
-            self.world.clock += self.world.clock_increment
-            self.slider_time.SetValue(self.world.clock)
+            self.world.session_dict['clock'] += self.world.session_dict['clock_increment']
+            self.slider_time.SetValue(self.world.session_dict['clock'])
             self.animation_panel.Refresh()
             if (platform.system() != "Linux"):
                 self.draw_plot.vertical_line()
@@ -522,7 +522,7 @@ class French75(wx.Frame):
         img.SaveFile('saved.png', wx.BITMAP_TYPE_PNG)
 
     def move_animation(self, e):
-        self.world.clock = self.slider_time.GetValue()
+        self.world.session_dict['clock'] = self.slider_time.GetValue()
         for segment in self.cell_segments:
             segment.update_clock()
 
