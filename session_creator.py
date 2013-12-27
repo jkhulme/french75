@@ -2,6 +2,7 @@ import wx
 from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
+from line import Line
 
 _PADDING = 5
 
@@ -161,6 +162,18 @@ class SessionWizard(wx.wizard.Wizard):
                         self.world.session_dict['species_dict'][species] = [(species,location,flag)]
                     else:
                         self.world.session_dict['species_dict'][species].append((species,location,flag))
+
+        for result in self.world.session_dict['results']:
+            results_dict = self.world.session_dict['results'][result]
+            self.world.session_dict['lines'][result] = {}
+            for key in results_dict:
+                if (not key == 'Time'):
+                    self.world.session_dict['lines'][result][key] = Line(self.world.session_dict['draw_plot'].axes,
+                                                     results_dict[key],
+                                                     results_dict['Time'],
+                                                     result, key,
+                                                     self.world.choose_colour())
+        self.world.session_dict['lines'] = self.world.session_dict['lines']
 
 
 class wizard_page(wizmod.PyWizardPage):

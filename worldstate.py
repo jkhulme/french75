@@ -1,5 +1,7 @@
 from singleton import Singleton
 import wx
+from random import randrange
+from math import sqrt
 
 _DICT_ELEMS = [('results', None),
                ('clock', 0),
@@ -31,7 +33,8 @@ _DICT_ELEMS = [('results', None),
                ('draw_plot', None),
                ('xkcd', False),
                ('graph_canvas', None),
-               ('redraw_legend', True)]
+               ('redraw_legend', True),
+               ('draw_annotations', True)]
 
 
 @Singleton
@@ -43,6 +46,8 @@ class WorldState:
         self._TEXT = 2
         self._TEXT_ARROW = 3
         self._CIRCLE = 4
+        self.colours = []
+        self.hard_colours = self.populate_colours()
 
         self.session_dict = dict(_DICT_ELEMS)
         self.temp_session = None
@@ -57,3 +62,36 @@ class WorldState:
 
     def change_cursor(self, cursor):
         self.session_dict['graph_canvas'].SetCursor(wx.StockCursor(cursor))
+
+    def euclid_distance(self, p1, p2):
+        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
+
+    """
+    Work through the list of set colours first.  Then start generating new
+    colours - if they are too close then regenerate
+    """
+    def choose_colour(self):
+        if (len(self.hard_colours) > 0):
+            return self.hard_colours.pop()
+        else:
+            accept = False
+
+            while(not accept):
+                accept = True
+                temp_colour = self.random_colour()
+                for colour in self.colours:
+                    if (self.euclid_distance(temp_colour, colour) < 50):
+                        accept = False
+                        break
+            self.colours.append(temp_colour)
+            return temp_colour
+
+    def random_colour(self):
+        return (randrange(0, 200, 1),
+                randrange(0, 200, 1),
+                randrange(0, 200, 1))
+
+    def populate_colours(self):
+        return [(255, 0, 0),
+                (0, 255, 0),
+                (0, 0, 255)]

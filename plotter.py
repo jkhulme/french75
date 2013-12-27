@@ -1,6 +1,3 @@
-from line import Line
-from utils import euclid_distance
-from random import randrange
 from matplotlib.ticker import MultipleLocator
 import matplotlib.pyplot as plt
 from worldstate import WorldState
@@ -30,24 +27,12 @@ class Plotter(object):
         self.axes = axes
         self.parser = self.world.session_dict['parser']
         self.mpl_legend = False
-        self.colours = []
-        self.hard_colours = self.populate_colours()
-        self.draw_annotations = True
+
 
         """
         Create a line from each species.  Don't put time in there.
         """
-        for result in self.world.session_dict['results']:
-            results_dict = self.world.session_dict['results'][result]
-            self.world.session_dict['lines'][result] = {}
-            for key in results_dict:
-                if (not key == 'Time'):
-                    self.world.session_dict['lines'][result][key] = Line(self.axes,
-                                                     results_dict[key],
-                                                     results_dict['Time'],
-                                                     result, key,
-                                                     self.choose_colour())
-        self.world.session_dict['lines'] = self.world.session_dict['lines']
+
 
     """
     Attempt to plot each line.
@@ -79,7 +64,7 @@ class Plotter(object):
         self.axes.set_title(self.world.session_dict['title'])
         self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
 
-        if self.draw_annotations:
+        if self.world.session_dict['draw_annotations']:
             self.redraw_annotations()
 
         self.world.session_dict['graph_canvas'].draw()
@@ -120,36 +105,6 @@ class Plotter(object):
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
         self.world.session_dict['graph_canvas'].draw()
-
-    """
-    Work through the list of set colours first.  Then start generating new
-    colours - if they are too close then regenerate
-    """
-    def choose_colour(self):
-        if (len(self.hard_colours) > 0):
-            return self.hard_colours.pop()
-        else:
-            accept = False
-
-            while(not accept):
-                accept = True
-                temp_colour = self.random_colour()
-                for colour in self.colours:
-                    if (euclid_distance(temp_colour, colour) < 50):
-                        accept = False
-                        break
-            self.colours.append(temp_colour)
-            return temp_colour
-
-    def random_colour(self):
-        return (randrange(0, 200, 1),
-                randrange(0, 200, 1),
-                randrange(0, 200, 1))
-
-    def populate_colours(self):
-        return [(255, 0, 0),
-                (0, 255, 0),
-                (0, 0, 255)]
 
     def vertical_line(self):
         self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)

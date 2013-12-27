@@ -314,16 +314,14 @@ class French75(wx.Frame):
         return menubar
 
     def toggle_xkcd(self, event):
-        self.world.session_dict['draw_plot'].xkcdify = not self.world.session_dict['draw_plot'].xkcdify
-        self.world.session_dict['redraw_legend'] = False
-        self.world.session_dict['draw_plot'].plot()
-        self.world.session_dict['redraw_legend'] = True
+        self.toggle_param('xkcd')
 
     def toggle_annotations(self, event):
-        self.world.session_dict['draw_plot'].draw_annotations = not self.world.session_dict['draw_plot'].draw_annotations
-        self.world.session_dict['redraw_legend'] = False
-        self.world.session_dict['draw_plot'].plot()
-        self.world.session_dict['redraw_legend'] = True
+        self.toggle_param('draw_annotations')
+
+    def toggle_param(self, param):
+        self.world.session_dict[param] = not self.world.session_dict[param]
+        refresh_plot()
 
 
     """
@@ -338,9 +336,8 @@ class French75(wx.Frame):
         if session_dialog.state == session_dialog._FINISHED:
             self.world.temp_session_dict = None
             self.world.session_dict['title'] = session_dialog.title_text.GetLineText(0)
-            session_dialog.parse_species()
-
             self.world.session_dict['draw_plot'] = Plotter(self.graph_axes)
+            session_dialog.parse_species()
             self.world.session_dict['draw_plot'].plot()
             reset_sash_position(self.splitter_left)
             self.legend_panel.Parent.Refresh()
