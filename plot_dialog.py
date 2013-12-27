@@ -72,7 +72,7 @@ class Plot_Dialog(wx.Dialog):
             self.line.flat_colour = rgb_to_hex((r, g, b))
         except:
             print "No colour change"
-        #self.world.push_state()
+        self.world.push_state()
         self.Close()
 
     def on_cancel(self, e):

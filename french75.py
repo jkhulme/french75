@@ -377,6 +377,7 @@ class French75(wx.Frame):
         else:
             self.world.session_dict = self.world.temp_session_dict
             self.world.temp_session_dict = None
+        self.world.push_state()
 
     """
     selects which csv files to use
