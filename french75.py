@@ -253,10 +253,7 @@ class French75(wx.Frame):
                 self.selected_annotation.type = self.world._TEXT_ARROW
 
     def delete_annotation(self, event):
-        new_annotation_list = []
-        for annotation in self.world.session_dict['annotations']:
-            if annotation != self.selected_annotation:
-                new_annotation_list.append(annotation)
+        new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
         self.world.session_dict['annotations'] = new_annotation_list
 
     def get_label(self):
