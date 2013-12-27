@@ -1,6 +1,7 @@
 import wx
 from plot_dialog import Plot_Dialog
 from custom_ui_elements import BioPepaCollapsiblePane
+from utils import refresh_plot
 
 _HEIGHT = 20
 _WIDTH = 45
@@ -122,9 +123,7 @@ class Legend(object):
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
         self.update(btn_props.GetParent(), file_key, species_key)
-        self.plotter.redraw_legend = False
-        self.plotter.plot()
-        #self.world.session_dict['graph_panel'].Refresh()
+        refresh_plot()
 
     def update(self, csv, file_key, species_key):
         for child in csv.GetChildren():

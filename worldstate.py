@@ -2,6 +2,7 @@ from singleton import Singleton
 import wx
 from random import randrange
 from math import sqrt
+from undo_stack import UndoStack
 
 _DICT_ELEMS = [('results', None),
                ('clock', 0),
@@ -48,8 +49,10 @@ class WorldState:
         self._CIRCLE = 4
         self.colours = []
         self.hard_colours = self.populate_colours()
+        self.undo_stack = UndoStack()
 
         self.session_dict = dict(_DICT_ELEMS)
+        self.undo_stack.push(self.undo_stack)
         self.temp_session = None
 
     def reset_session(session_dict):
@@ -95,3 +98,9 @@ class WorldState:
         return [(255, 0, 0),
                 (0, 255, 0),
                 (0, 0, 255)]
+
+    def undo(self):
+        self.session_dict = self.undo_stack.pop()
+
+    def push_state(self):
+        self.undo_stack.push(self.session_dict)

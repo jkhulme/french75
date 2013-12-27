@@ -311,7 +311,22 @@ class French75(wx.Frame):
         xkcdm_toggle = xkcd_menu.Append(wx.ID_ANY, '&Toggle')
         menubar.Append(xkcd_menu, '&XKCD Mode')
         self.Bind(wx.EVT_MENU, self.toggle_xkcd, xkcdm_toggle)
+
+        edit_menu = wx.Menu()
+        undo = edit_menu.Append(wx.ID_ANY, '&Undo')
+        redo = edit_menu.Append(wx.ID_ANY, '&Redo')
+        menubar.Append(edit_menu, '&Edit')
+        self.Bind(wx.EVT_MENU, self.undo, undo)
+        self.Bind(wx.EVT_MENU, self.redo, redo)
+
         return menubar
+
+    def undo(self, event):
+        self.world.undo()
+        refresh_plot()
+
+    def redo(self, event):
+        pass
 
     def toggle_xkcd(self, event):
         self.toggle_param('xkcd')
@@ -366,7 +381,9 @@ class French75(wx.Frame):
     """
     selects which csv files to use
     """
+    """
     def open_results_file(self, e):
+        pass
         open_results_file(self)
 
         self.slider_time.SetMax(self.world.session_dict['max_time'])
@@ -381,6 +398,7 @@ class French75(wx.Frame):
 
         self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
         self.animation_panel.Refresh()
+    """
 
     def play_animation(self, e):
         if not self.world.session_dict['start_playing']:
@@ -400,7 +418,6 @@ class French75(wx.Frame):
                 t3.start()
 
     def change_button_text(self, title):
-        print title
         self.btn_animate_play.SetLabel(title)
 
     """
@@ -436,9 +453,7 @@ class French75(wx.Frame):
     pane is refreshed by animate()
     """
     def animate_cell(self, e):
-        #TODO Post in mailing list as to why this doesn't work on mac
-        if (platform.system() == "Linux"):
-            wx.CallAfter(self.world.session_dict['draw_plot'].vertical_line())
+        wx.CallAfter(self.world.session_dict['draw_plot'].vertical_line)
         dc2 = wx.PaintDC(self.animation_panel)
         for segment in self.world.session_dict['cell_segments']:
             segment.paint(dc2)
@@ -455,8 +470,6 @@ class French75(wx.Frame):
             self.world.session_dict['clock'] += self.world.session_dict['clock_increment']
             self.slider_time.SetValue(self.world.session_dict['clock'])
             self.animation_panel.Refresh()
-            if (platform.system() != "Linux"):
-                self.world.session_dict['draw_plot'].vertical_line()
             time.sleep(n)
 
     """
@@ -466,6 +479,7 @@ class French75(wx.Frame):
         self.dc = wx.PaintDC(self.model_panel)
         if self.world.session_dict['first_time']:
             self.world.session_dict['first_time'] = False
+            #Do this when parsing the model?  Then I can remove this IF
             self.model_parser.tree.build_tree()
             self.model_parser.tree.draw_tree_one(self.dc)
         else:
