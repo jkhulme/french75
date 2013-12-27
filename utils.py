@@ -67,3 +67,8 @@ def calc_graph_size(dpi, cols, num_sidebars, phi):
 def reset_sash_position(sash):
     sash.SetSashPosition(sash.GetSashPosition() + 1)
     sash.SetSashPosition(sash.GetSashPosition() - 1)
+
+def refresh_plot():
+    world.session_dict['redraw_legend'] = False
+    world.session_dict['draw_plot'].plot()
+    world.session_dict['redraw_legend'] = True

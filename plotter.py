@@ -99,6 +99,28 @@ class Plotter(object):
             annotation = self.world.session_dict['temp_annotation']
             self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
 
+    def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
+        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
+        self.world.session_dict['annotate'] = False
+        if text:
+            self.world.session_dict['annotations'].append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
+        else:
+            self.world.session_dict['annotations'].append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
+        self.world.session_dict['graph_canvas'].draw()
+
+    def annotate_text(self, (x, y), text="Annotation"):
+        self.axes.text(x, y, text)
+        self.world.session_dict['annotate'] = False
+        self.world.session_dict['annotations'].append(Annotation(self.world._TEXT, (x, y), text=text))
+        self.world.session_dict['graph_canvas'].draw()
+
+    def annotate_circle(self, (x, y), colour="black"):
+        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
+        self.axes.add_artist(circle1)
+        self.world.session_dict['annotate'] = False
+        self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
+        self.world.session_dict['graph_canvas'].draw()
+
     """
     Work through the list of set colours first.  Then start generating new
     colours - if they are too close then regenerate

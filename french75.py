@@ -14,7 +14,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import open_results_file, euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position
+from utils import open_results_file, euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position, refresh_plot
 from subprocess import call
 from annotation import Annotation
 
@@ -173,7 +173,7 @@ class French75(wx.Frame):
                 if self.world.session_dict['click_one']:
                     click_two_x = event.xdata
                     click_two_y = event.ydata
-                    self.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
+                    self.world.session_dict['draw_plot'].annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
                     self.world.session_dict['click_one'] = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
@@ -184,7 +184,7 @@ class French75(wx.Frame):
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
-                    self.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
+                    self.world.session_dict['draw_plot'].annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     return
@@ -196,7 +196,7 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     return
                 if self.world.session_dict['click_one']:
-                    self.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata), text=self.world.session_dict['annotation_text'], colour='black')
+                    self.world.session_dict['draw_plot'].annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata), text=self.world.session_dict['annotation_text'], colour='black')
                     self.world.session_dict['click_one'] = False
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
@@ -207,15 +207,15 @@ class French75(wx.Frame):
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
-                    self.annotate_circle((event.xdata, event.ydata), colour='black')
+                    self.world.session_dict['draw_plot'].annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     return
         elif event.button == _RIGHT_BUTTON:
             self.selected_annotation = None
             for annotation in self.world.session_dict['annotations']:
-                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])), (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])), (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
-                #dist = point_to_line_distance((annotation.x1, annotation.y1), (annotation.x2, annotation.y2), (event.xdata, event.ydata))
-                #print dist
+                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
+                                              (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
+                                              (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
                 if dist < 0.025:
                     if self.selected_annotation is None:
                         self.selected_annotation = annotation
@@ -223,39 +223,12 @@ class French75(wx.Frame):
                         self.selected_annotation = annotation
             if self.selected_annotation is not None:
                 self.selected_annotation.colour = 'red'
-                print "Updated colour"
-                self.world.session_dict['redraw_legend'] = False
-                self.world.session_dict['draw_plot'].plot()
-                self.world.session_dict['redraw_legend'] = True
+                refresh_plot()
                 self.annotation_menu()
                 self.selected_annotation.colour = 'black'
-                self.world.session_dict['redraw_legend'] = False
-                self.world.session_dict['draw_plot'].plot()
-                self.world.session_dict['redraw_legend'] = True
+                refresh_plot()
             else:
                 print "Missed annotation"
-
-    def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
-        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
-        self.world.session_dict['annotate'] = False
-        if text:
-            self.world.session_dict['annotations'].append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
-        else:
-            self.world.session_dict['annotations'].append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
-        self.world.session_dict['graph_canvas'].draw()
-
-    def annotate_text(self, (x, y), text="Annotation"):
-        self.axes.text(x, y, text)
-        self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(Annotation(self.world._TEXT, (x, y), text=text))
-        self.world.session_dict['graph_canvas'].draw()
-
-    def annotate_circle(self, (x, y), colour="black"):
-        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
-        self.axes.add_artist(circle1)
-        self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
-        self.world.session_dict['graph_canvas'].draw()
 
     def annotation_menu(self):
         annotate_menu = wx.Menu()
