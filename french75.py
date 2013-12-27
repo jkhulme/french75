@@ -14,7 +14,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import open_results_file, euclid_distance, point_to_line_distance, calc_graph_size
+from utils import open_results_file, euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position
 from subprocess import call
 from annotation import Annotation
 
@@ -135,9 +135,11 @@ class French75(wx.Frame):
         if self.world.session_dict['draw_plot']:
             if self.world.session_dict['click_one']:
                 self.world.session_dict['temp_annotation'] = Annotation(self.world._ARROW, (self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata))
-            self.world.session_dict['draw_plot'].redraw_legend = False
-            self.world.session_dict['draw_plot'].plot()
-            self.world.session_dict['draw_plot'].redraw_legend = True
+            #TODO: Don't replot mid animation
+            if self.world.session_dict['annotate']:
+                self.world.session_dict['redraw_legend'] = False
+                self.world.session_dict['draw_plot'].plot()
+                self.world.session_dict['redraw_legend'] = True
 
     def open_file(self, event):
         i = self.attached_file_list.GetSelection()
@@ -177,9 +179,9 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.annotation_mode = self.world._NONE
                     self.world.session_dict['temp_annotation'] = None
-                    self.world.session_dict['draw_plot'].redraw_legend = False
+                    self.world.session_dict['redraw_legend'] = False
                     self.world.session_dict['draw_plot'].plot()
-                    self.world.session_dict['draw_plot'].redraw_legend = True
+                    self.world.session_dict['redraw_legend'] = True
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
@@ -200,9 +202,9 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     self.world.session_dict['temp_annotation'] = None
-                    self.world.session_dict['draw_plot'].redraw_legend = False
+                    self.world.session_dict['redraw_legend'] = False
                     self.world.session_dict['draw_plot'].plot()
-                    self.world.session_dict['draw_plot'].redraw_legend = True
+                    self.world.session_dict['redraw_legend'] = True
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
@@ -223,14 +225,14 @@ class French75(wx.Frame):
             if self.selected_annotation is not None:
                 self.selected_annotation.colour = 'red'
                 print "Updated colour"
-                self.world.session_dict['draw_plot'].redraw_legend = False
+                self.world.session_dict['redraw_legend'] = False
                 self.world.session_dict['draw_plot'].plot()
-                self.world.session_dict['draw_plot'].redraw_legend = True
+                self.world.session_dict['redraw_legend'] = True
                 self.annotation_menu()
                 self.selected_annotation.colour = 'black'
-                self.world.session_dict['draw_plot'].redraw_legend = False
+                self.world.session_dict['redraw_legend'] = False
                 self.world.session_dict['draw_plot'].plot()
-                self.world.session_dict['draw_plot'].redraw_legend = True
+                self.world.session_dict['redraw_legend'] = True
             else:
                 print "Missed annotation"
 
@@ -316,15 +318,15 @@ class French75(wx.Frame):
 
     def toggle_xkcd(self, event):
         self.world.session_dict['draw_plot'].xkcdify = not self.world.session_dict['draw_plot'].xkcdify
-        self.world.session_dict['draw_plot'].redraw_legend = False
+        self.world.session_dict['redraw_legend'] = False
         self.world.session_dict['draw_plot'].plot()
-        self.world.session_dict['draw_plot'].redraw_legend = True
+        self.world.session_dict['redraw_legend'] = True
 
     def toggle_annotations(self, event):
         self.world.session_dict['draw_plot'].draw_annotations = not self.world.session_dict['draw_plot'].draw_annotations
-        self.world.session_dict['draw_plot'].redraw_legend = False
+        self.world.session_dict['redraw_legend'] = False
         self.world.session_dict['draw_plot'].plot()
-        self.world.session_dict['draw_plot'].redraw_legend = True
+        self.world.session_dict['redraw_legend'] = True
 
 
     """
@@ -341,21 +343,18 @@ class French75(wx.Frame):
             self.world.session_dict['title'] = session_dialog.title_text.GetLineText(0)
             session_dialog.parse_species()
 
-            self.world.session_dict['draw_plot'] = Plotter(self.graph_axes, self.graph_canvas, True, self.world.session_dict['xkcd'])
+            self.world.session_dict['draw_plot'] = Plotter(self.graph_axes)
             self.world.session_dict['draw_plot'].plot()
-            self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() + 1)
-            self.splitter_left.SetSashPosition(self.splitter_left.GetSashPosition() - 1)
+            reset_sash_position(self.splitter_left)
             self.legend_panel.Parent.Refresh()
             self.slider_time.SetMax(self.world.session_dict['max_time'])
 
             for species in self.world.session_dict['species_dict'].keys():
-                for file_name in self.world.session_dict['draw_plot'].results.keys():
-                    for loc in self.world.session_dict['species_dict'][species]:
-                        print self.world.session_dict['draw_plot'].results[file_name][species+"@"+loc[1]]
                 self.drop_down_species.Append(species)
 
             self.drop_down_species.SetSelection(0)
 
+            #TODO: Fix these magic numbers
             a = 10
             b = 40
             c = 120
@@ -496,7 +495,7 @@ class French75(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.world.session_dict['draw_plot'].mpl_legend = True
-            self.world.session_dict['draw_plot'].redraw_legend = False
+            self.world.session_dict['redraw_legend'] = False
             self.world.session_dict['draw_plot'].plot()
             self.graph_canvas.print_figure(path, dpi=_DPI)
             self.world.session_dict['draw_plot'].mpl_legend = False

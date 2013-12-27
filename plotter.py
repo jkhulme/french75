@@ -17,43 +17,37 @@ class Plotter(object):
         General line plots.
 
     self.axes - Lines are plotted using this.
-    self.canvas - Used to draw the axes/plots
+    self.world.session_dict['graph_canvas'] - Used to draw the axes/plots
     self.parser - the csv parser
-    self.results - the results data
-    self.redraw_legend - do we need to redraw the legend or not
+    self.world.session_dict['redraw_legend'] - do we need to redraw the legend or not
     """
 
     """
     Initialise what we need, and then create a line for each plot
     """
-    def __init__(self, axes, canvas, redraw_legend, xkcdify):
+    def __init__(self, axes):
         self.world = WorldState.Instance()
         self.axes = axes
-        self.canvas = canvas
         self.parser = self.world.session_dict['parser']
-        self.results = {}
-        self.redraw_legend = redraw_legend
         self.mpl_legend = False
         self.colours = []
         self.hard_colours = self.populate_colours()
-        self.xkcdify = xkcdify
-        results = self.world.session_dict['results']
         self.draw_annotations = True
 
         """
         Create a line from each species.  Don't put time in there.
         """
-        for result in results:
-            results_dict = results[result]
-            self.results[result] = {}
+        for result in self.world.session_dict['results']:
+            results_dict = self.world.session_dict['results'][result]
+            self.world.session_dict['lines'][result] = {}
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.results[result][key] = Line(self.axes,
+                    self.world.session_dict['lines'][result][key] = Line(self.axes,
                                                      results_dict[key],
                                                      results_dict['Time'],
                                                      result, key,
                                                      self.choose_colour())
-        self.world.session_dict['lines'] = self.results
+        self.world.session_dict['lines'] = self.world.session_dict['lines']
 
     """
     Attempt to plot each line.
@@ -62,13 +56,13 @@ class Plotter(object):
     def plot(self):
         self.axes.clear()
 
-        for result in self.results:
-            for key in self.results[result]:
-                self.results[result][key].plot()
+        for result in self.world.session_dict['lines']:
+            for key in self.world.session_dict['lines'][result]:
+                self.world.session_dict['lines'][result][key].plot()
 
         #my interactive legend
-        if (self.redraw_legend):
-            self.world.session_dict['legend'].draw_legend(self, self.results)
+        if (self.world.session_dict['redraw_legend']):
+            self.world.session_dict['legend'].draw_legend(self, self.world.session_dict['lines'])
 
         #matplotlib legend - for saving with a legend
         if (self.mpl_legend):
@@ -88,7 +82,7 @@ class Plotter(object):
         if self.draw_annotations:
             self.redraw_annotations()
 
-        self.canvas.draw()
+        self.world.session_dict['graph_canvas'].draw()
 
     def redraw_annotations(self):
         for annotation in self.world.session_dict['annotations']:
@@ -112,20 +106,20 @@ class Plotter(object):
             self.world.session_dict['annotations'].append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
         else:
             self.world.session_dict['annotations'].append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
-        self.canvas.draw()
+        self.world.session_dict['graph_canvas'].draw()
 
     def annotate_text(self, (x, y), text="Annotation"):
         self.axes.text(x, y, text)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(Annotation(self.world._TEXT, (x, y), text=text))
-        self.canvas.draw()
+        self.world.session_dict['graph_canvas'].draw()
 
     def annotate_circle(self, (x, y), colour="black"):
         circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
         self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
-        self.canvas.draw()
+        self.world.session_dict['graph_canvas'].draw()
 
     """
     Work through the list of set colours first.  Then start generating new
@@ -159,5 +153,5 @@ class Plotter(object):
 
     def vertical_line(self):
         self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)
-        self.canvas.draw()
+        self.world.session_dict['graph_canvas'].draw()
         self.axes.lines.pop()

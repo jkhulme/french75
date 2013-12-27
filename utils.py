@@ -63,3 +63,7 @@ def calc_graph_size(dpi, cols, num_sidebars, phi):
     graph_width = int(((world.session_dict['dispW'] / cols) * (cols - num_sidebars)) / dpi)
     graph_height = int(graph_width/phi)
     return (graph_width, graph_height)
+
+def reset_sash_position(sash):
+    sash.SetSashPosition(sash.GetSashPosition() + 1)
+    sash.SetSashPosition(sash.GetSashPosition() - 1)

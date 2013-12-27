@@ -11,11 +11,11 @@ class CellSegment(object):
         self.key = file_name
         for i, (name, loc, l_flag) in enumerate(self.world.session_dict['species_dict'][species]):
             if l_flag == 1:
-                self.species_inner = species+"@"+self.world.species_dict[species][i][1]
+                self.species_inner = species+"@"+self.world.session_dict['species_dict'][species][i][1]
             elif l_flag == 2:
-                self.species_middle = species+"@"+self.world.species_dict[species][i][1]
+                self.species_middle = species+"@"+self.world.session_dict['species_dict'][species][i][1]
             elif l_flag == 3:
-                self.species_outer = species+"@"+self.world.species_dict[species][i][1]
+                self.species_outer = species+"@"+self.world.session_dict['species_dict'][species][i][1]
 
         self.result_inner = self.world.session_dict['lines'][self.key][self.species_inner]
         self.result_middle = self.world.session_dict['lines'][self.key][self.species_middle]

@@ -3,9 +3,7 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 
-
-padding = 5
-
+_PADDING = 5
 
 
 class SessionWizard(wx.wizard.Wizard):
@@ -13,9 +11,9 @@ class SessionWizard(wx.wizard.Wizard):
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
 
+        self._STARTED = 0
         self._FINISHED = 1
         self._CANCELLED = 2
-        self._STARTED = 0
 
         self.pages = []
         self.state = self._STARTED
@@ -164,7 +162,6 @@ class SessionWizard(wx.wizard.Wizard):
                     else:
                         self.world.session_dict['species_dict'][species].append((species,location,flag))
 
-padding = 5
 
 class wizard_page(wizmod.PyWizardPage):
     ''' An extended panel obj with a few methods to keep track of its siblings.
@@ -175,13 +172,13 @@ class wizard_page(wizmod.PyWizardPage):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         title = wx.StaticText(self, -1, title)
         title.SetFont(wx.Font(18, wx.SWISS, wx.NORMAL, wx.BOLD))
-        self.sizer.AddWindow(title, 0, wx.ALIGN_LEFT|wx.ALL, padding)
-        self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, padding)
+        self.sizer.AddWindow(title, 0, wx.ALIGN_LEFT|wx.ALL, _PADDING)
+        self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, _PADDING)
         self.SetSizer(self.sizer)
 
     def add_widget(self, stuff):
         '''Add additional widgets to the bottom of the page'''
-        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, padding)
+        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, _PADDING)
 
     #Would like to get rid of the following methods, but they seem to be needed by some parent code
     def SetNext(self, next):

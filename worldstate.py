@@ -17,11 +17,10 @@ _DICT_ELEMS = [('results', None),
                ('temp_annotation', None),
                ('annotation_mode', None),
                ('max_height', 0),
-               ('graph_canvas', None),
                ('annotation_text', ""),
                ('species_dict', {}),
                ('results', None),
-               ('lines', None),
+               ('lines', {}),
                ('first_time', True),
                ('cell_segments', []),
                ('start_playing', False),
@@ -30,7 +29,9 @@ _DICT_ELEMS = [('results', None),
                ('click_one_y', 0),
                ('attached_file_locations', []),
                ('draw_plot', None),
-               ('xkcd', False)]
+               ('xkcd', False),
+               ('graph_canvas', None),
+               ('redraw_legend', True)]
 
 
 @Singleton
