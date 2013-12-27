@@ -3,6 +3,7 @@ import wx
 from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
 
+
 world = WorldState.Instance()
 
 
@@ -57,3 +58,8 @@ def rgba_to_rgb((r, g, b), a):
     fg = (r * a, g * a, b * a)
     add_tuples = lambda (r1, g1, b1), (r2, g2, b2): (r1 + r2, g1 + g2, b1 + b2)
     return add_tuples(bg, fg)
+
+def calc_graph_size(dpi, cols, num_sidebars, phi):
+    graph_width = int(((world.session_dict['dispW'] / cols) * (cols - num_sidebars)) / dpi)
+    graph_height = int(graph_width/phi)
+    return (graph_width, graph_height)
