@@ -164,24 +164,29 @@ class French75(wx.Frame):
 
     def onclick(self, event):
         if event.button == _LEFT_BUTTON:
-            if self.world.session_dict['annotation_mode'] == self.world._ARROW:
-                if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
-                    self.world.session_dict['click_one_x'] = event.xdata
-                    self.world.session_dict['click_one_y'] = event.ydata
-                    self.world.session_dict['click_one'] = True
-                    return
-                if self.world.session_dict['click_one']:
-                    click_two_x = event.xdata
-                    click_two_y = event.ydata
-                    self.world.session_dict['draw_plot'].annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
-                    self.world.session_dict['click_one'] = False
-                    self.world.change_cursor(wx.CURSOR_ARROW)
-                    self.world.annotation_mode = self.world._NONE
-                    self.world.session_dict['temp_annotation'] = None
-                    self.world.session_dict['redraw_legend'] = False
-                    self.world.session_dict['draw_plot'].plot()
-                    self.world.session_dict['redraw_legend'] = True
-                    return
+            self.left_click_handler(event)
+        elif event.button == _RIGHT_BUTTON:
+            self.right_click_handler(event)
+
+    def left_click_handler(self, event):
+        if self.world.session_dict['annotation_mode'] == self.world._ARROW:
+            if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
+                self.world.session_dict['click_one_x'] = event.xdata
+                self.world.session_dict['click_one_y'] = event.ydata
+                self.world.session_dict['click_one'] = True
+                return
+            if self.world.session_dict['click_one']:
+                click_two_x = event.xdata
+                click_two_y = event.ydata
+                self.world.session_dict['draw_plot'].annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
+                self.world.session_dict['click_one'] = False
+                self.world.change_cursor(wx.CURSOR_ARROW)
+                self.world.annotation_mode = self.world._NONE
+                self.world.session_dict['temp_annotation'] = None
+                self.world.session_dict['redraw_legend'] = False
+                self.world.session_dict['draw_plot'].plot()
+                self.world.session_dict['redraw_legend'] = True
+                return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
                     self.world.session_dict['draw_plot'].annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
@@ -210,25 +215,26 @@ class French75(wx.Frame):
                     self.world.session_dict['draw_plot'].annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     return
-        elif event.button == _RIGHT_BUTTON:
-            self.selected_annotation = None
-            for annotation in self.world.session_dict['annotations']:
-                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
-                                              (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
-                                              (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
-                if dist < 0.025:
-                    if self.selected_annotation is None:
-                        self.selected_annotation = annotation
-                    elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
-                        self.selected_annotation = annotation
-            if self.selected_annotation is not None:
-                self.selected_annotation.colour = 'red'
-                refresh_plot()
-                self.annotation_menu()
-                self.selected_annotation.colour = 'black'
-                refresh_plot()
-            else:
-                print "Missed annotation"
+
+    def right_click_handler(self, event):
+        self.selected_annotation = None
+        for annotation in self.world.session_dict['annotations']:
+            dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
+                                          (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
+                                          (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+            if dist < 0.025:
+                if self.selected_annotation is None:
+                    self.selected_annotation = annotation
+                elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
+                    self.selected_annotation = annotation
+        if self.selected_annotation is not None:
+            self.selected_annotation.colour = 'red'
+            refresh_plot()
+            self.annotation_menu()
+            self.selected_annotation.colour = 'black'
+            refresh_plot()
+        else:
+            print "Missed annotation"
 
     def annotation_menu(self):
         annotate_menu = wx.Menu()
