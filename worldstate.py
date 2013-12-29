@@ -103,8 +103,7 @@ class WorldState:
 
     def push_state(self):
         #TODO: Need to push a copy onto here
-        temp = self.session_dict.copy()
-        self.undo_stack.push(temp)
+        self.undo_stack.push(self.session_dict.copy())
         print "$$$$$$$$$$$$$$$"
         for state in self.undo_stack.stack:
             print state['annotations']
