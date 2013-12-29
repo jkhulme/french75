@@ -11,3 +11,6 @@ class UndoStack:
 
     def undo(self):
         return self.pop()
+
+    def __len__(self):
+        return len(self.stack)

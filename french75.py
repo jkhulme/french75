@@ -186,6 +186,7 @@ class French75(wx.Frame):
                 self.world.session_dict['redraw_legend'] = False
                 self.world.session_dict['draw_plot'].plot()
                 self.world.session_dict['redraw_legend'] = True
+                self.world.push_state()
                 return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
