@@ -3,6 +3,7 @@ import wx
 from random import randrange
 from math import sqrt
 from undo_stack import UndoStack
+import copy
 
 _DICT_ELEMS = [('results', None),
                ('clock', 0),
@@ -37,6 +38,38 @@ _DICT_ELEMS = [('results', None),
                ('redraw_legend', True),
                ('draw_annotations', True)]
 
+_FILTER     = [('results', None),
+               ('clock', 0),
+               ('first_circle', True),
+               ('clock_pause', False),
+               #('legend', None),
+               ('title', "Graph"),
+               ('dispW', 0),
+               ('dispH', 0),
+               ('max_time', 1),
+               ('clock_increment', 1/600.0),
+               #('parser', None),
+               ('annotate', False),
+               ('annotations', []),
+               ('temp_annotation', None),
+               ('annotation_mode', None),
+               ('max_height', 0),
+               ('annotation_text', ""),
+               ('species_dict', {}),
+               ('results', None),
+               ('lines', {}),
+               ('first_time', True),
+               #('cell_segments', []),
+               ('start_playing', False),
+               ('click_one', False),
+               ('click_one_x', 0),
+               ('click_one_y', 0),
+               ('attached_file_locations', []),
+               #('draw_plot', None),
+               ('xkcd', False),
+               #('graph_canvas', None),
+               ('redraw_legend', True),
+               ('draw_annotations', True)]
 
 @Singleton
 class WorldState:
@@ -52,7 +85,9 @@ class WorldState:
         self.undo_stack = UndoStack()
 
         self.session_dict = dict(_DICT_ELEMS)
+        self.good_dict = dict(_FILTER)
         self.temp_session = None
+        self.graph_axes = None
 
     def reset_session(session_dict):
         for (key, value) in _DICT_ELEMS:
@@ -99,14 +134,20 @@ class WorldState:
                 (0, 0, 255)]
 
     def undo(self):
-        self.session_dict = self.undo_stack.pop()
+        temp_stack = self.undo_stack.pop()
+        for k, v in temp_stack.items():
+            self.session_dict[k] = v
 
     def push_state(self):
         #TODO: Need to push a copy onto here
         """
         I am copying the dictionary fine, but it is elements in the dictionary that also need copying, hopefully there is a library that does this, if not I need to do it myself
         """
-        self.undo_stack.push(self.session_dict.copy())
-        print "$$$$$$$$$$$$$$$"
-        for state in self.undo_stack.stack:
-            print state['annotations']
+        stack_dict = {}
+        good_keys = self.good_dict.keys()
+        #good_keys = ['lines']
+        for key in good_keys:
+            stack_dict[key] = self.session_dict[key]
+        self.undo_stack.push(copy.deepcopy(stack_dict))
+        for entry in self.undo_stack.stack:
+            print entry['annotations']

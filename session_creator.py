@@ -3,6 +3,7 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 from line import Line
+from copy import deepcopy
 
 _PADDING = 5
 
@@ -168,7 +169,7 @@ class SessionWizard(wx.wizard.Wizard):
             self.world.session_dict['lines'][result] = {}
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.world.session_dict['lines'][result][key] = Line(self.world.session_dict['draw_plot'].axes,
+                    self.world.session_dict['lines'][result][key] = Line(
                                                      results_dict[key],
                                                      results_dict['Time'],
                                                      result, key,

@@ -2,6 +2,7 @@ from matplotlib.ticker import MultipleLocator
 import matplotlib.pyplot as plt
 from worldstate import WorldState
 from annotation import Annotation
+from utils import rgb_to_hex
 
 
 class Plotter(object):
@@ -43,7 +44,7 @@ class Plotter(object):
 
         for result in self.world.session_dict['lines']:
             for key in self.world.session_dict['lines'][result]:
-                self.world.session_dict['lines'][result][key].plot()
+                self.plot_line(self.world.session_dict['lines'][result][key])
 
         #my interactive legend
         if (self.world.session_dict['redraw_legend']):
@@ -110,3 +111,14 @@ class Plotter(object):
         self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)
         self.world.session_dict['graph_canvas'].draw()
         self.axes.lines.pop()
+
+    """
+    Decides how we're going to plot
+    """
+    def plot_line(self, line):
+        if line.plot_line:
+            if not line.intense_plot:
+                self.world.graph_axes.plot(line.time, line.results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
+            else:
+                for (sub_plot, new_colour) in line.sub_plot_tuples:
+                    self.world.graph_axes.plot(line.time, sub_plot, color=new_colour, lw=line.thickness)

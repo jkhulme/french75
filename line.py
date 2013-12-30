@@ -1,5 +1,6 @@
 from math import ceil
 from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
+from copy import deepcopy
 
 _MIN_INTENSITY = 70
 _MAX_INTENSITY = 255
@@ -8,7 +9,7 @@ _MAX_INTENSITY = 255
 class Line(object):
 
     """
-    self.axes - plots the data
+    self.world.graph_axes - plots the data
     self.results - data to plot
     self.time - The time scale
     self.colour - holds the rgb tuple for plot colour
@@ -18,8 +19,7 @@ class Line(object):
     self.interval - for building sub plots - I think this has to be 2
     """
 
-    def __init__(self, axes, results, time, csv, key, colour):
-        self.axes = axes
+    def __init__(self, results, time, csv, key, colour):
         self.results = results
         self.time = time
         #magic values - but they get changes
@@ -74,17 +74,6 @@ class Line(object):
         return middle
 
     """
-    Decides how we're going to plot
-    """
-    def plot(self):
-        if self.plot_line:
-            if not self.intense_plot:
-                self.axes.plot(self.time, self.results, label=self.species, color=rgb_to_hex(self.rgb_tuple), alpha=1, lw=self.thickness)
-            else:
-                for (sub_plot, new_colour) in self.sub_plot_tuples:
-                    self.axes.plot(self.time, sub_plot, color=new_colour, lw=self.thickness)
-
-    """
     Plots the sub plots and works out what colour the line should be
     this is for colour intensity plot
     """
@@ -121,3 +110,17 @@ class Line(object):
                 break
             count += self.interval - 1
         return plot_arrays
+
+    def __copy__(self):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        return result
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result

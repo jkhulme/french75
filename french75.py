@@ -101,6 +101,7 @@ class French75(wx.Frame):
         self.graph_canvas = FigCanvas(self.graph_panel, -1, graph_fig)
         self.world.session_dict['graph_canvas'] = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
+        self.world.graph_axes = self.graph_axes
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
 
@@ -178,9 +179,6 @@ class French75(wx.Frame):
             if self.world.session_dict['click_one']:
                 click_two_x = event.xdata
                 click_two_y = event.ydata
-                print "$$$$$$$$$$$$$$$"
-                for state in self.world.undo_stack.stack:
-                    print state['annotations']
                 self.world.session_dict['draw_plot'].annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
                 self.world.session_dict['click_one'] = False
                 self.world.change_cursor(wx.CURSOR_ARROW)
@@ -189,9 +187,6 @@ class French75(wx.Frame):
                 self.world.session_dict['redraw_legend'] = False
                 self.world.session_dict['draw_plot'].plot()
                 self.world.session_dict['redraw_legend'] = True
-                print "$$$$$$$$$$$$$$$"
-                for state in self.world.undo_stack.stack:
-                    print state['annotations']
                 self.world.push_state()
                 return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
