@@ -103,6 +103,9 @@ class WorldState:
 
     def push_state(self):
         #TODO: Need to push a copy onto here
+        """
+        I am copying the dictionary fine, but it is elements in the dictionary that also need copying, hopefully there is a library that does this, if not I need to do it myself
+        """
         self.undo_stack.push(self.session_dict.copy())
         print "$$$$$$$$$$$$$$$"
         for state in self.undo_stack.stack:
