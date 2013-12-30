@@ -134,9 +134,11 @@ class WorldState:
                 (0, 0, 255)]
 
     def undo(self):
-        temp_stack = self.undo_stack.pop()
+        print self.session_dict['annotations']
+        temp_stack = self.undo_stack.undo_pop()
         for k, v in temp_stack.items():
             self.session_dict[k] = v
+        print self.session_dict['annotations']
 
     def push_state(self):
         #TODO: Need to push a copy onto here

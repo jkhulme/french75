@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class UndoStack:
 
     def __init__(self):
@@ -6,8 +9,9 @@ class UndoStack:
     def push(self, item):
         self.stack.insert(0, item)
 
-    def pop(self):
-        return self.stack.pop(0)
+    def undo_pop(self):
+        self.stack.pop(0)
+        return deepcopy(self.stack[0])
 
     def undo(self):
         return self.pop()
