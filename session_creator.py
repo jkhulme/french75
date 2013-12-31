@@ -3,7 +3,7 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 from line import Line
-from validators import TextNotEmptyValidator
+from validators import TextNotEmptyValidator, ResultsListNotEmptyValidator
 
 _PADDING = 5
 
@@ -36,8 +36,10 @@ class SessionWizard(wx.wizard.Wizard):
         self.add_page(page1)
 
         page2 = wizard_page(self, 'Select Results Files')
-        self.file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE)
+        results_label = wx.StaticText(page2, wx.ID_ANY, '', style=wx.ALIGN_LEFT)
+        self.file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE, validator=ResultsListNotEmptyValidator(results_label))
         page2.add_widget(self.file_list)
+        page2.add_widget(results_label)
         file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
         btn_add_file = wx.Button(page2, -1, "Add")
         btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
