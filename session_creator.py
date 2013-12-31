@@ -29,8 +29,10 @@ class SessionWizard(wx.wizard.Wizard):
         self.world = WorldState.Instance()
 
         page1 = wizard_page(self, 'Enter Title')  # Create a first page
-        self.title_text = wx.TextCtrl(page1, -1, size=(300, -1), validator = TextNotEmptyValidator())
+        title_label = wx.StaticText(page1, wx.ID_ANY, '', style=wx.ALIGN_LEFT)
+        self.title_text = wx.TextCtrl(page1, -1, size=(300, -1), validator = TextNotEmptyValidator(title_label))
         page1.add_widget(self.title_text)
+        page1.add_widget(title_label)
         self.add_page(page1)
 
         page2 = wizard_page(self, 'Select Results Files')
