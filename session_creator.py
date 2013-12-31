@@ -3,7 +3,7 @@ from worldstate import WorldState
 from utils import open_results_file
 import wx.wizard as wizmod
 from line import Line
-from copy import deepcopy
+from validators import TextNotEmptyValidator
 
 _PADDING = 5
 
@@ -29,7 +29,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.world = WorldState.Instance()
 
         page1 = wizard_page(self, 'Enter Title')  # Create a first page
-        self.title_text = wx.TextCtrl(page1, -1, size=(300, -1))
+        self.title_text = wx.TextCtrl(page1, -1, size=(300, -1), validator = TextNotEmptyValidator())
         page1.add_widget(self.title_text)
         self.add_page(page1)
 
