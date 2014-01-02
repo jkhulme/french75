@@ -14,7 +14,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import open_results_file, euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position, refresh_plot
+from utils import euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position, refresh_plot
 from subprocess import call
 from annotation import Annotation
 
@@ -67,9 +67,12 @@ class French75(wx.Frame):
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
+
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
+
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
+
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
         attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
@@ -77,12 +80,14 @@ class French75(wx.Frame):
         self.attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, 400))
         attached_files_vbox.Add(self.attached_file_list)
         attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
-        add_files_button = wx.Button(self.files_panel, -1, "Add")
-        add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
-        open_files_button = wx.Button(self.files_panel, -1, "Open")
-        open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
-        attached_file_toolbar.Add(add_files_button)
-        attached_file_toolbar.Add(open_files_button)
+        self.add_files_button = wx.Button(self.files_panel, -1, "Add")
+        self.add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
+
+        self.open_files_button = wx.Button(self.files_panel, -1, "Open")
+        self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
+
+        attached_file_toolbar.Add(self.add_files_button)
+        attached_file_toolbar.Add(self.open_files_button)
         attached_files_vbox.Add(attached_file_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
         self.files_panel.SetSizer(attached_files_vbox)
         attached_files_vbox.Fit(self)
@@ -105,9 +110,9 @@ class French75(wx.Frame):
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
 
-        toolbar = BioPepaToolbar(self.graph_canvas)
-        (toolW, toolH) = toolbar.GetSizeTuple()
-        graph_vbox.Add(toolbar)
+        self.toolbar = BioPepaToolbar(self.graph_canvas)
+        (toolW, toolH) = self.toolbar.GetSizeTuple()
+        graph_vbox.Add(self.toolbar)
 
         self.graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
@@ -130,7 +135,25 @@ class French75(wx.Frame):
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
         self.SetTitle(_TITLE)
+        self.enable_all(False)
+        self.filem_new_session.Enable(True)
         self.Maximize()
+
+    def enable_all(self, state):
+        self.toolbar.enable_all(state)
+        self.filem_new_session.Enable(state)
+        self.filem_open_results_save_plot.Enable(state)
+        self.filem_open_results_open_model.Enable(state)
+        self.filem_open_results_save_model.Enable(state)
+        self.annotationm_toggle.Enable(state)
+        self.xkcdm_toggle.Enable(state)
+        self.undo_m.Enable(state)
+        self.redo_m.Enable(state)
+        self.btn_animate_play.Enable(state)
+        self.slider_time.Enable(state)
+        self.drop_down_species.Enable(state)
+        self.add_files_button.Enable(state)
+        self.open_files_button.Enable(state)
 
     def move_mouse(self, event):
         if self.world.session_dict['draw_plot']:
@@ -288,38 +311,45 @@ class French75(wx.Frame):
         menubar.SetBackgroundColour(_BG_COLOUR)
 
         file_menu = wx.Menu()
-        filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
+        self.filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
         file_menu.AppendSeparator()
-        filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+        self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+
         file_menu.AppendSeparator()
-        filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
-        filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
+        self.filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
+
+        self.filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
+
 
         menubar.Append(file_menu, '&File')
 
-        self.Bind(wx.EVT_MENU, self.new_session, filem_new_session)
-        self.Bind(wx.EVT_MENU, self.open_model_file, filem_open_results_open_model)
-        self.Bind(wx.EVT_MENU, self.save_snapshot, filem_open_results_save_model)
-        self.Bind(wx.EVT_MENU, self.on_save_plot, filem_open_results_save_plot)
+        self.Bind(wx.EVT_MENU, self.new_session, self.filem_new_session)
+        self.Bind(wx.EVT_MENU, self.open_model_file, self.filem_open_results_open_model)
+        self.Bind(wx.EVT_MENU, self.save_snapshot, self.filem_open_results_save_model)
+        self.Bind(wx.EVT_MENU, self.on_save_plot, self.filem_open_results_save_plot)
 
         annotation_menu = wx.Menu()
-        annotationm_toggle = annotation_menu.Append(wx.ID_ANY, '&Toggle')
+        self.annotationm_toggle = annotation_menu.Append(wx.ID_ANY, '&Toggle')
+
 
         menubar.Append(annotation_menu, '&Annotations')
 
-        self.Bind(wx.EVT_MENU, self.toggle_annotations, annotationm_toggle)
+        self.Bind(wx.EVT_MENU, self.toggle_annotations, self.annotationm_toggle)
 
         xkcd_menu = wx.Menu()
-        xkcdm_toggle = xkcd_menu.Append(wx.ID_ANY, '&Toggle')
+        self.xkcdm_toggle = xkcd_menu.Append(wx.ID_ANY, '&Toggle')
+
         menubar.Append(xkcd_menu, '&XKCD Mode')
-        self.Bind(wx.EVT_MENU, self.toggle_xkcd, xkcdm_toggle)
+        self.Bind(wx.EVT_MENU, self.toggle_xkcd, self.xkcdm_toggle)
 
         edit_menu = wx.Menu()
-        undo = edit_menu.Append(wx.ID_ANY, '&Undo')
-        redo = edit_menu.Append(wx.ID_ANY, '&Redo')
+        self.undo_m = edit_menu.Append(wx.ID_ANY, '&Undo')
+
+        self.redo_m = edit_menu.Append(wx.ID_ANY, '&Redo')
+
         menubar.Append(edit_menu, '&Edit')
-        self.Bind(wx.EVT_MENU, self.undo, undo)
-        self.Bind(wx.EVT_MENU, self.redo, redo)
+        self.Bind(wx.EVT_MENU, self.undo, self.undo_m)
+        self.Bind(wx.EVT_MENU, self.redo, self.redo_m)
 
         return menubar
 
@@ -376,10 +406,13 @@ class French75(wx.Frame):
 
             self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
             self.animation_panel.Refresh()
+
+            self.world.push_state()
+            self.enable_all(True)
         else:
             self.world.session_dict = self.world.temp_session_dict
             self.world.temp_session_dict = None
-        self.world.push_state()
+
 
     """
     selects which csv files to use
