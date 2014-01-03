@@ -39,7 +39,6 @@ class SessionWizard(wx.wizard.Wizard):
         results_label = wx.StaticText(page2, wx.ID_ANY, '', style=wx.ALIGN_LEFT)
         self.file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE, validator=ResultsListNotEmptyValidator(results_label))
         page2.add_widget(self.file_list)
-        page2.add_widget(results_label)
         file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
         btn_add_file = wx.Button(page2, -1, "Add")
         btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
@@ -48,6 +47,8 @@ class SessionWizard(wx.wizard.Wizard):
         file_toolbar.Add(btn_add_file)
         file_toolbar.Add(btn_rem_file)
         page2.add_widget(file_toolbar)
+
+        page2.add_widget(results_label)
         self.add_page(page2)
 
         page3 = wizard_page(self, 'Select Model File')
@@ -132,13 +133,11 @@ class SessionWizard(wx.wizard.Wizard):
         self.Close()
 
     def cancel_wizard(self, e):
-        print "Cancelling the wizard"
         if self.state != self._FINISHED:
             self.state = self._CANCELLED
         self.Destroy()
 
     def finish_wizard(self, e):
-        print "Finishing the wizard"
         self.state = self._FINISHED
         self.Destroy()
 

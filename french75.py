@@ -137,16 +137,19 @@ class French75(wx.Frame):
         self.SetTitle(_TITLE)
         self.enable_all(False)
         self.filem_new_session.Enable(True)
+        self.filem_load_session.Enable(True)
         self.Maximize()
 
     def enable_all(self, state):
         self.toolbar.enable_all(state)
         self.filem_new_session.Enable(state)
+        self.filem_save_session.Enable(state)
+        self.filem_load_session.Enable(state)
         self.filem_open_results_save_plot.Enable(state)
         self.filem_open_results_open_model.Enable(state)
         self.filem_open_results_save_model.Enable(state)
         self.annotationm_toggle.Enable(state)
-        self.xkcdm_toggle.Enable(state)
+        #self.xkcdm_toggle.Enable(state)
         self.undo_m.Enable(state)
         self.redo_m.Enable(state)
         self.btn_animate_play.Enable(state)
@@ -187,10 +190,11 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
     def onclick(self, event):
-        if event.button == _LEFT_BUTTON:
-            self.left_click_handler(event)
-        elif event.button == _RIGHT_BUTTON:
-            self.right_click_handler(event)
+        if self.world.session_dict['draw_plot']:
+            if event.button == _LEFT_BUTTON:
+                self.left_click_handler(event)
+            elif event.button == _RIGHT_BUTTON:
+                self.right_click_handler(event)
 
     def left_click_handler(self, event):
         if self.world.session_dict['annotation_mode'] == self.world._ARROW:
@@ -312,8 +316,10 @@ class French75(wx.Frame):
 
         file_menu = wx.Menu()
         self.filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
+        self.filem_save_session = file_menu.Append(wx.ID_ANY, '&Save Session')
+        self.filem_load_session  = file_menu.Append(wx.ID_ANY, '&Load Session')
         file_menu.AppendSeparator()
-        self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, '&Save')
+        self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, 'Export Graph')
 
         file_menu.AppendSeparator()
         self.filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
@@ -324,23 +330,21 @@ class French75(wx.Frame):
         menubar.Append(file_menu, '&File')
 
         self.Bind(wx.EVT_MENU, self.new_session, self.filem_new_session)
+        self.Bind(wx.EVT_MENU, self.save_session, self.filem_save_session)
+        self.Bind(wx.EVT_MENU, self.load_session, self.filem_load_session)
         self.Bind(wx.EVT_MENU, self.open_model_file, self.filem_open_results_open_model)
         self.Bind(wx.EVT_MENU, self.save_snapshot, self.filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, self.filem_open_results_save_plot)
 
-        annotation_menu = wx.Menu()
-        self.annotationm_toggle = annotation_menu.Append(wx.ID_ANY, '&Toggle')
+        preferences_menu = wx.Menu()
+        self.annotationm_toggle = preferences_menu.AppendCheckItem(wx.ID_ANY, '&Annotations')
+        self.annotationm_toggle.Check()
+        #self.xkcdm_toggle = preferences_menu.AppendCheckItem(wx.ID_ANY, '&xkcd mode')
 
-
-        menubar.Append(annotation_menu, '&Annotations')
+        menubar.Append(preferences_menu, '&Preferences')
 
         self.Bind(wx.EVT_MENU, self.toggle_annotations, self.annotationm_toggle)
-
-        xkcd_menu = wx.Menu()
-        self.xkcdm_toggle = xkcd_menu.Append(wx.ID_ANY, '&Toggle')
-
-        menubar.Append(xkcd_menu, '&XKCD Mode')
-        self.Bind(wx.EVT_MENU, self.toggle_xkcd, self.xkcdm_toggle)
+        #self.Bind(wx.EVT_MENU, self.toggle_xkcd, self.xkcdm_toggle)
 
         edit_menu = wx.Menu()
         self.undo_m = edit_menu.Append(wx.ID_ANY, '&Undo')
@@ -362,6 +366,7 @@ class French75(wx.Frame):
 
     def toggle_xkcd(self, event):
         self.toggle_param('xkcd')
+        matplotlib.pyplot.xkcd()
 
     def toggle_annotations(self, event):
         self.toggle_param('draw_annotations')
@@ -413,6 +418,24 @@ class French75(wx.Frame):
             self.world.session_dict = self.world.temp_session_dict
             self.world.temp_session_dict = None
 
+    def save_session(self, e):
+        file_choices = "F75 (*.f75)|*.f75"
+
+        dlg = wx.FileDialog(
+            self,
+            message="Save session as...",
+            defaultDir=os.getcwd(),
+            defaultFile="my_session.f75",
+            wildcard=file_choices,
+            style=wx.SAVE)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            print self.world.session_json()
+            print path
+
+    def load_session(self, e):
+        pass
 
     """
     selects which csv files to use

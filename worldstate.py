@@ -4,6 +4,9 @@ from random import randrange
 from math import sqrt
 from undo_stack import UndoStack
 import copy
+import json
+import pickle
+
 
 _DICT_ELEMS = [('results', None),
                ('clock', 0),
@@ -86,6 +89,7 @@ class WorldState:
 
         self.session_dict = dict(_DICT_ELEMS)
         self.good_dict = dict(_FILTER)
+        self.pickle_dict = dict(_FILTER)
         self.temp_session = None
         self.graph_axes = None
 
@@ -153,3 +157,10 @@ class WorldState:
         self.undo_stack.push(copy.deepcopy(stack_dict))
         for entry in self.undo_stack.stack:
             print entry['annotations']
+
+    def session_json(self):
+        stack_dict = {}
+        good_keys = self.pickle_dict.keys()
+        for key in good_keys:
+            stack_dict[key] = self.session_dict[key]
+        return pickle.dumps(stack_dict)
