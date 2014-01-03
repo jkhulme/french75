@@ -3,6 +3,11 @@ from copy import deepcopy
 
 class UndoStack:
 
+    """
+    Basic stack really, returns a deepcopy due to annoying dict copying
+    will also probably have the redo stack inside of it <- TODO
+    """
+
     def __init__(self):
         self.stack = []
 

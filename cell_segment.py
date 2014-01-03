@@ -4,6 +4,11 @@ from worldstate import WorldState
 
 class CellSegment(object):
 
+    """
+    Used for drawing the animations.  There is one segment for each 'ring' in
+    the cell.
+    """
+
     def __init__(self, (tl_x, tl_y), radius, index, file_name, species):
         self.world = WorldState.Instance()
         #Get an array of tuples of times when the colour changes and what

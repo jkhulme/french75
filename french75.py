@@ -136,6 +136,7 @@ class French75(wx.Frame):
 
         self.SetTitle(_TITLE)
         self.world.update_title = self.SetTitle
+        self.world.get_title = self.GetTitle
         self.enable_all(False)
         self.filem_new_session.Enable(True)
         self.filem_load_session.Enable(True)
@@ -432,7 +433,7 @@ class French75(wx.Frame):
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            print self.world.session_json()
+            print self.world.pickle_session()
             print path
 
     def load_session(self, e):

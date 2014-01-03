@@ -9,10 +9,17 @@ _PADDING = 5
 
 
 class SessionWizard(wx.wizard.Wizard):
-    '''Add pages to this wizard object to make it useful.'''
+
+    """
+    Using a wizard to guide the user through the process of starting a new
+    session easier.  Also looks better than a long scrolling list of things.
+    """
+
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
 
+        #These states are so that I know what has or hasn't been done on
+        #completion or cancellation.  More will be added.
         self._STARTED = 0
         self._FINISHED = 1
         self._CANCELLED = 2
@@ -28,6 +35,7 @@ class SessionWizard(wx.wizard.Wizard):
 
         self.world = WorldState.Instance()
 
+        #PAGE 1
         page1 = wizard_page(self, 'Enter Title')  # Create a first page
         title_label = wx.StaticText(page1, wx.ID_ANY, '', style=wx.ALIGN_LEFT)
         self.title_text = wx.TextCtrl(page1, -1, size=(300, -1), validator = TextNotEmptyValidator(title_label))
@@ -35,6 +43,7 @@ class SessionWizard(wx.wizard.Wizard):
         page1.add_widget(title_label)
         self.add_page(page1)
 
+        #PAGE 2
         page2 = wizard_page(self, 'Select Results Files')
         results_label = wx.StaticText(page2, wx.ID_ANY, '', style=wx.ALIGN_LEFT)
         self.file_list = wx.ListBox(page2, -1, size=(300, -1), style=wx.LB_MULTIPLE, validator=ResultsListNotEmptyValidator(results_label))
@@ -51,6 +60,7 @@ class SessionWizard(wx.wizard.Wizard):
         page2.add_widget(results_label)
         self.add_page(page2)
 
+        #PAGE 3
         page3 = wizard_page(self, 'Select Model File')
         self.model_list = wx.ListBox(page3, -1, size=(300, -1), style=wx.LB_SINGLE)
         model_button = wx.Button(page3, -1, "Select")
@@ -59,16 +69,19 @@ class SessionWizard(wx.wizard.Wizard):
         page3.add_widget(model_button)
         self.add_page(page3)
 
+        #PAGE 4
         page4 = wizard_page(self, 'Perinuclear Species')
         self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page4.add_widget(self.species_list_peri)
         self.add_page(page4)
 
+        #PAGE 5
         page5 = wizard_page(self, 'Cytoplasmic Species')
         self.species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page5.add_widget(self.species_list_mid)
         self.add_page(page5)
 
+        #PAGE 6
         page6 = wizard_page(self, 'Cell Membrane Species')
         self.species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page6.add_widget(self.species_list_api)
@@ -86,6 +99,9 @@ class SessionWizard(wx.wizard.Wizard):
         self.RunWizard(self.pages[0])
 
     def add_files(self, e):
+        """
+        Results files.  There can be many, they can be added in multiple goes
+        """
         open_results_file(self)
         for key in self.world.session_dict['results'].keys():
             self.species_dict[key] = []
@@ -97,6 +113,10 @@ class SessionWizard(wx.wizard.Wizard):
             self.file_list.Append(key)
 
     def remove_files(self, e):
+        """
+        Again results files, because there can be many and they can be removed
+        in multiple goes
+        """
         old_paths = [path for i, path in enumerate(self.chosen_paths) if i in self.file_list.GetSelections()]
         self.chosen_paths = [path for i, path in enumerate(self.chosen_paths) if i not in self.file_list.GetSelections()]
         for path in old_paths:
@@ -107,6 +127,10 @@ class SessionWizard(wx.wizard.Wizard):
         self.populate_species_lists()
 
     def populate_species_lists(self):
+        """
+        Get a list of all species, it is called whenever results files are
+        added or removed
+        """
         self.species_list_peri.Clear()
         self.species_list_mid.Clear()
         self.species_list_api.Clear()
@@ -117,6 +141,9 @@ class SessionWizard(wx.wizard.Wizard):
                 self.species_list_api.Append(species)
 
     def select_model(self, e):
+        """
+        Only one
+        """
         file_chooser = wx.FileDialog(
             self,
             message="Choose a file",
@@ -133,6 +160,9 @@ class SessionWizard(wx.wizard.Wizard):
         self.Close()
 
     def cancel_wizard(self, e):
+        """
+        For some reason, finishing normally also comes in here
+        """
         if self.state != self._FINISHED:
             self.state = self._CANCELLED
         self.Destroy()
@@ -142,6 +172,9 @@ class SessionWizard(wx.wizard.Wizard):
         self.Destroy()
 
     def parse_species(self):
+        """
+        Need to go over this again and work out what it is doing
+        """
         self.world.session_dict['species_dict'] = {}
         inner = self.species_list_peri.GetCheckedStrings()[0]
         middle = self.species_list_mid.GetCheckedStrings()[0]
@@ -167,6 +200,7 @@ class SessionWizard(wx.wizard.Wizard):
                     else:
                         self.world.session_dict['species_dict'][species].append((species,location,flag))
 
+        #Create a line for each result
         for result in self.world.session_dict['results']:
             results_dict = self.world.session_dict['results'][result]
             self.world.session_dict['lines'][result] = {}
@@ -177,7 +211,6 @@ class SessionWizard(wx.wizard.Wizard):
                                                      results_dict['Time'],
                                                      result, key,
                                                      self.world.choose_colour())
-        self.world.session_dict['lines'] = self.world.session_dict['lines']
 
 
 class wizard_page(wizmod.PyWizardPage):

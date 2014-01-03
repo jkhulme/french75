@@ -1,7 +1,15 @@
 import wx
 
+"""
+Validators for the wizard
+"""
+
 
 class TextNotEmptyValidator(wx.PyValidator):
+    """
+    Have we entered a title?
+    error label is a wx.StaticText on the wizard page
+    """
     def __init__(self, error_label):
         wx.PyValidator.__init__(self)
         self.error_label = error_label
@@ -31,6 +39,9 @@ class TextNotEmptyValidator(wx.PyValidator):
 
 
 class ResultsListNotEmptyValidator(wx.PyValidator):
+    """
+    Have we selected a results file?
+    """
     def __init__(self, error_label):
         wx.PyValidator.__init__(self)
         self.error_label = error_label
