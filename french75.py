@@ -135,6 +135,7 @@ class French75(wx.Frame):
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
         self.SetTitle(_TITLE)
+        self.world.update_title = self.SetTitle
         self.enable_all(False)
         self.filem_new_session.Enable(True)
         self.filem_load_session.Enable(True)

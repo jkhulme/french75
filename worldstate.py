@@ -4,7 +4,6 @@ from random import randrange
 from math import sqrt
 from undo_stack import UndoStack
 import copy
-import json
 import pickle
 
 
@@ -149,6 +148,8 @@ class WorldState:
         """
         I am copying the dictionary fine, but it is elements in the dictionary that also need copying, hopefully there is a library that does this, if not I need to do it myself
         """
+        print "Changing Title"
+        self.update_title("Unsaved Changes")
         stack_dict = {}
         good_keys = self.good_dict.keys()
         #good_keys = ['lines']
