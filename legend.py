@@ -90,6 +90,7 @@ class Legend(object):
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_show_hide)
         self.world.session_dict['lines'][file_key][species_key].plot_line = cb_show_hide.GetValue()
+        self.world.push_state()
         refresh_plot()
 
     """
@@ -100,6 +101,7 @@ class Legend(object):
         file_key = cb_intense.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_intense)
         self.world.session_dict['lines'][file_key][species_key].intense_plot = cb_intense.GetValue()
+        self.world.push_state()
         refresh_plot()
 
     def get_species(self, cb):

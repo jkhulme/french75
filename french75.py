@@ -241,6 +241,7 @@ class French75(wx.Frame):
                     self.world.session_dict['draw_plot'].annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.push_state()
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
                 if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
@@ -258,11 +259,13 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.session_dict['draw_plot'].plot()
                     self.world.session_dict['redraw_legend'] = True
+                    self.world.push_state()
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
                     self.world.session_dict['draw_plot'].annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.push_state()
                     return
 
     def right_click_handler(self, event):
@@ -303,10 +306,12 @@ class French75(wx.Frame):
             self.selected_annotation.text = self.world.session_dict['annotation_text']
             if self.selected_annotation.type == self.world._ARROW:
                 self.selected_annotation.type = self.world._TEXT_ARROW
+        self.world.push_state()
 
     def delete_annotation(self, event):
         new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
         self.world.session_dict['annotations'] = new_annotation_list
+        self.world.push_state()
 
     def get_label(self):
          dialog = wx.TextEntryDialog(None, "What kind of text would you like to enter?","Text Entry", "Default Value", style=wx.OK|wx.CANCEL)
@@ -460,8 +465,9 @@ class French75(wx.Frame):
 
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            print self.world.pickle_session()
-            print path
+            with open(path, 'wb') as f:
+                f.write(self.world.pickle_session())
+            self.SetTitle(_TITLE)
 
     def load_session(self, e):
         pass

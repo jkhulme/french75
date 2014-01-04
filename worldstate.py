@@ -177,7 +177,7 @@ class WorldState:
         Need to use deepcopy so that objects in the dictionary are not just
         references
         """
-        self.update_title(self.get_title() + " - Unsaved Changes")
+        self.update_title("French75 - Unsaved Changes")
         stack_dict = {}
         good_keys = self.good_dict.keys()
         for key in good_keys:
