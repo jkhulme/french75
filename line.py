@@ -111,6 +111,9 @@ class Line(object):
             count += self.interval - 1
         return plot_arrays
 
+    """
+    Deepcopy stuff, used for copying the dictionary into the undo stack
+    """
     def __copy__(self):
         cls = self.__class__
         result = cls.__new__(cls)

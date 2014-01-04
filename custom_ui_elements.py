@@ -47,6 +47,9 @@ class BioPepaToolbar(NavigationToolbar):
         wx.EVT_TOOL(self, self.ANNOTATE_CIRCLE, self._on_custom_annotate_circle)
 
     def enable_all(self, state):
+        """
+        Want them all to be disabled until the session has been created
+        """
         self.EnableTool(self.wx_ids['Home'], state)
         self.EnableTool(self.wx_ids['Pan'], state)
         self.EnableTool(self.wx_ids['Zoom'], state)
@@ -96,6 +99,7 @@ class BioPepaToolbar(NavigationToolbar):
     def clear_text_box(self, e):
         self.txtctrl.ChangeValue("")
 
+#Different OSs use different collapsible pane implementations
 if (platform.system() == "Linux"):
     class BioPepaCollapsiblePane(PCP.PyCollapsiblePane):
         def __init__(self, legend_panel, result):

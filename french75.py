@@ -40,10 +40,12 @@ class French75(wx.Frame):
     self.legend_panel - panel the legend goes on
     self.dc - drawing context
     self.world.session_dict['draw_plot'] - the plotter which we use to draw lines
-    self.dice - it was lying about screen res - so check for it
     """
 
     def __init__(self, *args, **kwargs):
+        """
+        Sets up the UI, binds the events etc
+        """
         super(French75, self).__init__(*args, **kwargs)
         self.Maximize()
         self.world = WorldState.Instance()
@@ -143,6 +145,9 @@ class French75(wx.Frame):
         self.Maximize()
 
     def enable_all(self, state):
+        """
+        Want stuff disables until after session has been set up
+        """
         self.toolbar.enable_all(state)
         self.filem_new_session.Enable(state)
         self.filem_save_session.Enable(state)
@@ -151,6 +156,7 @@ class French75(wx.Frame):
         self.filem_open_results_open_model.Enable(state)
         self.filem_open_results_save_model.Enable(state)
         self.annotationm_toggle.Enable(state)
+        #Test on DICE, see if XKCD mode can work
         #self.xkcdm_toggle.Enable(state)
         self.undo_m.Enable(state)
         self.redo_m.Enable(state)
@@ -161,6 +167,9 @@ class French75(wx.Frame):
         self.open_files_button.Enable(state)
 
     def move_mouse(self, event):
+        """
+        Handles the drawing of the arrow when deciding where to annotate
+        """
         if self.world.session_dict['draw_plot']:
             if self.world.session_dict['click_one']:
                 self.world.session_dict['temp_annotation'] = Annotation(self.world._ARROW, (self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata))
@@ -171,6 +180,9 @@ class French75(wx.Frame):
                 self.world.session_dict['redraw_legend'] = True
 
     def open_file(self, event):
+        """
+        Opening attached files, must be a better way of doing this
+        """
         i = self.attached_file_list.GetSelection()
         if platform.system() == "Linux":
             call(["gnome-open", self.world.session_dict['attached_file_locations'][i]])
@@ -192,6 +204,9 @@ class French75(wx.Frame):
             file_chooser.Destroy()
 
     def onclick(self, event):
+        """
+        On the graph canvas
+        """
         if self.world.session_dict['draw_plot']:
             if event.button == _LEFT_BUTTON:
                 self.left_click_handler(event)
@@ -199,6 +214,9 @@ class French75(wx.Frame):
                 self.right_click_handler(event)
 
     def left_click_handler(self, event):
+        """
+        Currently checks which annotation you want to draw and then creates it
+        """
         if self.world.session_dict['annotation_mode'] == self.world._ARROW:
             if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
                 self.world.session_dict['click_one_x'] = event.xdata
@@ -248,6 +266,9 @@ class French75(wx.Frame):
                     return
 
     def right_click_handler(self, event):
+        """
+        Select existing annotations, offer to edit or delete
+        """
         self.selected_annotation = None
         for annotation in self.world.session_dict['annotations']:
             dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
@@ -299,13 +320,15 @@ class French75(wx.Frame):
     because of cases where there are multiple monitors we need to go through
     all the monitors and decide which one to use - base this on mouse position.
     n/b - self.GetSize() might need to be used
-    """
+
     def get_resolution(self):
         for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
             (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = monitor.GetGeometry().GetSize()
             (mouseX, mouseY) = wx.GetMousePosition()
             if (mouseX < self.world.session_dict['dispW']):
                 return (self.world.session_dict['dispW'], self.world.session_dict['dispH'])
+    Currently not called
+    """
 
     """
     The menu bar.
@@ -421,6 +444,10 @@ class French75(wx.Frame):
             self.world.temp_session_dict = None
 
     def save_session(self, e):
+        """
+        Serialize the data with pickling and write it to a file.
+        Uses the .f75 extension
+        """
         file_choices = "F75 (*.f75)|*.f75"
 
         dlg = wx.FileDialog(
@@ -462,6 +489,9 @@ class French75(wx.Frame):
     """
 
     def play_animation(self, e):
+        """
+        Create new threads, change button text
+        """
         if not self.world.session_dict['start_playing']:
             self.world.session_dict['start_playing'] = True
             t4 = Thread(target=self.change_button_text, args=("Pause",))
@@ -510,8 +540,9 @@ class French75(wx.Frame):
         self.model_panel.Refresh()
 
     """
-    called when the animation pane is refreshed.
+    called when the animation pane is refreshed. -- OnPaint
     pane is refreshed by animate()
+    update the position of the vertical line.  Draw each of the cell segments
     """
     def animate_cell(self, e):
         wx.CallAfter(self.world.session_dict['draw_plot'].vertical_line)
@@ -520,9 +551,9 @@ class French75(wx.Frame):
             segment.paint(dc2)
 
     """
-    Currently called on load
-    TODO: Make it be a 'play button'
-    TODO: Get rid of magic numbers
+    Run by the thread
+    Check the time and whether we are paused or not, if not then update the
+    clock and redraw
     """
     def animate(self, n):
         while self.world.session_dict['clock'] < self.world.session_dict['max_time']:
@@ -585,6 +616,9 @@ class French75(wx.Frame):
         img.SaveFile('saved.png', wx.BITMAP_TYPE_PNG)
 
     def move_animation(self, e):
+        """
+        Bound to the slider when you move it -- updates the session clock
+        """
         self.world.session_dict['clock'] = self.slider_time.GetValue()
         for segment in self.world.session_dict['cell_segments']:
             segment.update_clock()

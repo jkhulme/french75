@@ -5,6 +5,10 @@ from worldstate import WorldState
 
 class Plot_Dialog(wx.Dialog):
 
+    """
+    The plot preferences dialog, user can change things like colour and
+    thickness
+    """
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
 
@@ -25,6 +29,7 @@ class Plot_Dialog(wx.Dialog):
         self.colour_picker = wx.ColourPickerCtrl(dialog_panel, -1)
         sbs.Add(self.colour_picker)
 
+        #Should this be tied more to real units?
         self.thick_spin = wx.SpinCtrl(dialog_panel, -1, "2")
         sbs.Add(self.thick_spin)
 

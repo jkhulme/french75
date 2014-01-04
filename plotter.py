@@ -17,23 +17,14 @@ class Plotter(object):
     self.axes - Lines are plotted using this.
     self.world.session_dict['graph_canvas'] - Used to draw the axes/plots
     self.parser - the csv parser
-    self.world.session_dict['redraw_legend'] - do we need to redraw the legend or not
+    self.mpl_legend - used when saving the graph
     """
 
-    """
-    Initialise what we need, and then create a line for each plot
-    """
     def __init__(self, axes):
         self.world = WorldState.Instance()
         self.axes = axes
         self.parser = self.world.session_dict['parser']
         self.mpl_legend = False
-
-
-        """
-        Create a line from each species.  Don't put time in there.
-        """
-
 
     """
     Attempt to plot each line.
@@ -48,7 +39,7 @@ class Plotter(object):
 
         #my interactive legend
         if (self.world.session_dict['redraw_legend']):
-            self.world.session_dict['legend'].draw_legend(self, self.world.session_dict['lines'])
+            self.world.session_dict['legend'].draw_legend()
 
         #matplotlib legend - for saving with a legend
         if (self.mpl_legend):
@@ -71,6 +62,9 @@ class Plotter(object):
         self.world.session_dict['graph_canvas'].draw()
 
     def redraw_annotations(self):
+        """
+        go through the list of annotations and plot them
+        """
         for annotation in self.world.session_dict['annotations']:
             if annotation.type == self.world._TEXT_ARROW:
                 self.axes.annotate(annotation.text, xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
@@ -81,10 +75,15 @@ class Plotter(object):
                 self.axes.add_artist(circle1)
             elif annotation.type == self.world._TEXT:
                 self.axes.text(annotation.x1, annotation.y1, annotation.text)
+        #This is the arrow following mouse annotation thing
         if self.world.session_dict['temp_annotation'] is not None:
             annotation = self.world.session_dict['temp_annotation']
             self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
 
+    """
+    The following 3 methods create the annotations, and plot them for the
+    first time
+    """
     def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
         self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
         self.world.session_dict['annotate'] = False
@@ -108,12 +107,15 @@ class Plotter(object):
         self.world.session_dict['graph_canvas'].draw()
 
     def vertical_line(self):
+        """
+        The sliding bar that follows the clock
+        """
         self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)
         self.world.session_dict['graph_canvas'].draw()
         self.axes.lines.pop()
 
     """
-    Decides how we're going to plot
+    Decides, for each line, how we're going to plot, normal or with intensities
     """
     def plot_line(self, line):
         if line.plot_line:
