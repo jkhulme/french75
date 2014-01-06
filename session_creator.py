@@ -133,21 +133,18 @@ class SessionWizard(wx.wizard.Wizard):
         for key in self.world.session_dict['results'].keys():
             self.species_dict[key] = {}
             for species in self.world.session_dict['results'][key].keys():
-                print species
                 if species != 'Time':
                     try:
                         (name, location) = species.split("@")
-                        print name, location
                     except:
                         (name, location) = (species, "whole_cell")
                     if name in self.species_dict[key]:
-                        self.species_dict[key][name].append(location[:-1])
+                        self.species_dict[key][name].append(location)
                     else:
-                        self.species_dict[key][name] = [location[:-1]]
+                        self.species_dict[key][name] = [location]
             self.populate_file_dd_list()
             self.chosen_paths.append(key)
             self.file_list.Append(key)
-        print self.species_dict
 
     def remove_files(self, e):
         """
@@ -229,37 +226,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.Destroy()
 
     def parse_species(self):
-        """
-        Need to go over this again and work out what it is doing
-        """
-        self.world.session_dict['species_dict'] = {}
-        inner = self.species_list_peri.GetCheckedStrings()
-        middle = self.species_list_mid.GetCheckedStrings()
-        outer = self.species_list_api.GetCheckedStrings()
-        if len(inner) > 0 and len(middle) > 0 and len(outer) > 0:
-            inner = inner[0]
-            middle = middle[0]
-            outer = outer[0]
-            loc_flag = 0
-            for file_name in self.world.session_dict['results'].keys():
-                for result in self.world.session_dict['results'][file_name].keys():
-                    if not result == "Time":
-                        if result == inner:
-                            loc_flag = 1
-                        elif result == middle:
-                            loc_flag = 2
-                        elif result == outer:
-                            loc_flag = 3
-                        try:
-                            (name, loc) = result.split("@")
-                            (species, location, flag) = (name, loc, loc_flag)
-                        except:
-                            (species, location, flag) = (result, None, loc_flag)
-
-                        if species not in self.world.session_dict['species_dict'].keys():
-                            self.world.session_dict['species_dict'][species] = [(species,location,flag)]
-                        else:
-                            self.world.session_dict['species_dict'][species].append((species,location,flag))
+        self.world.session_dict['species_dict'] = self.species_dict
 
         #Create a line for each result
         for result in self.world.session_dict['results']:

@@ -1,9 +1,11 @@
 import wx
+from worldstate import WorldState
 
 
 class CellSegments2(object):
 
     def __init__(self, tree, (width, height)):
+        self.world = WorldState.Instance()
         tree_list = self.tree_to_list(tree)
         num_of_segments = len(tree.keys())
         radius = height - 20
@@ -21,8 +23,6 @@ class CellSegments2(object):
 
         #Draws CCW
         for (location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
-            print location
-            print species_locations
             if location in species_locations[:-1] or species_locations == ['whole_cell']:
                 dc.SetBrush(wx.Brush('green'))
             else:
@@ -39,4 +39,5 @@ class CellSegments2(object):
             if next_key is None:
                 break
             tree_list.append(next_key)
+        self.world.session_dict['tree_list'] = tree_list
         return tree_list
