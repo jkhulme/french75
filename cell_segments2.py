@@ -23,7 +23,7 @@ class CellSegments2(object):
 
         #Draws CCW
         for (location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
-            if location in species_locations[:-1] or species_locations == ['whole_cell']:
+            if location in species_locations or species_locations == ['whole_cell']:
                 dc.SetBrush(wx.Brush('green'))
             else:
                 dc.SetBrush(wx.Brush('white'))

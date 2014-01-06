@@ -13,71 +13,25 @@ class CellSegment(object):
         self.world = WorldState.Instance()
         #Get an array of tuples of times when the colour changes and what
         #colour it changes to.
-        self.key = file_name
+        num_of_segments = len(self.world.session_dict['tree_list'])
+        change = 0
         self.sub_segments = []
-        for location in self.world.session_dict['tree_list']:
-            full_name = species + "@" + location
-            result = self.world.session_dict['lines'][self.key][full_name]
+        for i in range(0, num_of_segments):
+            centre_x = tl_x
+            centre_y = tl_y
+            outer_x1, outer_y1 = centre_x + radius - change, centre_y
+            outer_x2, outer_y2 = centre_x, 10 + change
+            self.sub_segments.append(self.world.session_dict['lines'][file_name][species+"@"+self.world.session_dict['tree_list'][i]], self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2)
+            change += radius / num_of_segments
 
-        """
-            seg_colour = self.result_inner.colour_change_points[0][1]
-            self.sub_segments.append(full_name, result, seg_colour)
-            self.time_points_inner = []
-            self.past_points_inner = []
-            self.counter_inner = 0
-
-        for (time, colour) in self.result_inner.colour_change_points:
-            self.time_points_inner.append(self.result_inner.time[time])
-
-
-        #Calculate the top and right points of the arc based on centre and
-        #radius.  Arc goes CCW.
-        self.centre_x, self.centre_y = tl_x, tl_y + radius
-
-        self.outer_x1, self.outer_y1 = tl_x + radius, self.centre_y
-        self.outer_x2, self.outer_y2 = tl_x, tl_y
-
-        self.middle_x1, self.middle_y1 = tl_x + 2*(radius/3), self.centre_y
-        self.middle_x2, self.middle_y2 = tl_x, tl_y + (radius/3)
-
-        self.inner_x1, self.inner_y1 = tl_x + (radius/3), self.centre_y
-        self.inner_x2, self.inner_y2 = tl_x, tl_y + 2*(radius/3)
-        """
     def paint(self, dc):
-        pass
-        """
-        #Work out whether we should change brush colour and what it should be set to
-        if len(self.time_points_inner) > 0:
-            if self.world.session_dict['clock'] >= self.time_points_inner[self.counter_inner]:
-                time = self.time_points_inner[self.counter_inner]
-                self.seg_colour_inner = self.result_inner.colour_change_points[self.counter_inner][1]
-                self.counter_inner += 1
-                self.past_points_inner.append((time, self.seg_colour_inner))
-        if len(self.time_points_middle) > 0:
-            if self.world.session_dict['clock'] >= self.time_points_middle[self.counter_middle]:
-                time = self.time_points_middle[self.counter_middle]
-                self.seg_colour_middle = self.result_middle.colour_change_points[self.counter_middle][1]
-                self.counter_middle += 1
-                self.past_points_middle.append((time, self.seg_colour_middle))
-        if len(self.time_points_outer) > 0:
-            if self.world.session_dict['clock'] >= self.time_points_outer[self.counter_outer]:
-                time = self.time_points_outer[self.counter_outer]
-                self.seg_colour_outer = self.result_outer.colour_change_points[self.counter_outer][1]
-                self.counter_outer += 1
-                self.past_points_outer.append((time, self.seg_colour_outer))
-
-        #eventually this will be done for each segment I think - once species are in multiple locations in cell i.e. nucleus, perinucleus etc
-        dc.SetBrush(wx.Brush(self.seg_colour_outer))
-
-        #The three arcs.  Drawn largest to smallest
-        dc.DrawArc(self.outer_x1, self.outer_y1, self.outer_x2, self.outer_y2, self.centre_x, self.centre_y)
-
-        dc.SetBrush(wx.Brush(self.seg_colour_middle))
-        dc.DrawArc(self.middle_x1, self.middle_y1, self.middle_x2, self.middle_y2, self.centre_x, self.centre_y)
-
-        dc.SetBrush(wx.Brush(self.seg_colour_inner))
-        dc.DrawArc(self.inner_x1, self.inner_y1, self.inner_x2, self.inner_y2, self.centre_x, self.centre_y)
-        """
+        species_locations = ['whole_cell']
+        for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
+            if location in species_locations or species_locations == ['whole_cell']:
+                dc.SetBrush(wx.Brush('green'))
+            else:
+                dc.SetBrush(wx.Brush('white'))
+            dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
 
     def update_clock(self):
         pass

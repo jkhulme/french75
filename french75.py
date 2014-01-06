@@ -432,7 +432,7 @@ class French75(wx.Frame):
 
                 #TODO: Fix these magic numbers
                 a = 10
-                b = 40
+                b = 160
                 c = 120
                 d = 0
                 for file_name in self.world.session_dict['results'].keys():
