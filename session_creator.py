@@ -75,9 +75,14 @@ class SessionWizard(wx.wizard.Wizard):
         self.file_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
         self.file_dd.Bind(wx.EVT_COMBOBOX, self.change_file)
         self.species_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
+
+        self.location_panel = wx.Panel(page4, -1, size=(1000000, 1000000))
+        self.location_panel.SetBackgroundColour('white')
         #self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page4.add_widget(self.file_dd)
         page4.add_widget(self.species_dd)
+        page4.add_widget(self.location_panel)
+        page4.Bind(wizmod.EVT_WIZARD_PAGE_SHOWN, self.page4_location_panel_size)
         #page4.add_widget(self.species_list_peri)
         self.add_page(page4)
 
@@ -94,6 +99,16 @@ class SessionWizard(wx.wizard.Wizard):
         page6.add_widget(self.species_list_api)
         self.add_page(page6)
         """
+
+    def page4_location_panel_size(self, e):
+        print self.location_panel.GetSize()
+        self.location_panel.Bind(wx.EVT_PAINT, self.draw_cell)
+        self.location_panel.Refresh()
+
+    def draw_cell(self, e):
+        dc = wx.PaintDC(self.location_panel)
+        dc.SetBrush(wx.Brush('#c56c00'))
+        dc.DrawRectangle(10, 15, 90, 60)
 
     def add_page(self, page):
         '''Add a wizard page to the list.'''
