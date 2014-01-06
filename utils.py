@@ -22,7 +22,7 @@ def open_results_file(self):
             results[path.split('/')[-1]] = parser.results_dict
 
         world.session_dict['results'] = results
-        world.session_dict['parser'] = parser
+        world.parser = parser
 
         file_chooser.Destroy()
     else:
@@ -84,5 +84,5 @@ def refresh_plot():
     unless necessary.
     """
     world.session_dict['redraw_legend'] = False
-    world.session_dict['draw_plot'].plot()
+    world.draw_plot.plot()
     world.session_dict['redraw_legend'] = True

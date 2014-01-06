@@ -15,7 +15,7 @@ class Plotter(object):
         General line plots.
 
     self.axes - Lines are plotted using this.
-    self.world.session_dict['graph_canvas'] - Used to draw the axes/plots
+    self.world.graph_canvas - Used to draw the axes/plots
     self.parser - the csv parser
     self.mpl_legend - used when saving the graph
     """
@@ -23,7 +23,6 @@ class Plotter(object):
     def __init__(self, axes):
         self.world = WorldState.Instance()
         self.axes = axes
-        self.parser = self.world.session_dict['parser']
         self.mpl_legend = False
 
     """
@@ -39,7 +38,7 @@ class Plotter(object):
 
         #my interactive legend
         if (self.world.session_dict['redraw_legend']):
-            self.world.session_dict['legend'].draw_legend()
+            self.world.legend.draw_legend()
 
         #matplotlib legend - for saving with a legend
         if (self.mpl_legend):
@@ -54,12 +53,12 @@ class Plotter(object):
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title(self.world.session_dict['title'])
-        self.axes.axis((self.parser.xmin, self.parser.xmax, self.parser.ymin, self.parser.ymax*1.1))
+        self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], self.world.session_dict['ymin'], self.world.session_dict['ymax']*1.1))
 
         if self.world.session_dict['draw_annotations']:
             self.redraw_annotations()
 
-        self.world.session_dict['graph_canvas'].draw()
+        self.world.graph_canvas.draw()
 
     def redraw_annotations(self):
         """
@@ -91,27 +90,27 @@ class Plotter(object):
             self.world.session_dict['annotations'].append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
         else:
             self.world.session_dict['annotations'].append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
-        self.world.session_dict['graph_canvas'].draw()
+        self.world.graph_canvas.draw()
 
     def annotate_text(self, (x, y), text="Annotation"):
         self.axes.text(x, y, text)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(Annotation(self.world._TEXT, (x, y), text=text))
-        self.world.session_dict['graph_canvas'].draw()
+        self.world.graph_canvas.draw()
 
     def annotate_circle(self, (x, y), colour="black"):
         circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
         self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
-        self.world.session_dict['graph_canvas'].draw()
+        self.world.graph_canvas.draw()
 
     def vertical_line(self):
         """
         The sliding bar that follows the clock
         """
         self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)
-        self.world.session_dict['graph_canvas'].draw()
+        self.world.graph_canvas.draw()
         self.axes.lines.pop()
 
     """

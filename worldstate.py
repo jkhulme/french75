@@ -11,13 +11,11 @@ _DICT_ELEMS = [('results', None),
                ('clock', 0),
                ('first_circle', True),
                ('clock_pause', False),
-               ('legend', None),
                ('title', "Graph"),
                ('dispW', 0),
                ('dispH', 0),
                ('max_time', 1),
                ('clock_increment', 1/600.0),
-               ('parser', None),
                ('annotate', False),
                ('annotations', []),
                ('temp_annotation', None),
@@ -28,50 +26,19 @@ _DICT_ELEMS = [('results', None),
                ('results', None),
                ('lines', {}),
                ('first_time', True),
-               ('cell_segments', []),
                ('start_playing', False),
                ('click_one', False),
                ('click_one_x', 0),
                ('click_one_y', 0),
                ('attached_file_locations', []),
-               ('draw_plot', None),
                ('xkcd', False),
-               ('graph_canvas', None),
                ('redraw_legend', True),
-               ('draw_annotations', True)]
+               ('draw_annotations', True),
+               ('ymin', 0),
+               ('ymax', 0),
+               ('xmin', 0),
+               ('xmax', 0)]
 
-_FILTER     = [('results', None),
-               ('clock', 0),
-               ('first_circle', True),
-               ('clock_pause', False),
-               #('legend', None),
-               ('title', "Graph"),
-               ('dispW', 0),
-               ('dispH', 0),
-               ('max_time', 1),
-               ('clock_increment', 1/600.0),
-               #('parser', None),
-               ('annotate', False),
-               ('annotations', []),
-               ('temp_annotation', None),
-               ('annotation_mode', None),
-               ('max_height', 0),
-               ('annotation_text', ""),
-               ('species_dict', {}),
-               ('results', None),
-               ('lines', {}),
-               ('first_time', True),
-               #('cell_segments', []),
-               ('start_playing', False),
-               ('click_one', False),
-               ('click_one_x', 0),
-               ('click_one_y', 0),
-               ('attached_file_locations', []),
-               #('draw_plot', None),
-               ('xkcd', False),
-               #('graph_canvas', None),
-               ('redraw_legend', True),
-               ('draw_annotations', True)]
 
 @Singleton
 class WorldState:
@@ -93,11 +60,13 @@ class WorldState:
         self.undo_stack = UndoStack()
 
         self.session_dict = dict(_DICT_ELEMS)
-        self.good_dict = dict(_FILTER)
-        self.pickle_dict = dict(_FILTER)
 
         self.temp_session = None
         self.graph_axes = None
+        self.legend = None
+        self.parser = None
+        self.draw_plot = None
+        self.cell_segments = []
 
     def reset_session(session_dict):
         """
@@ -178,19 +147,18 @@ class WorldState:
         references
         """
         self.update_title("French75 - Unsaved Changes")
-        stack_dict = {}
-        good_keys = self.good_dict.keys()
-        for key in good_keys:
-            stack_dict[key] = self.session_dict[key]
-        self.undo_stack.push(copy.deepcopy(stack_dict))
+        self.undo_stack.push(copy.deepcopy(self.session_dict))
 
     def pickle_session(self):
         """
         serialize the data, currently just going to be for saving and loading
         sessions but it could be used to for the concurrency stuff as well.
         """
-        stack_dict = {}
-        good_keys = self.pickle_dict.keys()
-        for key in good_keys:
-            stack_dict[key] = self.session_dict[key]
-        return pickle.dumps(stack_dict)
+        return pickle.dumps(self.session_dict)
+
+    def unpickle_session(self, data):
+        """
+        Deserialize the data, just replaces the session dict as that is where
+        the important stuff is
+        """
+        self.session_dict = pickle.loads(data)
