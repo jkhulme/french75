@@ -111,11 +111,18 @@ class SessionWizard(wx.wizard.Wizard):
         """
         open_results_file(self)
         for key in self.world.session_dict['results'].keys():
-            self.species_dict[key] = []
+            self.species_dict[key] = {}
             for species in self.world.session_dict['results'][key].keys():
                 if species != 'Time':
-                    self.species_dict[key].append(species)
-            self.populate_species_lists()
+                    try:
+                        (name, location) = species.split("@")
+                    except:
+                        (name, location) = (species, "whole_cell")
+                    if species in self.species_dict[key]:
+                        self.species_dict[key][name].append(location)
+                    else:
+                        self.species_dict[key][name] = [location]
+            self.populate_file_dd_list()
             self.chosen_paths.append(key)
             self.file_list.Append(key)
 
@@ -131,9 +138,9 @@ class SessionWizard(wx.wizard.Wizard):
         self.file_list.Clear()
         for path in self.chosen_paths:
             self.file_list.Append(path.split('/')[-1])
-        self.populate_species_lists()
+        self.populate_file_dd_list()
 
-    def populate_species_lists(self):
+    def populate_file_dd_list(self):
         """
         Get a list of all species, it is called whenever results files are
         added or removed
@@ -148,19 +155,21 @@ class SessionWizard(wx.wizard.Wizard):
             self.file_dd.Append(key)
         self.file_dd.SetSelection(0)
 
-        self.species_dd.Clear()
-        for species in self.species_dict[self.file_dd.GetValue()]:
-            self.species_dd.Append(species)
+        self.populate_species_dd_list()
         """
             self.species_list_peri.Append(species)
             self.species_list_mid.Append(species)
             self.species_list_api.Append(species)
         """
 
-    def change_file(self, e):
+    def populate_species_dd_list(self):
         self.species_dd.Clear()
         for species in self.species_dict[self.file_dd.GetValue()]:
             self.species_dd.Append(species)
+        self.species_dd.SetSelection(0)
+
+    def change_file(self, e):
+        self.populate_species_dd_list()
 
     def select_model(self, e):
         """
