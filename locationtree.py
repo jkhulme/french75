@@ -25,6 +25,7 @@ class LocationTree:
         self.tree.pop(old_root, None)
         for location_name in self.tree['root']:
             self.loc_data[location_name].parent = 'root'
+        return self.tree
 
     def draw_tree_one(self, dc):
         r = 90
@@ -79,3 +80,6 @@ class LocationTree:
                 self.circles[node].paint()
 
         return self.output
+
+    def __str__(self):
+        return self.tree.__str__()

@@ -4,6 +4,7 @@ from utils import open_results_file
 import wx.wizard as wizmod
 from line import Line
 from validators import TextNotEmptyValidator, ResultsListNotEmptyValidator
+from biopepa_model_parser import Biopepa_Model_Parser
 
 _PADDING = 5
 
@@ -70,7 +71,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.add_page(page3)
 
         #PAGE 4
-        page4 = wizard_page(self, 'Perinuclear Species')
+        page4 = wizard_page(self, 'Species Locations')
         self.file_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
         self.file_dd.Bind(wx.EVT_COMBOBOX, self.change_file)
         self.species_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
@@ -183,6 +184,9 @@ class SessionWizard(wx.wizard.Wizard):
         if file_chooser.ShowModal() == wx.ID_OK:
             path = file_chooser.GetPaths()[0]
             self.model_list.Append(path.split('/')[-1])
+            self.model_parser = Biopepa_Model_Parser()
+            self.model_parser.parse(path)
+            print self.model_parser.build_graph()
             file_chooser.Destroy()
         else:
             file_chooser.Destroy()
