@@ -5,6 +5,7 @@ import wx.wizard as wizmod
 from line import Line
 from validators import TextNotEmptyValidator, ResultsListNotEmptyValidator
 from biopepa_model_parser import Biopepa_Model_Parser
+from cell_segments2 import CellSegments2
 
 _PADDING = 5
 
@@ -101,14 +102,17 @@ class SessionWizard(wx.wizard.Wizard):
         """
 
     def page4_location_panel_size(self, e):
-        print self.location_panel.GetSize()
+        (width, height) = self.location_panel.GetSize()
+        self.cell = CellSegments2(self.tree, (width, height))
         self.location_panel.Bind(wx.EVT_PAINT, self.draw_cell)
         self.location_panel.Refresh()
 
     def draw_cell(self, e):
         dc = wx.PaintDC(self.location_panel)
-        dc.SetBrush(wx.Brush('#c56c00'))
-        dc.DrawRectangle(10, 15, 90, 60)
+        self.cell.paint(dc, self.get_current_species_locations())
+
+    def get_current_species_locations(self):
+        return self.species_dict[self.file_dd.GetValue()][self.species_dd.GetValue()]
 
     def add_page(self, page):
         '''Add a wizard page to the list.'''
@@ -129,18 +133,21 @@ class SessionWizard(wx.wizard.Wizard):
         for key in self.world.session_dict['results'].keys():
             self.species_dict[key] = {}
             for species in self.world.session_dict['results'][key].keys():
+                print species
                 if species != 'Time':
                     try:
                         (name, location) = species.split("@")
+                        print name, location
                     except:
                         (name, location) = (species, "whole_cell")
-                    if species in self.species_dict[key]:
-                        self.species_dict[key][name].append(location)
+                    if name in self.species_dict[key]:
+                        self.species_dict[key][name].append(location[:-1])
                     else:
-                        self.species_dict[key][name] = [location]
+                        self.species_dict[key][name] = [location[:-1]]
             self.populate_file_dd_list()
             self.chosen_paths.append(key)
             self.file_list.Append(key)
+        print self.species_dict
 
     def remove_files(self, e):
         """
@@ -201,7 +208,7 @@ class SessionWizard(wx.wizard.Wizard):
             self.model_list.Append(path.split('/')[-1])
             self.model_parser = Biopepa_Model_Parser()
             self.model_parser.parse(path)
-            print self.model_parser.build_graph()
+            self.tree = self.model_parser.build_graph()
             file_chooser.Destroy()
         else:
             file_chooser.Destroy()
