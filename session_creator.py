@@ -71,10 +71,16 @@ class SessionWizard(wx.wizard.Wizard):
 
         #PAGE 4
         page4 = wizard_page(self, 'Perinuclear Species')
-        self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-        page4.add_widget(self.species_list_peri)
+        self.file_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
+        self.file_dd.Bind(wx.EVT_COMBOBOX, self.change_file)
+        self.species_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
+        #self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
+        page4.add_widget(self.file_dd)
+        page4.add_widget(self.species_dd)
+        #page4.add_widget(self.species_list_peri)
         self.add_page(page4)
 
+        """
         #PAGE 5
         page5 = wizard_page(self, 'Cytoplasmic Species')
         self.species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
@@ -86,6 +92,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page6.add_widget(self.species_list_api)
         self.add_page(page6)
+        """
 
     def add_page(self, page):
         '''Add a wizard page to the list.'''
@@ -131,14 +138,29 @@ class SessionWizard(wx.wizard.Wizard):
         Get a list of all species, it is called whenever results files are
         added or removed
         """
+        """
         self.species_list_peri.Clear()
         self.species_list_mid.Clear()
         self.species_list_api.Clear()
+        """
+        self.file_dd.Clear()
         for key in self.species_dict.keys():
-            for species in self.species_dict[key]:
-                self.species_list_peri.Append(species)
-                self.species_list_mid.Append(species)
-                self.species_list_api.Append(species)
+            self.file_dd.Append(key)
+        self.file_dd.SetSelection(0)
+
+        self.species_dd.Clear()
+        for species in self.species_dict[self.file_dd.GetValue()]:
+            self.species_dd.Append(species)
+        """
+            self.species_list_peri.Append(species)
+            self.species_list_mid.Append(species)
+            self.species_list_api.Append(species)
+        """
+
+    def change_file(self, e):
+        self.species_dd.Clear()
+        for species in self.species_dict[self.file_dd.GetValue()]:
+            self.species_dd.Append(species)
 
     def select_model(self, e):
         """
