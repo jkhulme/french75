@@ -477,6 +477,9 @@ class French75(wx.Frame):
             with open(path, 'wb') as f:
                 f.write(self.world.pickle_session())
             self.SetTitle(_TITLE)
+        else:
+            dlg.Destroy()
+
 
     def load_session(self, e):
         file_chooser = wx.FileDialog(
@@ -490,6 +493,7 @@ class French75(wx.Frame):
                 data = f.readlines()
             self.world.unpickle_session(''.join(data))
             self.sessiony_stuff()
+            self.SetTitle(_TITLE)
         else:
             file_chooser.Destroy()
 

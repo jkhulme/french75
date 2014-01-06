@@ -133,9 +133,10 @@ class WorldState:
         Need to update values one by one because some need to be taken out
         of the session dict <- TODO
         """
-        temp_stack = self.undo_stack.undo_pop()
-        for k, v in temp_stack.items():
-            self.session_dict[k] = v
+        try:
+          self.session_dict = self.undo_stack.undo_pop()
+        except:
+          pass
 
     def push_state(self):
         """
