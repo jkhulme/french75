@@ -425,22 +425,23 @@ class French75(wx.Frame):
             self.legend_panel.Parent.Refresh()
             self.slider_time.SetMax(self.world.session_dict['max_time'])
 
-            for species in self.world.session_dict['species_dict'].keys():
-                self.drop_down_species.Append(species)
-            self.drop_down_species.SetSelection(0)
+            if self.world.session_dict['species_dict']:
+                for species in self.world.session_dict['species_dict'].keys():
+                    self.drop_down_species.Append(species)
+                self.drop_down_species.SetSelection(0)
 
-            #TODO: Fix these magic numbers
-            a = 10
-            b = 40
-            c = 120
-            d = 0
-            for file_name in self.world.session_dict['results'].keys():
-                self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
-                a += 140
-                d += 1
+                #TODO: Fix these magic numbers
+                a = 10
+                b = 40
+                c = 120
+                d = 0
+                for file_name in self.world.session_dict['results'].keys():
+                    self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+                    a += 140
+                    d += 1
 
-            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-            self.animation_panel.Refresh()
+                self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+                self.animation_panel.Refresh()
 
             self.world.push_state()
             self.enable_all(True)
