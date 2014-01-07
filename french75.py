@@ -160,9 +160,12 @@ class French75(wx.Frame):
         #self.xkcdm_toggle.Enable(state)
         self.undo_m.Enable(state)
         self.redo_m.Enable(state)
-        self.btn_animate_play.Enable(state)
-        self.slider_time.Enable(state)
-        self.drop_down_species.Enable(state)
+
+        if self.world.session_dict['tree_list'] and state:
+            self.btn_animate_play.Enable(state)
+            self.slider_time.Enable(state)
+            self.drop_down_species.Enable(state)
+
         self.add_files_button.Enable(state)
         self.open_files_button.Enable(state)
 
