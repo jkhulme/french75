@@ -37,6 +37,9 @@ class Line(object):
         self.thickness = 2
         self.colour_change_points = []
         self.plot_sub_plots()
+        self.time_points = []
+        self.past_points = []
+        self.counter = 0
 
     """
     Handles the details of what needs to be done to interpolate.  Then

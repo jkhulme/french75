@@ -11,6 +11,7 @@ class CellSegment(object):
 
     def __init__(self, (tl_x, tl_y), radius, index, file_name, species):
         self.world = WorldState.Instance()
+        self.counter = 0
         #Get an array of tuples of times when the colour changes and what
         #colour it changes to.
         num_of_segments = len(self.world.session_dict['tree_list'])
@@ -21,14 +22,15 @@ class CellSegment(object):
             centre_y = tl_y
             outer_x1, outer_y1 = centre_x + radius - change, centre_y
             outer_x2, outer_y2 = centre_x, 10 + change
-            self.sub_segments.append(self.world.session_dict['lines'][file_name][species+"@"+self.world.session_dict['tree_list'][i]], self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2)
+            self.sub_segments.append((self.world.session_dict['lines'][file_name][species+"@"+self.world.session_dict['tree_list'][i]], self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
             change += radius / num_of_segments
 
     def paint(self, dc):
         species_locations = ['whole_cell']
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             if location in species_locations or species_locations == ['whole_cell']:
-                dc.SetBrush(wx.Brush('green'))
+                dc.SetBrush(wx.Brush(line.current_animation_colour))
+                print line.colour_change_points
             else:
                 dc.SetBrush(wx.Brush('white'))
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
