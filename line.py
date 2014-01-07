@@ -129,8 +129,10 @@ class Line(object):
                 if max_time:
                     return
             else:
+                max_time = True
                 self.seg_colour = colour
                 self.counter += i + 1
+
 
     """
     Deepcopy stuff, used for copying the dictionary into the undo stack

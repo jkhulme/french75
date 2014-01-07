@@ -418,33 +418,9 @@ class French75(wx.Frame):
         if session_dialog.state == session_dialog._FINISHED:
             self.world.temp_session_dict = None
             self.world.session_dict['title'] = session_dialog.title_text.GetLineText(0)
-            self.world.draw_plot = Plotter(self.graph_axes)
             session_dialog.parse_species()
-            self.world.draw_plot.plot()
-            reset_sash_position(self.splitter_left)
-            self.legend_panel.Parent.Refresh()
-            self.slider_time.SetMax(self.world.session_dict['max_time'])
+            self.sessiony_stuff()
 
-            if self.world.session_dict['tree_list']:
-                for species in self.world.session_dict['species_dict'][self.world.session_dict['species_dict'].keys()[0]].keys():
-                    self.drop_down_species.Append(species)
-                self.drop_down_species.SetSelection(0)
-
-                #TODO: Fix these magic numbers
-                a = 10
-                b = 160
-                c = 120
-                d = 0
-                for file_name in self.world.session_dict['results'].keys():
-                    self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
-                    a += 140
-                    d += 1
-
-                self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
-                self.animation_panel.Refresh()
-
-            self.world.push_state()
-            self.enable_all(True)
         else:
             self.world.session_dict = self.world.temp_session_dict
             self.world.temp_session_dict = None
@@ -455,6 +431,25 @@ class French75(wx.Frame):
         reset_sash_position(self.splitter_left)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
+
+        if self.world.session_dict['tree_list']:
+            for species in self.world.session_dict['species_dict'][self.world.session_dict['species_dict'].keys()[0]].keys():
+                self.drop_down_species.Append(species)
+            self.drop_down_species.SetSelection(0)
+
+            #TODO: Fix these magic numbers
+            a = 10
+            b = 160
+            c = 120
+            d = 0
+            for file_name in self.world.session_dict['results'].keys():
+                self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+                a += 140
+                d += 1
+
+            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            self.animation_panel.Refresh()
+
         self.world.push_state()
         self.enable_all(True)
 
