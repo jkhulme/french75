@@ -30,7 +30,7 @@ class CellSegment(object):
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             if location in species_locations or species_locations == ['whole_cell']:
                 line.update_animation_colour(self.world.session_dict['clock'])
-                dc.SetBrush(wx.Brush('green'))
+                dc.SetBrush(wx.Brush(line.seg_colour))
             else:
                 dc.SetBrush(wx.Brush('white'))
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
