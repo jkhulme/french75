@@ -425,7 +425,7 @@ class French75(wx.Frame):
             self.legend_panel.Parent.Refresh()
             self.slider_time.SetMax(self.world.session_dict['max_time'])
 
-            if self.world.session_dict['species_dict']:
+            if self.world.session_dict['tree_list']:
                 for species in self.world.session_dict['species_dict'][self.world.session_dict['species_dict'].keys()[0]].keys():
                     self.drop_down_species.Append(species)
                 self.drop_down_species.SetSelection(0)

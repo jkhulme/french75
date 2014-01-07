@@ -28,6 +28,7 @@ class SessionWizard(wx.wizard.Wizard):
 
         self.pages = []
         self.state = self._STARTED
+        self.tree = None
 
         self.Bind(wizmod.EVT_WIZARD_CANCEL, self.cancel_wizard)
         self.Bind(wizmod.EVT_WIZARD_FINISHED, self.finish_wizard)
@@ -78,7 +79,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.species_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
 
         self.location_panel = wx.Panel(page4, -1, size=(1000000, 1000000))
-        self.location_panel.SetBackgroundColour('white')
+        #self.location_panel.SetBackgroundColour('white')
         #self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page4.add_widget(self.file_dd)
         page4.add_widget(self.species_dd)
@@ -103,9 +104,10 @@ class SessionWizard(wx.wizard.Wizard):
 
     def page4_location_panel_size(self, e):
         (width, height) = self.location_panel.GetSize()
-        self.cell = CellSegments2(self.tree, (width, height))
-        self.location_panel.Bind(wx.EVT_PAINT, self.draw_cell)
-        self.location_panel.Refresh()
+        if self.tree:
+            self.cell = CellSegments2(self.tree, (width, height))
+            self.location_panel.Bind(wx.EVT_PAINT, self.draw_cell)
+            self.location_panel.Refresh()
 
     def draw_cell(self, e):
         dc = wx.PaintDC(self.location_panel)
@@ -165,22 +167,12 @@ class SessionWizard(wx.wizard.Wizard):
         Get a list of all species, it is called whenever results files are
         added or removed
         """
-        """
-        self.species_list_peri.Clear()
-        self.species_list_mid.Clear()
-        self.species_list_api.Clear()
-        """
         self.file_dd.Clear()
         for key in self.species_dict.keys():
             self.file_dd.Append(key)
         self.file_dd.SetSelection(0)
 
         self.populate_species_dd_list()
-        """
-            self.species_list_peri.Append(species)
-            self.species_list_mid.Append(species)
-            self.species_list_api.Append(species)
-        """
 
     def populate_species_dd_list(self):
         self.species_dd.Clear()

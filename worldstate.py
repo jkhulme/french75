@@ -37,7 +37,8 @@ _DICT_ELEMS = [('results', None),
                ('ymin', 0),
                ('ymax', 0),
                ('xmin', 0),
-               ('xmax', 0)]
+               ('xmax', 0),
+               ('tree_list', None)]
 
 
 @Singleton
