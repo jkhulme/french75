@@ -123,13 +123,14 @@ class Line(object):
         return plot_arrays
 
     def update_animation_colour(self, world_clock):
+        max_time = False
         for i, (time, colour) in enumerate(self.colour_change_points[self.counter:]):
-            if world_clock > self.time[time]:
-                print "world", world_clock
-                print "line", time
+            if world_clock < self.time[time]:
+                if max_time:
+                    return
+            else:
                 self.seg_colour = colour
                 self.counter += i + 1
-                return
 
     """
     Deepcopy stuff, used for copying the dictionary into the undo stack
