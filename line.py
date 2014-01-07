@@ -40,6 +40,7 @@ class Line(object):
         self.time_points = []
         self.past_points = []
         self.counter = 0
+        self.seg_colour = None
 
     """
     Handles the details of what needs to be done to interpolate.  Then
@@ -96,6 +97,7 @@ class Line(object):
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
+        self.seg_colour = self.colour_change_points[0][1]
 
 
     """
@@ -113,6 +115,15 @@ class Line(object):
                 break
             count += self.interval - 1
         return plot_arrays
+
+    def update_animation_colour(self, world_clock):
+        for i, (time, colour) in enumerate(self.colour_change_points):
+            if world_clock > time:
+                self.seg_colour = colour
+                self.counter = i
+                print time
+                print world_clock
+                break
 
     """
     Deepcopy stuff, used for copying the dictionary into the undo stack
