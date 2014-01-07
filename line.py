@@ -48,14 +48,16 @@ class Line(object):
     updates the data to be used.
     """
     def line_distance(self):
-        dist = (ceil(self.time[-1]) / len(self.results)) * 1.1
+        dist = (ceil(self.time[-1]) / len(self.results)) * 0.9
         output_time = []
         output_results = []
         for i in range(0, len(self.results) - 1):
             p1 = (self.time[i], self.results[i])
             p2 = (self.time[i + 1], self.results[i + 1])
+            print euclid_distance(p1, p2)
             if (euclid_distance(p1, p2) > dist):
                 step = ceil(euclid_distance(p1, p2) / dist)
+                print step
                 output_time.extend([self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step))
                 output_results.extend([self.results[i]] + self.interpolate([self.results[i], self.results[i + 1]], step))
             else:
