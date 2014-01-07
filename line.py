@@ -48,7 +48,7 @@ class Line(object):
     updates the data to be used.
     """
     def line_distance(self):
-        dist = (ceil(self.time[-1]) / len(self.results)) * 0.9
+        dist = (ceil(self.time[-1]) / len(self.results)) * 1.001
         output_time = []
         output_results = []
         for i in range(0, len(self.results) - 1):
