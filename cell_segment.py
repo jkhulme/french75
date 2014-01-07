@@ -37,22 +37,5 @@ class CellSegment(object):
 
     def update_clock(self):
         pass
-        """
-        self.counter_inner = 0
-        for (time, colour) in self.past_points_inner:
-            if self.world.session_dict['clock'] >= time:
-                self.counter_inner += 1
-        self.past_points_inner = self.past_points_inner[:self.counter_inner]
-
-        self.counter_middle = 0
-        for (time, colour) in self.past_points_middle:
-            if self.world.session_dict['clock'] >= time:
-                self.counter_middle += 1
-        self.past_points_middle = self.past_points_middle[:self.counter_middle]
-
-        self.counter_outer = 0
-        for (time, colour) in self.past_points_outer:
-            if self.world.session_dict['clock'] >= time:
-                self.counter_outer += 1
-        self.past_points_outer = self.past_points_outer[:self.counter_outer]
-        """
+        for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
+            line.counter = 0
