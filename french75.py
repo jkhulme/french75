@@ -644,3 +644,4 @@ if __name__ == '__main__':
     gui = French75(None)
     gui.Show()
     app.MainLoop()
+    app.Destroy()

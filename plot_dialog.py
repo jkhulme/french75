@@ -75,6 +75,7 @@ class Plot_Dialog(wx.Dialog):
             (r, g, b) = self.colour_picker.GetColour().Get()
             self.line.rgb_tuple = (r, g, b)
             self.line.flat_colour = rgb_to_hex((r, g, b))
+            self.line.plot_sub_plots()
         except:
             print "No colour change"
         self.world.push_state()

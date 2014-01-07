@@ -68,6 +68,7 @@ class WorldState:
         self.parser = None
         self.draw_plot = None
         self.cell_segments = []
+        self.graph_canvas = None
 
     def reset_session(session_dict):
         """
@@ -84,7 +85,7 @@ class WorldState:
         self.session_dict['clock_increment'] = self.session_dict['max_time'] / 600.0
 
     def change_cursor(self, cursor):
-        self.session_dict['graph_canvas'].SetCursor(wx.StockCursor(cursor))
+        self.graph_canvas.SetCursor(wx.StockCursor(cursor))
 
     def euclid_distance(self, p1, p2):
         """
