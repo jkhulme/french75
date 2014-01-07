@@ -50,6 +50,7 @@ class French75(wx.Frame):
         self.Maximize()
         self.world = WorldState.Instance()
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
+        self.end_of_time = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = wx.Panel(self.splitter_left, -1)
@@ -509,6 +510,13 @@ class French75(wx.Frame):
         Create new threads, change button text
         """
         if not self.world.session_dict['start_playing']:
+            print "?????????????????"
+            self.world.session_dict['clock'] = 0
+            self.slider_time.SetValue(0)
+            for line_dict in self.world.session_dict['lines'].values():
+                for line in line_dict.values():
+                    line.counter = 0
+            self.world.session_dict['clock_pause'] = False
             self.world.session_dict['start_playing'] = True
             t4 = Thread(target=self.change_button_text, args=("Pause",))
             t = Thread(target=self.animate, args=(0.1,))
@@ -516,10 +524,12 @@ class French75(wx.Frame):
             t4.start()
         else:
             if self.world.session_dict['clock_pause']:
+                print "&&&&&&&&&&&&&&&&&&&"
                 self.world.session_dict['clock_pause'] = False
                 t2 = Thread(target=self.change_button_text, args=("Pause",))
                 t2.start()
             else:
+                print "*********************"
                 self.world.session_dict['clock_pause'] = True
                 t3 = Thread(target=self.change_button_text, args=("Play",))
                 t3.start()
@@ -575,10 +585,14 @@ class French75(wx.Frame):
         while self.world.session_dict['clock'] < self.world.session_dict['max_time']:
             while self.world.session_dict['clock_pause']:
                 pass
+            time.sleep(n)
             self.world.session_dict['clock'] += self.world.session_dict['clock_increment']
             self.slider_time.SetValue(self.world.session_dict['clock'])
             self.animation_panel.Refresh()
-            time.sleep(n)
+
+        self.slider_time.SetValue(self.world.session_dict['max_time'])
+        self.change_button_text('Play')
+        self.world.session_dict['start_playing'] = False
 
     """
     Handles drawing of the model
