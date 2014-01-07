@@ -22,7 +22,6 @@ def open_results_file(self):
             results[path.split('/')[-1]] = parser.results_dict
 
         world.session_dict['results'] = results
-        print world.session_dict['results'][world.session_dict['results'].keys()[0]].keys()
         world.parser = parser
 
         file_chooser.Destroy()

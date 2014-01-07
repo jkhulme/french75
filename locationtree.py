@@ -47,7 +47,6 @@ class LocationTree:
                     self.circles[node].paint()
             except:
                 num_of_children = len(self.tree[self.loc_data[node].parent])
-                print num_of_children
                 new = self.circles[self.loc_data[node].parent].give_birth(node, num_of_children)
 
                 self.circles[node] = Circle(new, dc)

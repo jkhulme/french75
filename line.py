@@ -38,7 +38,6 @@ class Line(object):
         self.colour_change_points = []
         self.seg_colour = None
         self.plot_sub_plots()
-        print self.time
         self.time_points = []
         self.past_points = []
         self.counter = 0
@@ -99,12 +98,7 @@ class Line(object):
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
-        print "$$$$$$$$$$$$$$$"
-        print self.seg_colour
         self.seg_colour = self.colour_change_points[0][1]
-        print self.seg_colour
-        print self.colour_change_points
-
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
