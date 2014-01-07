@@ -433,7 +433,7 @@ class French75(wx.Frame):
         self.slider_time.SetMax(self.world.session_dict['max_time'])
 
         if self.world.session_dict['tree_list']:
-            for species in self.world.session_dict['species_dict'][self.world.session_dict['species_dict'].keys()[0]].keys():
+            for species in self.list_of_species():
                 self.drop_down_species.Append(species)
             self.drop_down_species.SetSelection(0)
 
@@ -452,6 +452,14 @@ class French75(wx.Frame):
 
         self.world.push_state()
         self.enable_all(True)
+
+    def list_of_species(self):
+        species_list = []
+        for key, item in self.world.session_dict['species_dict'].items():
+            for species in item:
+                if species not in species_list:
+                    species_list.append(species)
+        return species_list
 
     def save_session(self, e):
         """
