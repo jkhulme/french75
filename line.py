@@ -38,6 +38,7 @@ class Line(object):
         self.colour_change_points = []
         self.seg_colour = None
         self.plot_sub_plots()
+        print self.time
         self.time_points = []
         self.past_points = []
         self.counter = 0
@@ -123,7 +124,7 @@ class Line(object):
 
     def update_animation_colour(self, world_clock):
         for i, (time, colour) in enumerate(self.colour_change_points[self.counter:]):
-            if world_clock > time:
+            if world_clock > self.time[time]:
                 print "world", world_clock
                 print "line", time
                 self.seg_colour = colour
