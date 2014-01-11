@@ -1,6 +1,6 @@
-from math import ceil
 from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 from copy import deepcopy
+from random import randrange
 
 _MIN_INTENSITY = 70
 _MAX_INTENSITY = 255
@@ -19,9 +19,30 @@ class Line(object):
     self.interval - for building sub plots - I think this has to be 2
     """
 
-    def __init__(self, results, time, csv, key, colour):
+    def __init__(self, results, time, csv, key, colour, graph_width, graph_height, xmin, xmax, ymin, ymax):
         self.results = results
         self.time = time
+        self.graph_width = graph_width
+        self.graph_height = graph_height
+        self.xmin = xmin
+        self.xmax = xmax
+        self.ymin = ymin
+        self.ymax = ymax
+        self.horizontal_scale = graph_width / float(xmax - xmin)
+        self.vertical_scale = graph_height / float(ymax - ymin)
+
+        print "horizontal"
+        print self.graph_width
+        print self.horizontal_scale
+
+        print "vertical"
+        print self.graph_height
+        print self.vertical_scale
+
+        self.length = self.calc_line_length(self.results, self.time)
+        print "length: ", self.length
+
+        self.guide_points = 1000
         #magic values - but they get changes
         self.min = 0
         self.max = 0
@@ -30,8 +51,9 @@ class Line(object):
         self.intense_plot = False
         #see issue 40 if interval is too high
         #TODO: make interval some function of number of points?
-        self.interval = 20
-        self.line_distance()
+        self.interval = 5
+        self.interpolate(self.results, self.time)
+        #self.line_distance()
         self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
@@ -42,11 +64,22 @@ class Line(object):
         self.past_points = []
         self.counter = 0
 
+    def calc_line_length(self, results, time):
+        data_time_points = zip(results, time)
+        point_pairs = zip(data_time_points, data_time_points[1:])
+        total_dist = 0
+        for (point_a, point_b) in point_pairs:
+            dist = euclid_distance(self.scale(point_a), self.scale(point_b))
+            total_dist += dist
+        return total_dist
+
+    def scale(self, (x, y)):
+        return ((self.horizontal_scale*x, self.vertical_scale*y))
 
     """
     Handles the details of what needs to be done to interpolate.  Then
     updates the data to be used.
-    """
+
     def line_distance(self):
         dist = (ceil(self.time[-1]) / len(self.results)) * 1.1
         output_time = []
@@ -65,18 +98,41 @@ class Line(object):
         output_results.append(self.results[-1])
         self.time = output_time
         self.results = output_results
+    """
 
     """
     Handles the interpolation of points, need to test to make sure this is
     correct.  May have to advise that it is unsuitable for more than pretty
     pictures
     """
-    def interpolate(self, data, steps):
-        middle = []
-        inc = (data[1] - data[0]) / float(steps)
-        for i in range(0, int(steps) - 1):
-            middle += [data[0] + ((i + 1) * inc)]
-        return middle
+    def interpolate(self, results, time):
+        data_time_points = zip(results, time)
+        point_pairs = zip(data_time_points, data_time_points[1:])
+        interpolated_data = []
+        interpolated_time = []
+        num_of_points = len(results)
+
+        for ((data_a, time_a), (data_b, time_b)) in point_pairs:
+            interpolated_data.append(data_a)
+            interpolated_time.append(time_a)
+
+            distance = euclid_distance(self.scale((data_a, time_a)), self.scale((data_b, time_b)))
+            ratio = float(distance)/self.length
+            interpolation_count = int((self.guide_points-num_of_points)*ratio)+1
+            increment = (time_b - time_a)/float(interpolation_count)
+            for i in range(1, interpolation_count):
+                new_time = time_a + (i*increment)
+                new_data = data_a + ((data_b - data_a) * ((new_time - time_a)/(time_b - time_a)))
+                interpolated_data.append(new_data)
+                interpolated_time.append(new_time)
+
+            interpolated_data.append(data_b)
+            interpolated_time.append(time_b)
+        print interpolated_data
+        print interpolated_time
+        self.results = interpolated_data
+        self.time = interpolated_time
+
 
     """
     Plots the sub plots and works out what colour the line should be
@@ -95,7 +151,8 @@ class Line(object):
                 count += 1
             intensity = (((current - self.min) / float(1 + self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
-            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            #new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            new_colour = rgb_to_hex(self.random_colour())
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
@@ -126,6 +183,14 @@ class Line(object):
                 max_time = True
                 self.seg_colour = colour
                 self.counter += i + 1
+
+    def random_colour(self):
+        """
+        The 50 closest to white are skipped to prevent pale colours
+        """
+        return (randrange(0, 200, 1),
+                randrange(0, 200, 1),
+                randrange(0, 200, 1))
 
 
     """

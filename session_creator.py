@@ -230,7 +230,13 @@ class SessionWizard(wx.wizard.Wizard):
                                                      results_dict[key],
                                                      results_dict['Time'],
                                                      result, key,
-                                                     self.world.choose_colour())
+                                                     self.world.choose_colour(),
+                                                     self.world.session_dict['graph_width'],
+                                                     self.world.session_dict['graph_height'],
+                                                     self.world.session_dict['xmin'],
+                                                     self.world.session_dict['xmax'],
+                                                     self.world.session_dict['ymin'],
+                                                     self.world.session_dict['ymax'])
 
 
 class wizard_page(wizmod.PyWizardPage):

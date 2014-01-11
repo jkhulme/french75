@@ -103,6 +103,8 @@ class French75(wx.Frame):
         animation_hbox.Fit(self)
 
         (graph_width, graph_height) = calc_graph_size(_DPI, _COLS, _NUM_OF_SIDEBARS, _PHI)
+        self.world.session_dict['graph_width'] = graph_width
+        self.world.session_dict['graph_height'] = graph_height
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
 

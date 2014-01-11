@@ -38,7 +38,9 @@ _DICT_ELEMS = [('results', None),
                ('ymax', 0),
                ('xmin', 0),
                ('xmax', 0),
-               ('tree_list', None)]
+               ('tree_list', None),
+               ('graph_width', 0),
+               ('graph_height', 0)]
 
 
 @Singleton
