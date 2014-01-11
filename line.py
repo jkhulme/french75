@@ -28,8 +28,8 @@ class Line(object):
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
-        self.horizontal_scale = graph_width / float(xmax - xmin)
-        self.vertical_scale = graph_height / float(ymax - ymin)
+        self.horizontal_scale = float(xmax - xmin) / graph_width
+        self.vertical_scale = float(ymax - ymin) / graph_height
 
         print "horizontal"
         print self.graph_width
@@ -128,8 +128,6 @@ class Line(object):
 
             interpolated_data.append(data_b)
             interpolated_time.append(time_b)
-        print interpolated_data
-        print interpolated_time
         self.results = interpolated_data
         self.time = interpolated_time
 
@@ -151,8 +149,8 @@ class Line(object):
                 count += 1
             intensity = (((current - self.min) / float(1 + self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
-            #new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
-            new_colour = rgb_to_hex(self.random_colour())
+            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            #new_colour = rgb_to_hex(self.random_colour())
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
