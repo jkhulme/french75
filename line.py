@@ -51,7 +51,7 @@ class Line(object):
         self.intense_plot = False
         #see issue 40 if interval is too high
         #TODO: make interval some function of number of points?
-        self.interval = 5
+        self.interval = 10
         self.interpolate(self.results, self.time)
         #self.line_distance()
         self.rgb_tuple = colour
@@ -117,6 +117,8 @@ class Line(object):
             interpolated_time.append(time_a)
 
             distance = euclid_distance(self.scale((data_a, time_a)), self.scale((data_b, time_b)))
+            (scaled_data_a, scaled_time_a) = self.scale((data_a, time_a))
+            (scaled_data_b, scaled_time_b) = self.scale((data_b, time_b))
             ratio = float(distance)/self.length
             interpolation_count = int((self.guide_points-num_of_points)*ratio)+1
             increment = (time_b - time_a)/float(interpolation_count)
@@ -149,8 +151,8 @@ class Line(object):
                 count += 1
             intensity = (((current - self.min) / float(1 + self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
-            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
-            #new_colour = rgb_to_hex(self.random_colour())
+            #new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            new_colour = rgb_to_hex(self.random_colour())
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
