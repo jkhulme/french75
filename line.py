@@ -151,8 +151,8 @@ class Line(object):
                 count += 1
             intensity = (((current - self.min) / float(1 + self.max - self.min)) * (_MAX_INTENSITY - _MIN_INTENSITY)) + _MIN_INTENSITY
             alpha = intensity/255
-            #new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
-            new_colour = rgb_to_hex(self.random_colour())
+            new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
+            #new_colour = rgb_to_hex(self.random_colour())
             self.colour_change_points.append((count, new_colour))
             self.sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
