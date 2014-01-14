@@ -31,16 +31,7 @@ class Line(object):
         self.horizontal_scale = float(xmax - xmin) / graph_width
         self.vertical_scale = float(ymax - ymin) / graph_height
 
-        print "horizontal"
-        print self.graph_width
-        print self.horizontal_scale
-
-        print "vertical"
-        print self.graph_height
-        print self.vertical_scale
-
         self.length = self.calc_line_length(self.results, self.time)
-        print "length: ", self.length
 
         self.guide_points = 1000
         #magic values - but they get changes

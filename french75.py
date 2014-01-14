@@ -516,7 +516,6 @@ class French75(wx.Frame):
         Create new threads, change button text
         """
         if not self.world.session_dict['start_playing']:
-            print "?????????????????"
             self.world.session_dict['clock'] = 0
             self.slider_time.SetValue(0)
             for line_dict in self.world.session_dict['lines'].values():
@@ -530,12 +529,10 @@ class French75(wx.Frame):
             t4.start()
         else:
             if self.world.session_dict['clock_pause']:
-                print "&&&&&&&&&&&&&&&&&&&"
                 self.world.session_dict['clock_pause'] = False
                 t2 = Thread(target=self.change_button_text, args=("Pause",))
                 t2.start()
             else:
-                print "*********************"
                 self.world.session_dict['clock_pause'] = True
                 t3 = Thread(target=self.change_button_text, args=("Play",))
                 t3.start()
