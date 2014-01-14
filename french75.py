@@ -75,7 +75,7 @@ class French75(wx.Frame):
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
 
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
-
+        self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
         attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
@@ -441,7 +441,10 @@ class French75(wx.Frame):
         if self.world.session_dict['tree_list']:
             for species in self.list_of_species():
                 self.drop_down_species.Append(species)
+            for file_name in self.world.session_dict['results'].keys():
+                self.drop_down_files.Append(file_name)
             self.drop_down_species.SetSelection(0)
+            self.drop_down_files.SetSelection(0)
 
             #TODO: Fix these magic numbers
             a = 10
