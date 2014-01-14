@@ -47,6 +47,8 @@ class Biopepa_Model_Parser():
         return output
 
     def build_graph(self):
-        self.tree = LocationTree(self.loc_results)
-        return self.tree.build_tree()
+        if self.loc_results != {}:
+            self.tree = LocationTree(self.loc_results)
+            return self.tree.build_tree()
+        return {}
 
