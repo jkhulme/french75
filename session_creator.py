@@ -171,15 +171,14 @@ class SessionWizard(wx.wizard.Wizard):
         self.file_dd.Clear()
         for key in self.species_dict.keys():
             self.file_dd.Append(key)
-        self.file_dd.SetSelection(0)
-
+            self.file_dd.SetSelection(0)
         self.populate_species_dd_list()
 
     def populate_species_dd_list(self):
         self.species_dd.Clear()
         for species in self.species_dict[self.file_dd.GetValue()]:
             self.species_dd.Append(species)
-        self.species_dd.SetSelection(0)
+            self.species_dd.SetSelection(0)
 
     def change_file(self, e):
         self.populate_species_dd_list()
