@@ -119,7 +119,7 @@ class Plotter(object):
     """
     def plot_line(self, line):
         if line.plot_line:
-            t0 = time.time()
+            #t0 = time.time()
             if not line.intense_plot:
                 self.world.graph_axes.plot(line.time, line.results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
             else:
@@ -137,5 +137,5 @@ class Plotter(object):
                 #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
                 #self.world.graph_axes.add_collection(lines)
                 #1.22244095802s
-            t1 = time.time()
-            print t1 - t0
+            #t1 = time.time()
+            #print t1 - t0
