@@ -77,6 +77,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.file_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
         self.file_dd.Bind(wx.EVT_COMBOBOX, self.change_file)
         self.species_dd = wx.ComboBox(page4, -1, style=wx.CB_READONLY)
+        self.species_dd.Bind(wx.EVT_COMBOBOX, self.change_species)
 
         self.location_panel = wx.Panel(page4, -1, size=(1000000, 1000000))
         #self.location_panel.SetBackgroundColour('white')
@@ -182,6 +183,10 @@ class SessionWizard(wx.wizard.Wizard):
 
     def change_file(self, e):
         self.populate_species_dd_list()
+        self.location_panel.Refresh()
+
+    def change_species(self, e):
+        self.location_panel.Refresh()
 
     def select_model(self, e):
         """

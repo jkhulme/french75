@@ -96,6 +96,7 @@ class French75(wx.Frame):
         attached_files_vbox.Fit(self)
 
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        animation_hbox.Add(self.drop_down_files)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
         animation_hbox.Add(self.slider_time)
