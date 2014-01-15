@@ -50,6 +50,7 @@ class French75(wx.Frame):
         super(French75, self).__init__(*args, **kwargs)
         self.Maximize()
         self.panels = []
+        self.panel_vboxes = []
         self.world = WorldState.Instance()
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
         self.end_of_time = False
@@ -78,6 +79,7 @@ class French75(wx.Frame):
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
 
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
+        self.drop_down_species.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_species)
         self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
@@ -464,7 +466,8 @@ class French75(wx.Frame):
             d = 0
             for i, file_name in enumerate(self.world.session_dict['results'].keys()):
                 small_vbox = wx.BoxSizer(wx.VERTICAL)
-                title = wx.StaticText(self.animation_panel, -1, file_name)
+                self.panel_vboxes.append(small_vbox)
+                title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
                 small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
                 panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
                 small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
@@ -482,6 +485,41 @@ class French75(wx.Frame):
 
         self.world.push_state()
         self.enable_all(True)
+
+    def change_animation_species(self, e):
+        (a_width, a_height) = self.animation_panel.GetSize()
+        for child in self.animation_panel.GetChildren():
+            try:
+                int(child.GetName())
+                child.Destroy()
+            except:
+                pass
+        self.panels = []
+        self.panel_vboxes = []
+        self.world.cell_segments = []
+        #TODO: Fix these magic numbers
+        a = 10
+        b = (a_height * 0.7) - 10
+        c = (a_height * 0.7) - 20
+        d = 0
+        for i, file_name in enumerate(self.world.session_dict['results'].keys()):
+            small_vbox = wx.BoxSizer(wx.VERTICAL)
+            self.panel_vboxes.append(small_vbox)
+            title = wx.StaticText(self.animation_panel, -1, file_name)
+            small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
+            panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
+            small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
+            panel.SetBackgroundColour('white')
+            panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            self.panels.append(panel)
+            self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
+            self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+            a += 140
+            d += 1
+        self.animation_panel.Layout()
+        self.animation_panel.SetupScrolling(scroll_y=False)
+        for panel in self.panels:
+            panel.Refresh()
 
     def list_of_species(self):
         species_list = []

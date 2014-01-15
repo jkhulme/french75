@@ -15,9 +15,7 @@ class CellSegment(object):
         #Get an array of tuples of times when the colour changes and what
         #colour it changes to.
         num_of_segments = len(self.world.session_dict['tree_list'])
-        print self.world.session_dict['tree_list']
         change = 0
-        print self.world.session_dict['species_dict']
         self.sub_segments = []
         for i in range(0, num_of_segments):
             centre_x = tl_x
@@ -40,6 +38,5 @@ class CellSegment(object):
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
 
     def update_clock(self):
-        pass
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             line.counter = 0

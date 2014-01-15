@@ -1,0 +1,311 @@
+// simple vesicle movement model with endosomes as species
+// model uses Bio-PEPA compartments
+//   3 regions
+//   1 active Src per endosome
+//   10 inactive Src per endosome
+
+// endosome species  
+//     Eij@L : E contains j inactive Src and is in compartment L,
+//             this implies E contains 11-j active Src
+// movement between compartments 
+//     mrij :  movement of an endsome with j inactive Src to compartment r
+//             where 1 implies R1, 2 implies R2, 3 implies R3 and M implies MB
+// change in number of active and inactive Src
+//     cijL :  endosome in compartment L reduces its number of inactive Src
+//             to j-1 and increases its active Src to 11-(j-1)
+
+
+// COMPARTMENTS
+
+location MB : size = 1, type = membrane;          // membrane
+location R3 in MB : size = 1, type = compartment; // region 3 of cytoplasm
+location R2 in R3 : size = 1, type = compartment; // region 2 of cytoplasm
+location R1 in R2 : size = 1, type = compartment; // region 1 of cytoplasm
+location PN in R1 : size = 1, type = compartment; // perinuclear region
+
+
+// RATE CONSTANTS
+
+// rate at which endosomes contained a FGFR/Src complex are degraded
+    degrade = 0.5;
+// rate at which endosomes contained a FGFR/Src complex are recycled
+    recycle = 0.0;
+    
+// rate at which endosomes appear at PN
+    input = 4.0;
+
+// rate at which endosomes move between regions
+// can be made specific to a region by using the region modifier parameters
+    move = 5.0;
+// rate at which Src in a endosome becomes active
+// is modified by the active Src count modifier, currently axmod = x
+    change = 5.0;
+
+// INITIAL QUANTITIES
+
+aSrc_MB_init = 0;
+iSrc_MB_init = 0;
+
+Ei0_PN_init = 0;  Ei1_PN_init = 0;  Ei2_PN_init = 0;  Ei3_PN_init = 0;  Ei4_PN_init = 0;  Ei5_PN_init = 0;  Ei6_PN_init = 0;  Ei7_PN_init = 0;  Ei8_PN_init = 0;  Ei9_PN_init = 0;  Ei10_PN_init = 0; 
+Ei0_R1_init = 0;  Ei1_R1_init = 0;  Ei2_R1_init = 0;  Ei3_R1_init = 0;  Ei4_R1_init = 0;  Ei5_R1_init = 0;  Ei6_R1_init = 0;  Ei7_R1_init = 0;  Ei8_R1_init = 0;  Ei9_R1_init = 0;  Ei10_R1_init = 0; 
+Ei0_R2_init = 0;  Ei1_R2_init = 0;  Ei2_R2_init = 0;  Ei3_R2_init = 0;  Ei4_R2_init = 0;  Ei5_R2_init = 0;  Ei6_R2_init = 0;  Ei7_R2_init = 0;  Ei8_R2_init = 0;  Ei9_R2_init = 0;  Ei10_R2_init = 0; 
+Ei0_R3_init = 0;  Ei1_R3_init = 0;  Ei2_R3_init = 0;  Ei3_R3_init = 0;  Ei4_R3_init = 0;  Ei5_R3_init = 0;  Ei6_R3_init = 0;  Ei7_R3_init = 0;  Ei8_R3_init = 0;  Ei9_R3_init = 0;  Ei10_R3_init = 0; 
+
+
+// RATE MODIFIERS (FOR LOCATIONS AND NUMBER OF ACTIVE SRC IN ENDOSOMES)
+
+a1mod = 1;  a2mod = 2;  a3mod = 3;  a4mod = 4;  
+a5mod = 5;  a6mod = 6;  a7mod = 7;  a8mod = 8;  a9mod = 9;  
+a10mod = 10;  
+
+PNmod = 1; R1mod = 0.9; R2mod = 0.80; R3mod = 0.70; 
+
+kineticLawOf deg      : degrade * aSrc@MB;
+kineticLawOf rec      : recycle * aSrc@MB;
+
+kineticLawOf create   : input;
+
+kineticLawOf ciMB       : change * iSrc@MB * aSrc@MB * 0.01;
+
+kineticLawOf ci1PN : change * a10mod * H(Ei1@PN);
+kineticLawOf ci1R1 : change * a10mod * H(Ei1@R1);
+kineticLawOf ci1R2 : change * a10mod * H(Ei1@R2);
+kineticLawOf ci1R3 : change * a10mod * H(Ei1@R3);
+
+kineticLawOf ci2PN : change * a9mod * H(Ei2@PN);
+kineticLawOf ci2R1 : change * a9mod * H(Ei2@R1);
+kineticLawOf ci2R2 : change * a9mod * H(Ei2@R2);
+kineticLawOf ci2R3 : change * a9mod * H(Ei2@R3);
+
+kineticLawOf ci3PN : change * a8mod * H(Ei3@PN);
+kineticLawOf ci3R1 : change * a8mod * H(Ei3@R1);
+kineticLawOf ci3R2 : change * a8mod * H(Ei3@R2);
+kineticLawOf ci3R3 : change * a8mod * H(Ei3@R3);
+
+kineticLawOf ci4PN : change * a7mod * H(Ei4@PN);
+kineticLawOf ci4R1 : change * a7mod * H(Ei4@R1);
+kineticLawOf ci4R2 : change * a7mod * H(Ei4@R2);
+kineticLawOf ci4R3 : change * a7mod * H(Ei4@R3);
+
+kineticLawOf ci5PN : change * a6mod * H(Ei5@PN);
+kineticLawOf ci5R1 : change * a6mod * H(Ei5@R1);
+kineticLawOf ci5R2 : change * a6mod * H(Ei5@R2);
+kineticLawOf ci5R3 : change * a6mod * H(Ei5@R3);
+
+kineticLawOf ci6PN : change * a5mod * H(Ei6@PN);
+kineticLawOf ci6R1 : change * a5mod * H(Ei6@R1);
+kineticLawOf ci6R2 : change * a5mod * H(Ei6@R2);
+kineticLawOf ci6R3 : change * a5mod * H(Ei6@R3);
+
+kineticLawOf ci7PN : change * a4mod * H(Ei7@PN);
+kineticLawOf ci7R1 : change * a4mod * H(Ei7@R1);
+kineticLawOf ci7R2 : change * a4mod * H(Ei7@R2);
+kineticLawOf ci7R3 : change * a4mod * H(Ei7@R3);
+
+kineticLawOf ci8PN : change * a3mod * H(Ei8@PN);
+kineticLawOf ci8R1 : change * a3mod * H(Ei8@R1);
+kineticLawOf ci8R2 : change * a3mod * H(Ei8@R2);
+kineticLawOf ci8R3 : change * a3mod * H(Ei8@R3);
+
+kineticLawOf ci9PN : change * a2mod * H(Ei9@PN);
+kineticLawOf ci9R1 : change * a2mod * H(Ei9@R1);
+kineticLawOf ci9R2 : change * a2mod * H(Ei9@R2);
+kineticLawOf ci9R3 : change * a2mod * H(Ei9@R3);
+
+kineticLawOf ci10PN : change * a1mod * H(Ei10@PN);
+kineticLawOf ci10R1 : change * a1mod * H(Ei10@R1);
+kineticLawOf ci10R2 : change * a1mod * H(Ei10@R2);
+kineticLawOf ci10R3 : change * a1mod * H(Ei10@R3);
+
+kineticLawOf m1i0 : move * PNmod * H(Ei0@PN);
+kineticLawOf m2i0 : move * R1mod * H(Ei0@R1);
+kineticLawOf m3i0 : move * R2mod * H(Ei0@R2);
+kineticLawOf mMi0 : move * R3mod * H(Ei0@R3);
+
+kineticLawOf m1i1 : move * PNmod * H(Ei1@PN);
+kineticLawOf m2i1 : move * R1mod * H(Ei1@R1);
+kineticLawOf m3i1 : move * R2mod * H(Ei1@R2);
+kineticLawOf mMi1 : move * R3mod * H(Ei1@R3);
+
+kineticLawOf m1i2 : move * PNmod * H(Ei2@PN);
+kineticLawOf m2i2 : move * R1mod * H(Ei2@R1);
+kineticLawOf m3i2 : move * R2mod * H(Ei2@R2);
+kineticLawOf mMi2 : move * R3mod * H(Ei2@R3);
+
+kineticLawOf m1i3 : move * PNmod * H(Ei3@PN);
+kineticLawOf m2i3 : move * R1mod * H(Ei3@R1);
+kineticLawOf m3i3 : move * R2mod * H(Ei3@R2);
+kineticLawOf mMi3 : move * R3mod * H(Ei3@R3);
+
+kineticLawOf m1i4 : move * PNmod * H(Ei4@PN);
+kineticLawOf m2i4 : move * R1mod * H(Ei4@R1);
+kineticLawOf m3i4 : move * R2mod * H(Ei4@R2);
+kineticLawOf mMi4 : move * R3mod * H(Ei4@R3);
+
+kineticLawOf m1i5 : move * PNmod * H(Ei5@PN);
+kineticLawOf m2i5 : move * R1mod * H(Ei5@R1);
+kineticLawOf m3i5 : move * R2mod * H(Ei5@R2);
+kineticLawOf mMi5 : move * R3mod * H(Ei5@R3);
+
+kineticLawOf m1i6 : move * PNmod * H(Ei6@PN);
+kineticLawOf m2i6 : move * R1mod * H(Ei6@R1);
+kineticLawOf m3i6 : move * R2mod * H(Ei6@R2);
+kineticLawOf mMi6 : move * R3mod * H(Ei6@R3);
+
+kineticLawOf m1i7 : move * PNmod * H(Ei7@PN);
+kineticLawOf m2i7 : move * R1mod * H(Ei7@R1);
+kineticLawOf m3i7 : move * R2mod * H(Ei7@R2);
+kineticLawOf mMi7 : move * R3mod * H(Ei7@R3);
+
+kineticLawOf m1i8 : move * PNmod * H(Ei8@PN);
+kineticLawOf m2i8 : move * R1mod * H(Ei8@R1);
+kineticLawOf m3i8 : move * R2mod * H(Ei8@R2);
+kineticLawOf mMi8 : move * R3mod * H(Ei8@R3);
+
+kineticLawOf m1i9 : move * PNmod * H(Ei9@PN);
+kineticLawOf m2i9 : move * R1mod * H(Ei9@R1);
+kineticLawOf m3i9 : move * R2mod * H(Ei9@R2);
+kineticLawOf mMi9 : move * R3mod * H(Ei9@R3);
+
+kineticLawOf m1i10 : move * PNmod * H(Ei10@PN);
+kineticLawOf m2i10 : move * R1mod * H(Ei10@R1);
+kineticLawOf m3i10 : move * R2mod * H(Ei10@R2);
+kineticLawOf mMi10 : move * R3mod * H(Ei10@R3);
+
+aSrc    = deg << aSrc@MB + rec << aSrc@MB + ciMB >> aSrc@MB
+        + (mMi0,11) >> aSrc@MB + (mMi1,10) >> aSrc@MB 
+        + (mMi2,9) >> aSrc@MB + (mMi3,8) >> aSrc@MB + (mMi4,7) >> aSrc@MB 
+        + (mMi5,6) >> aSrc@MB + (mMi6,5) >> aSrc@MB + (mMi7,4) >> aSrc@MB 
+        + (mMi8,3) >> aSrc@MB + (mMi9,2) >> aSrc@MB + (mMi10,1) >> aSrc@MB ;
+
+iSrc    = ciMB << iSrc@MB
+        + (mMi1,1) >> iSrc@MB + (mMi2,2) >> iSrc@MB + (mMi3,3) >> iSrc@MB 
+        + (mMi4,4) >> iSrc@MB + (mMi5,5) >> iSrc@MB + (mMi6,6) >> iSrc@MB 
+        + (mMi7,7) >> iSrc@MB + (mMi8,8) >> iSrc@MB + (mMi9,9) >> iSrc@MB 
+        + (mMi10,10) >> iSrc@MB ;
+        
+Ei0  = ci1PN >> Ei0@PN + m1i0 [PN -> R1] (.) Ei0 +
+       ci1R1 >> Ei0@R1 + m2i0 [R1 -> R2] (.) Ei0 +
+       ci1R2 >> Ei0@R2 + m3i0 [R2 -> R3] (.) Ei0 +
+       ci1R3 >> Ei0@R3 + mMi0 << Ei0@R3;
+
+Ei1  = ci2PN >> Ei1@PN + ci1PN << Ei1@PN + m1i1 [PN -> R1] (.) Ei1 +
+       ci2R1 >> Ei1@R1 + ci1R1 << Ei1@R1 + m2i1 [R1 -> R2] (.) Ei1 +
+       ci2R2 >> Ei1@R2 + ci1R2 << Ei1@R2 + m3i1 [R2 -> R3] (.) Ei1 +
+       ci2R3 >> Ei1@R3 + ci1R3 << Ei1@R3 + mMi1 << Ei1@R3;
+
+Ei2  = ci3PN >> Ei2@PN + ci2PN << Ei2@PN + m1i2 [PN -> R1] (.) Ei2 +
+       ci3R1 >> Ei2@R1 + ci2R1 << Ei2@R1 + m2i2 [R1 -> R2] (.) Ei2 +
+       ci3R2 >> Ei2@R2 + ci2R2 << Ei2@R2 + m3i2 [R2 -> R3] (.) Ei2 +
+       ci3R3 >> Ei2@R3 + ci2R3 << Ei2@R3 + mMi2 << Ei2@R3;
+
+Ei3  = ci4PN >> Ei3@PN + ci3PN << Ei3@PN + m1i3 [PN -> R1] (.) Ei3 +
+       ci4R1 >> Ei3@R1 + ci3R1 << Ei3@R1 + m2i3 [R1 -> R2] (.) Ei3 +
+       ci4R2 >> Ei3@R2 + ci3R2 << Ei3@R2 + m3i3 [R2 -> R3] (.) Ei3 +
+       ci4R3 >> Ei3@R3 + ci3R3 << Ei3@R3 + mMi3 << Ei3@R3;
+
+Ei4  = ci5PN >> Ei4@PN + ci4PN << Ei4@PN + m1i4 [PN -> R1] (.) Ei4 +
+       ci5R1 >> Ei4@R1 + ci4R1 << Ei4@R1 + m2i4 [R1 -> R2] (.) Ei4 +
+       ci5R2 >> Ei4@R2 + ci4R2 << Ei4@R2 + m3i4 [R2 -> R3] (.) Ei4 +
+       ci5R3 >> Ei4@R3 + ci4R3 << Ei4@R3 + mMi4 << Ei4@R3;
+
+Ei5  = ci6PN >> Ei5@PN + ci5PN << Ei5@PN + m1i5 [PN -> R1] (.) Ei5 +
+       ci6R1 >> Ei5@R1 + ci5R1 << Ei5@R1 + m2i5 [R1 -> R2] (.) Ei5 +
+       ci6R2 >> Ei5@R2 + ci5R2 << Ei5@R2 + m3i5 [R2 -> R3] (.) Ei5 +
+       ci6R3 >> Ei5@R3 + ci5R3 << Ei5@R3 + mMi5 << Ei5@R3;
+
+Ei6  = ci7PN >> Ei6@PN + ci6PN << Ei6@PN + m1i6 [PN -> R1] (.) Ei6 +
+       ci7R1 >> Ei6@R1 + ci6R1 << Ei6@R1 + m2i6 [R1 -> R2] (.) Ei6 +
+       ci7R2 >> Ei6@R2 + ci6R2 << Ei6@R2 + m3i6 [R2 -> R3] (.) Ei6 +
+       ci7R3 >> Ei6@R3 + ci6R3 << Ei6@R3 + mMi6 << Ei6@R3;
+
+Ei7  = ci8PN >> Ei7@PN + ci7PN << Ei7@PN + m1i7 [PN -> R1] (.) Ei7 +
+       ci8R1 >> Ei7@R1 + ci7R1 << Ei7@R1 + m2i7 [R1 -> R2] (.) Ei7 +
+       ci8R2 >> Ei7@R2 + ci7R2 << Ei7@R2 + m3i7 [R2 -> R3] (.) Ei7 +
+       ci8R3 >> Ei7@R3 + ci7R3 << Ei7@R3 + mMi7 << Ei7@R3;
+
+Ei8  = ci9PN >> Ei8@PN + ci8PN << Ei8@PN + m1i8 [PN -> R1] (.) Ei8 +
+       ci9R1 >> Ei8@R1 + ci8R1 << Ei8@R1 + m2i8 [R1 -> R2] (.) Ei8 +
+       ci9R2 >> Ei8@R2 + ci8R2 << Ei8@R2 + m3i8 [R2 -> R3] (.) Ei8 +
+       ci9R3 >> Ei8@R3 + ci8R3 << Ei8@R3 + mMi8 << Ei8@R3;
+
+Ei9  = ci10PN >> Ei9@PN + ci9PN << Ei9@PN + m1i9 [PN -> R1] (.) Ei9 +
+       ci10R1 >> Ei9@R1 + ci9R1 << Ei9@R1 + m2i9 [R1 -> R2] (.) Ei9 +
+       ci10R2 >> Ei9@R2 + ci9R2 << Ei9@R2 + m3i9 [R2 -> R3] (.) Ei9 +
+       ci10R3 >> Ei9@R3 + ci9R3 << Ei9@R3 + mMi9 << Ei9@R3;
+
+Ei10  = create >> Ei10@PN + ci10PN << Ei10@PN + m1i10 [PN -> R1] (.) Ei10 +
+        ci10R1 << Ei10@R1 + m2i10 [R1 -> R2] (.) Ei10 +
+        ci10R2 << Ei10@R2 + m3i10 [R2 -> R3] (.) Ei10 +
+        ci10R3 << Ei10@R3 + mMi10 << Ei10@R3;
+
+// VARIABLES
+
+PNact   = (Ei0@PN*11) + (Ei1@PN*10) + (Ei2@PN*9) + (Ei3@PN*8) + (Ei4@PN*7) + (Ei5@PN*6) + (Ei6@PN*5) + (Ei7@PN*4) + (Ei8@PN*3) + (Ei9@PN*2) + (Ei10@PN*1) ;
+PNinact = (Ei1@PN*1) + (Ei2@PN*2) + (Ei3@PN*3) + (Ei4@PN*4) + (Ei5@PN*5) + (Ei6@PN*6) + (Ei7@PN*7) + (Ei8@PN*8) + (Ei9@PN*9) + (Ei10@PN*10) ;
+percentPNact = PNact/(PNact+PNinact)*100;
+PNSrc = PNact + PNinact;
+
+R1act   = (Ei0@R1*11) + (Ei1@R1*10) + (Ei2@R1*9) + (Ei3@R1*8) + (Ei4@R1*7) + (Ei5@R1*6) + (Ei6@R1*5) + (Ei7@R1*4) + (Ei8@R1*3) + (Ei9@R1*2) + (Ei10@R1*1) ;
+R1inact = (Ei1@R1*1) + (Ei2@R1*2) + (Ei3@R1*3) + (Ei4@R1*4) + (Ei5@R1*5) + (Ei6@R1*6) + (Ei7@R1*7) + (Ei8@R1*8) + (Ei9@R1*9) + (Ei10@R1*10) ;
+percentR1act = R1act/(R1act+R1inact)*100;
+R1Src = R1act + R1inact;
+
+R2act   = (Ei0@R2*11) + (Ei1@R2*10) + (Ei2@R2*9) + (Ei3@R2*8) + (Ei4@R2*7) + (Ei5@R2*6) + (Ei6@R2*5) + (Ei7@R2*4) + (Ei8@R2*3) + (Ei9@R2*2) + (Ei10@R2*1) ;
+R2inact = (Ei1@R2*1) + (Ei2@R2*2) + (Ei3@R2*3) + (Ei4@R2*4) + (Ei5@R2*5) + (Ei6@R2*6) + (Ei7@R2*7) + (Ei8@R2*8) + (Ei9@R2*9) + (Ei10@R2*10) ;
+percentR2act = R2act/(R2act+R2inact)*100;
+R2Src = R2act + R2inact;
+
+R3act   = (Ei0@R3*11) + (Ei1@R3*10) + (Ei2@R3*9) + (Ei3@R3*8) + (Ei4@R3*7) + (Ei5@R3*6) + (Ei6@R3*5) + (Ei7@R3*4) + (Ei8@R3*3) + (Ei9@R3*2) + (Ei10@R3*1) ;
+R3inact = (Ei1@R3*1) + (Ei2@R3*2) + (Ei3@R3*3) + (Ei4@R3*4) + (Ei5@R3*5) + (Ei6@R3*6) + (Ei7@R3*7) + (Ei8@R3*8) + (Ei9@R3*9) + (Ei10@R3*10) ;
+percentR3act = R3act/(R3act+R3inact)*100;
+R3Src = R3act + R3inact;
+
+percentMBact = aSrc@MB/(aSrc@MB+iSrc@MB)*100;
+MBSrc = aSrc@MB + iSrc@MB;
+
+TotalAct = PNact + R1act + R2act + R3act + aSrc@MB;
+atPNpercent = PNact/TotalAct*100;
+atR1percent = R1act/TotalAct*100;
+atR2percent = R2act/TotalAct*100;
+atR3percent = R3act/TotalAct*100;
+atMBpercent = aSrc@MB/TotalAct*100;
+
+activeSrc_at__perinuclear = PNact;
+activeSrc_at__region1 = R1act;
+activeSrc_at__region2 = R2act;
+activeSrc_at__region3 = R3act;
+activeSrc_at_membrane = aSrc@MB;
+
+percent_activeSrc_at__pn = percentPNact;
+percent_activeSrc_at__r1 = percentR1act;
+percent_activeSrc_at__r2 = percentR2act;
+percent_activeSrc_at__r3 = percentR3act;
+percent_activeSrc_at_mem = percentMBact;
+
+prop_of_activeSrc_at__pn = atPNpercent;
+prop_of_activeSrc_at__r1 = atR1percent;
+prop_of_activeSrc_at__r2 = atR2percent;
+prop_of_activeSrc_at__r3 = atR3percent;
+prop_of_activeSrc_at_mem = atMBpercent;
+
+// MODEL
+
+    aSrc@MB[aSrc_MB_init]
+<*> iSrc@MB[iSrc_MB_init]
+<*> Ei0@PN[Ei0_PN_init] <*> Ei1@PN[Ei1_PN_init] <*> Ei2@PN[Ei2_PN_init]
+<*> Ei3@PN[Ei3_PN_init] <*> Ei4@PN[Ei4_PN_init] <*> Ei5@PN[Ei5_PN_init]
+<*> Ei6@PN[Ei6_PN_init] <*> Ei7@PN[Ei7_PN_init] <*> Ei8@PN[Ei8_PN_init]
+<*> Ei9@PN[Ei9_PN_init] <*> Ei10@PN[Ei10_PN_init]
+<*> Ei0@R1[Ei0_R1_init] <*> Ei1@R1[Ei1_R1_init] <*> Ei2@R1[Ei2_R1_init]
+<*> Ei3@R1[Ei3_R1_init] <*> Ei4@R1[Ei4_R1_init] <*> Ei5@R1[Ei5_R1_init]
+<*> Ei6@R1[Ei6_R1_init] <*> Ei7@R1[Ei7_R1_init] <*> Ei8@R1[Ei8_R1_init]
+<*> Ei9@R1[Ei9_R1_init] <*> Ei10@R1[Ei10_R1_init]
+<*> Ei0@R2[Ei0_R2_init] <*> Ei1@R2[Ei1_R2_init] <*> Ei2@R2[Ei2_R2_init]
+<*> Ei3@R2[Ei3_R2_init] <*> Ei4@R2[Ei4_R2_init] <*> Ei5@R2[Ei5_R2_init]
+<*> Ei6@R2[Ei6_R2_init] <*> Ei7@R2[Ei7_R2_init] <*> Ei8@R2[Ei8_R2_init]
+<*> Ei9@R2[Ei9_R2_init] <*> Ei10@R2[Ei10_R2_init]
+<*> Ei0@R3[Ei0_R3_init] <*> Ei1@R3[Ei1_R3_init] <*> Ei2@R3[Ei2_R3_init]
+<*> Ei3@R3[Ei3_R3_init] <*> Ei4@R3[Ei4_R3_init] <*> Ei5@R3[Ei5_R3_init]
+<*> Ei6@R3[Ei6_R3_init] <*> Ei7@R3[Ei7_R3_init] <*> Ei8@R3[Ei8_R3_init]
+<*> Ei9@R3[Ei9_R3_init] <*> Ei10@R3[Ei10_R3_init]
