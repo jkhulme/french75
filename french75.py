@@ -55,7 +55,7 @@ class French75(wx.Frame):
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
         self.end_of_time = False
         self.i = 0
-        self.save = False
+        #self.save = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = scrolled.ScrolledPanel(self.splitter_left, -1)
@@ -173,8 +173,8 @@ class French75(wx.Frame):
         self.filem_save_session.Enable(state)
         self.filem_load_session.Enable(state)
         self.filem_open_results_save_plot.Enable(state)
-        self.filem_open_results_open_model.Enable(state)
-        self.filem_open_results_save_model.Enable(state)
+        #self.filem_open_results_open_model.Enable(state)
+        #self.filem_open_results_save_model.Enable(state)
         self.annotationm_toggle.Enable(state)
         #Test on DICE, see if XKCD mode can work
         #self.xkcdm_toggle.Enable(state)
@@ -386,12 +386,12 @@ class French75(wx.Frame):
         self.filem_load_session  = file_menu.Append(wx.ID_ANY, '&Load Session')
         file_menu.AppendSeparator()
         self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, 'Export Graph')
-        self.filem_export_animation = file_menu.Append(wx.ID_ANY, 'Export Animation')
+        #self.filem_export_animation = file_menu.Append(wx.ID_ANY, 'Export Animation')
 
-        file_menu.AppendSeparator()
-        self.filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
+        #file_menu.AppendSeparator()
+        #self.filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
 
-        self.filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
+        #self.filem_open_results_save_model = file_menu.Append(wx.ID_ANY, 'Save &Model')
 
 
         menubar.Append(file_menu, '&File')
@@ -399,10 +399,10 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.new_session, self.filem_new_session)
         self.Bind(wx.EVT_MENU, self.save_session, self.filem_save_session)
         self.Bind(wx.EVT_MENU, self.load_session, self.filem_load_session)
-        self.Bind(wx.EVT_MENU, self.open_model_file, self.filem_open_results_open_model)
-        self.Bind(wx.EVT_MENU, self.save_snapshot, self.filem_open_results_save_model)
+        #self.Bind(wx.EVT_MENU, self.open_model_file, self.filem_open_results_open_model)
+        #self.Bind(wx.EVT_MENU, self.save_snapshot, self.filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, self.filem_open_results_save_plot)
-        self.Bind(wx.EVT_MENU, self.export_animation, self.filem_export_animation)
+        #self.Bind(wx.EVT_MENU, self.export_animation, self.filem_export_animation)
 
         preferences_menu = wx.Menu()
         self.annotationm_toggle = preferences_menu.AppendCheckItem(wx.ID_ANY, '&Annotations')
@@ -681,8 +681,8 @@ class French75(wx.Frame):
         dc2 = wx.PaintDC(panel)
         self.world.cell_segments[idx].paint(dc2)
         self.i += 1
-        if self.save:
-            self.save_snapshot(dc2, self.i)
+        #if self.save:
+        #    self.save_snapshot(dc2, self.i)
 
     """
     Run by the thread
@@ -742,7 +742,7 @@ class French75(wx.Frame):
     """
     Save a picture of the model
     based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
-    """
+
     def save_snapshot(self, dc, i):
         dcSource = dc
         size = dcSource.Size
@@ -753,6 +753,7 @@ class French75(wx.Frame):
         memDC.SelectObject(wx.NullBitmap)
         img = bmp.ConvertToImage()
         img.SaveFile(str(i) + '.png', wx.BITMAP_TYPE_PNG)
+    """
 
     def move_animation(self, e):
         """
