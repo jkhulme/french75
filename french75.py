@@ -17,6 +17,7 @@ import platform
 from utils import euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position, refresh_plot
 from subprocess import call
 from annotation import Annotation
+import wx.lib.scrolledpanel as scrolled
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -53,14 +54,15 @@ class French75(wx.Frame):
         self.end_of_time = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
-        self.legend_panel = wx.Panel(self.splitter_left, -1)
+        self.legend_panel = scrolled.ScrolledPanel(self.splitter_left, -1)
         splitter_right = wx.SplitterWindow(self.splitter_left, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
         splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         self.graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right_middle, -1)
         self.files_panel = wx.Panel(splitter_right_middle, -1)
-        self.animation_panel = wx.Panel(splitter_middle, -1)
+        #self.animation_panel = wx.Panel(splitter_middle, -1)
+        self.animation_panel = scrolled.ScrolledPanel(splitter_middle, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
@@ -95,13 +97,25 @@ class French75(wx.Frame):
         self.files_panel.SetSizer(attached_files_vbox)
         attached_files_vbox.Fit(self)
 
+        animation_vbox = wx.BoxSizer(wx.VERTICAL)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        panel_a = wx.Panel(self.animation_panel, -1,size=(1000,1000))
+        panel_a.SetBackgroundColour('red')
+        panel_b = wx.Panel(self.animation_panel, -1,size=(1000,1000))
+        panel_b.SetBackgroundColour('green')
+        animation_panels_hbox.Add(panel_a,0,wx.EXPAND|wx.ALL,border=10)
+        animation_panels_hbox.Add(panel_b,0,wx.EXPAND|wx.ALL,border=10)
         animation_hbox.Add(self.drop_down_files)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
         animation_hbox.Add(self.slider_time)
-        self.animation_panel.SetSizer(animation_hbox)
+        animation_vbox.Add(animation_hbox)
+        animation_vbox.Add(animation_panels_hbox)
+        self.animation_panel.SetSizer(animation_vbox)
+        animation_vbox.Fit(self)
         animation_hbox.Fit(self)
+        self.animation_panel.SetupScrolling(scroll_y=False)
 
         (graph_width, graph_height) = calc_graph_size(_DPI, _COLS, _NUM_OF_SIDEBARS, _PHI)
         self.world.session_dict['graph_width'] = graph_width

@@ -30,7 +30,7 @@ class Legend(object):
         for child in self.legend_panel.GetChildren():
             child.Destroy()
 
-        title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_CENTER)
+        title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_LEFT)
         font = wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD)
         title.SetFont(font)
         vbox_leg.Add(title, flag=wx.CENTER)
@@ -75,7 +75,9 @@ class Legend(object):
             vbox_collpane.Fit(collpane_body)
 
         self.legend_panel.SetSizer(vbox_leg)
-        vbox_leg.Fit(self.legend_panel)
+        self.legend_panel.Layout()
+        #vbox_leg.Fit(self.legend_panel)
+        self.legend_panel.SetupScrolling()
 
         for child in self.legend_panel.GetChildren():
             try:
@@ -138,4 +140,5 @@ class Legend(object):
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].plot_line)
                 if child.GetLabel() == "I" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
+        self.legend_panel.SetupScrolling()
         self.legend_panel.Refresh()
