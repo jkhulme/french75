@@ -49,6 +49,7 @@ class French75(wx.Frame):
         """
         super(French75, self).__init__(*args, **kwargs)
         self.Maximize()
+        self.panels = []
         self.world = WorldState.Instance()
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
         self.end_of_time = False
@@ -99,19 +100,13 @@ class French75(wx.Frame):
 
         animation_vbox = wx.BoxSizer(wx.VERTICAL)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
-        animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
-        panel_a = wx.Panel(self.animation_panel, -1,size=(1000,1000))
-        panel_a.SetBackgroundColour('red')
-        panel_b = wx.Panel(self.animation_panel, -1,size=(1000,1000))
-        panel_b.SetBackgroundColour('green')
-        animation_panels_hbox.Add(panel_a,0,wx.EXPAND|wx.ALL,border=10)
-        animation_panels_hbox.Add(panel_b,0,wx.EXPAND|wx.ALL,border=10)
+        self.animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_files)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
         animation_hbox.Add(self.slider_time)
         animation_vbox.Add(animation_hbox)
-        animation_vbox.Add(animation_panels_hbox)
+        animation_vbox.Add(self.animation_panels_hbox)
         self.animation_panel.SetSizer(animation_vbox)
         animation_vbox.Fit(self)
         animation_hbox.Fit(self)
@@ -466,12 +461,17 @@ class French75(wx.Frame):
             b = 160
             c = 120
             d = 0
-            for file_name in self.world.session_dict['results'].keys():
+            for i, file_name in enumerate(self.world.session_dict['results'].keys()):
+                panel = wx.Panel(self.animation_panel, -1,size=(100,100))
+                panel.SetBackgroundColour('red')
+                panel.Bind(wx.EVT_PAINT, self.animate_cell)
+                self.panels.append((i, panel))
+                self.animation_panels_hbox.Add(panel,0,wx.EXPAND|wx.ALL,border=10)
                 self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
                 a += 140
                 d += 1
-
-            self.animation_panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            #self.animation_panel.Layout()
+            self.animation_panel.SetupScrolling(scroll_y=False)
             self.animation_panel.Refresh()
 
         self.world.push_state()
@@ -589,7 +589,7 @@ class French75(wx.Frame):
     """
     def animate_cell(self, e):
         wx.CallAfter(self.world.draw_plot.vertical_line)
-        dc2 = wx.PaintDC(self.animation_panel)
+        dc2 = wx.PaintDC(self)
         for segment in self.world.cell_segments:
             segment.paint(dc2)
 

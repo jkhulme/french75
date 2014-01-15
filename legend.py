@@ -140,5 +140,4 @@ class Legend(object):
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].plot_line)
                 if child.GetLabel() == "I" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
-        self.legend_panel.SetupScrolling()
         self.legend_panel.Refresh()
