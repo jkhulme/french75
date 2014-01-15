@@ -318,10 +318,23 @@ class French75(wx.Frame):
         annotate_menu = wx.Menu()
         m_edit_annotation = annotate_menu.Append(wx.ID_ANY, 'Edit')
         m_delete_annotation = annotate_menu.Append(wx.ID_ANY, 'Delete')
+        #self.m_toggle_annotation = annotate_menu.AppendCheckItem(wx.ID_ANY, '&Show')
+        #self.m_toggle_annotation.Check(True)
         self.Bind(wx.EVT_MENU, self.edit_annotation_text, m_edit_annotation)
         self.Bind(wx.EVT_MENU, self.delete_annotation, m_delete_annotation)
+        #self.Bind(wx.EVT_MENU, self.show_hide_annotation, self.m_toggle_annotation)
         self.graph_panel.PopupMenu(annotate_menu)
         annotate_menu.Destroy()
+
+    """
+    def show_hide_annotation(self, e):
+        is_checked = self.m_toggle_annotation.IsChecked()
+        new_check = not is_checked
+        print new_check
+        self.m_toggle_annotation.Check(check=False)
+        print self.m_toggle_annotation.IsChecked()
+        self.selected_annotation.show = self.m_toggle_annotation.IsChecked()
+    """
 
     def edit_annotation_text(self, event):
         self.get_label()

@@ -13,3 +13,4 @@ class Annotation(object):
         if text:
             self.text = text
         self.colour = colour
+        self.show = True
