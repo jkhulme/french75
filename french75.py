@@ -447,6 +447,7 @@ class French75(wx.Frame):
         reset_sash_position(self.splitter_left)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
+        (a_width, a_height) = self.animation_panel.GetSize()
 
         if self.world.session_dict['tree_list']:
             for species in self.list_of_species():
@@ -462,17 +463,18 @@ class French75(wx.Frame):
             c = 120
             d = 0
             for i, file_name in enumerate(self.world.session_dict['results'].keys()):
-                panel = wx.Panel(self.animation_panel, -1,size=(100,100), name=str(i))
+                panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.75,a_height*0.75), name=str(i))
                 panel.SetBackgroundColour('red')
                 panel.Bind(wx.EVT_PAINT, self.animate_cell)
-                self.panels.append((i, panel))
+                self.panels.append(panel)
                 self.animation_panels_hbox.Add(panel,0,wx.EXPAND|wx.ALL,border=10)
                 self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
                 a += 140
                 d += 1
             #self.animation_panel.Layout()
             self.animation_panel.SetupScrolling(scroll_y=False)
-            self.animation_panel.Refresh()
+            for panel in self.panels:
+                panel.Refresh()
 
         self.world.push_state()
         self.enable_all(True)
@@ -606,7 +608,8 @@ class French75(wx.Frame):
             time.sleep(n)
             self.world.session_dict['clock'] += self.world.session_dict['clock_increment']
             self.slider_time.SetValue(self.world.session_dict['clock'])
-            self.animation_panel.Refresh()
+            for panel in self.panels:
+                panel.Refresh()
 
         self.slider_time.SetValue(self.world.session_dict['max_time'])
         self.change_button_text('Play')
