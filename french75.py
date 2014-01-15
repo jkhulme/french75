@@ -80,6 +80,8 @@ class French75(wx.Frame):
 
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
         self.drop_down_species.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_species)
+        self.switch_animation_button = wx.Button(self.animation_panel, -1, "<->")
+        self.switch_animation_button.Bind(wx.EVT_BUTTON, self.switch_animation)
         self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
@@ -104,6 +106,7 @@ class French75(wx.Frame):
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
         animation_hbox.Add(self.drop_down_files)
+        animation_hbox.Add(self.switch_animation_button)
         animation_hbox.Add(self.drop_down_species)
         animation_hbox.Add(self.btn_animate_play)
         animation_hbox.Add(self.slider_time)
@@ -449,7 +452,6 @@ class French75(wx.Frame):
         reset_sash_position(self.splitter_left)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
-        (a_width, a_height) = self.animation_panel.GetSize()
 
         if self.world.session_dict['tree_list']:
             for species in self.list_of_species():
@@ -459,34 +461,16 @@ class French75(wx.Frame):
             self.drop_down_species.SetSelection(0)
             self.drop_down_files.SetSelection(0)
 
-            #TODO: Fix these magic numbers
-            a = 10
-            b = (a_height * 0.7) - 10
-            c = (a_height * 0.7) - 20
-            d = 0
-            for i, file_name in enumerate(self.world.session_dict['results'].keys()):
-                small_vbox = wx.BoxSizer(wx.VERTICAL)
-                self.panel_vboxes.append(small_vbox)
-                title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
-                small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
-                panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
-                small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
-                panel.SetBackgroundColour('white')
-                panel.Bind(wx.EVT_PAINT, self.animate_cell)
-                self.panels.append(panel)
-                self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
-                self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
-                a += 140
-                d += 1
-            self.animation_panel.Layout()
-            self.animation_panel.SetupScrolling(scroll_y=False)
-            for panel in self.panels:
-                panel.Refresh()
+            self.create_cell_segments_by_file()
+
 
         self.world.push_state()
         self.enable_all(True)
 
     def change_animation_species(self, e):
+        self.create_cell_segments()
+
+    def create_cell_segments_by_file(self):
         (a_width, a_height) = self.animation_panel.GetSize()
         for child in self.animation_panel.GetChildren():
             try:
@@ -505,7 +489,7 @@ class French75(wx.Frame):
         for i, file_name in enumerate(self.world.session_dict['results'].keys()):
             small_vbox = wx.BoxSizer(wx.VERTICAL)
             self.panel_vboxes.append(small_vbox)
-            title = wx.StaticText(self.animation_panel, -1, file_name)
+            title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
             small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
             panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
             small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
@@ -514,12 +498,54 @@ class French75(wx.Frame):
             self.panels.append(panel)
             self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
             self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
-            a += 140
-            d += 1
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
         for panel in self.panels:
             panel.Refresh()
+
+    def create_cell_segments_by_species(self):
+        (a_width, a_height) = self.animation_panel.GetSize()
+        for child in self.animation_panel.GetChildren():
+            try:
+                int(child.GetName())
+                child.Destroy()
+            except:
+                pass
+        self.panels = []
+        self.panel_vboxes = []
+        self.world.cell_segments = []
+        #TODO: Fix these magic numbers
+        a = 10
+        b = (a_height * 0.7) - 10
+        c = (a_height * 0.7) - 20
+        d = 0
+        for i, species_name in enumerate(self.list_of_species()):
+            if species_name != "Time":
+                small_vbox = wx.BoxSizer(wx.VERTICAL)
+                self.panel_vboxes.append(small_vbox)
+                title = wx.StaticText(self.animation_panel, -1, species_name, name=str(i))
+                small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
+                panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
+                small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
+                panel.SetBackgroundColour('white')
+                panel.Bind(wx.EVT_PAINT, self.animate_cell)
+                self.panels.append(panel)
+                self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
+                self.world.cell_segments.append(CellSegment((a, b), c, d, self.drop_down_files.GetStringSelection(), species_name.split("@")[0]))
+        self.animation_panel.Layout()
+        self.animation_panel.SetupScrolling(scroll_y=False)
+        for panel in self.panels:
+            panel.Refresh()
+
+    def switch_animation(self, e):
+        if self.drop_down_species.IsEnabled():
+            self.drop_down_species.Enable(False)
+            self.drop_down_files.Enable(True)
+            self.create_cell_segments_by_species()
+        else:
+            self.drop_down_species.Enable(True)
+            self.drop_down_files.Enable(False)
+            self.create_cell_segments_by_file()
 
     def list_of_species(self):
         species_list = []
