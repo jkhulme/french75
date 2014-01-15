@@ -462,7 +462,7 @@ class French75(wx.Frame):
             c = 120
             d = 0
             for i, file_name in enumerate(self.world.session_dict['results'].keys()):
-                panel = wx.Panel(self.animation_panel, -1,size=(100,100))
+                panel = wx.Panel(self.animation_panel, -1,size=(100,100), name=str(i))
                 panel.SetBackgroundColour('red')
                 panel.Bind(wx.EVT_PAINT, self.animate_cell)
                 self.panels.append((i, panel))
@@ -589,9 +589,10 @@ class French75(wx.Frame):
     """
     def animate_cell(self, e):
         wx.CallAfter(self.world.draw_plot.vertical_line)
-        dc2 = wx.PaintDC(self)
-        for segment in self.world.cell_segments:
-            segment.paint(dc2)
+        panel = e.GetEventObject()
+        idx = int(panel.GetName())
+        dc2 = wx.PaintDC(panel)
+        self.world.cell_segments[idx].paint(dc2)
 
     """
     Run by the thread
