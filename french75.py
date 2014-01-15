@@ -54,6 +54,8 @@ class French75(wx.Frame):
         self.world = WorldState.Instance()
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
         self.end_of_time = False
+        self.i = 0
+        self.save = False
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = scrolled.ScrolledPanel(self.splitter_left, -1)
@@ -371,6 +373,7 @@ class French75(wx.Frame):
         self.filem_load_session  = file_menu.Append(wx.ID_ANY, '&Load Session')
         file_menu.AppendSeparator()
         self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, 'Export Graph')
+        self.filem_export_animation = file_menu.Append(wx.ID_ANY, 'Export Animation')
 
         file_menu.AppendSeparator()
         self.filem_open_results_open_model = file_menu.Append(wx.ID_ANY, '&View Model')
@@ -386,6 +389,7 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.open_model_file, self.filem_open_results_open_model)
         self.Bind(wx.EVT_MENU, self.save_snapshot, self.filem_open_results_save_model)
         self.Bind(wx.EVT_MENU, self.on_save_plot, self.filem_open_results_save_plot)
+        self.Bind(wx.EVT_MENU, self.export_animation, self.filem_export_animation)
 
         preferences_menu = wx.Menu()
         self.annotationm_toggle = preferences_menu.AppendCheckItem(wx.ID_ANY, '&Annotations')
@@ -663,6 +667,9 @@ class French75(wx.Frame):
         idx = int(panel.GetName())
         dc2 = wx.PaintDC(panel)
         self.world.cell_segments[idx].paint(dc2)
+        self.i += 1
+        if self.save:
+            self.save_snapshot(dc2, self.i)
 
     """
     Run by the thread
@@ -723,8 +730,8 @@ class French75(wx.Frame):
     Save a picture of the model
     based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
     """
-    def save_snapshot(self, e):
-        dcSource = self.dc
+    def save_snapshot(self, dc, i):
+        dcSource = dc
         size = dcSource.Size
         bmp = wx.EmptyBitmap(200, 200)
         memDC = wx.MemoryDC()
@@ -732,7 +739,7 @@ class French75(wx.Frame):
         memDC.Blit(0, 0, size.width, size.height, dcSource, 0, 0)
         memDC.SelectObject(wx.NullBitmap)
         img = bmp.ConvertToImage()
-        img.SaveFile('saved.png', wx.BITMAP_TYPE_PNG)
+        img.SaveFile(str(i) + '.png', wx.BITMAP_TYPE_PNG)
 
     def move_animation(self, e):
         """
@@ -741,6 +748,10 @@ class French75(wx.Frame):
         self.world.session_dict['clock'] = self.slider_time.GetValue()
         for segment in self.world.cell_segments:
             segment.update_clock()
+
+    def export_animation(self, e):
+        self.save = True
+        self.play_animation(None)
 
 if __name__ == '__main__':
     app = wx.App()
