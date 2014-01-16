@@ -121,9 +121,9 @@ class Plotter(object):
     def plot_line(self, line):
         if line.plot_line:
             #t0 = time.time()
-            if not line.intense_plot:
+            if line.plot_state == 0:
                 self.world.graph_axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
-            else:
+            elif line.plot_state == 1:
                 self.world.graph_axes.set_xlim(self.world.session_dict['xmin'], self.world.session_dict['xmax'])
                 self.world.graph_axes.set_ylim(self.world.session_dict['ymin'], self.world.session_dict['ymax'])
                 #segments = []
@@ -138,5 +138,8 @@ class Plotter(object):
                 #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
                 #self.world.graph_axes.add_collection(lines)
                 #1.22244095802s
+            elif line.plot_state == 2:
+                print "Normalised data"
+                self.world.graph_axes.plot(line.original_time, line.normalised_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
             #t1 = time.time()
             #print t1 - t0

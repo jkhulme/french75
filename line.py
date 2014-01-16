@@ -20,10 +20,16 @@ class Line(object):
     """
 
     def __init__(self, results, time, csv, key, colour, graph_width, graph_height, xmin, xmax, ymin, ymax):
+
+        self.REGULAR = 0
+        self.INTENSITY = 1
+        self.NORMALISED = 2
+        self.plot_state = 0
+
         self.results = results
         self.original_results = results
-        self.interpolated_results = None
-        self.normalised_results = None
+        self.interpolated_results = []
+        self.normalised_results = []
         self.time = time
         self.original_time = time
         self.interpolated_time = None
@@ -59,6 +65,7 @@ class Line(object):
         self.time_points = []
         self.past_points = []
         self.counter = 0
+        self.normalise()
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
@@ -189,7 +196,10 @@ class Line(object):
                 randrange(0, 200, 1))
 
     def normalise(self):
-        print self.results
+        d_max = max(self.results)
+        d_min = min(self.results)
+        for result in self.results:
+            self.normalised_results.append((result - d_min) / float(d_max - d_min))
 
 
     """
