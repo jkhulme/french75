@@ -420,10 +420,23 @@ class French75(wx.Frame):
         self.redo_m = edit_menu.Append(wx.ID_ANY, '&Redo')
 
         menubar.Append(edit_menu, '&Edit')
+
         self.Bind(wx.EVT_MENU, self.undo, self.undo_m)
         self.Bind(wx.EVT_MENU, self.redo, self.redo_m)
 
+        data_menu = wx.Menu()
+        self.normalise_m = data_menu.Append(wx.ID_ANY, '&Normalise')
+        self.export_data_m = data_menu.Append(wx.ID_ANY, '&Export Data')
+        self.Bind(wx.EVT_MENU, self.normalise_data, self.normalise_m)
+
+        menubar.Append(data_menu, '&Data')
+
         return menubar
+
+    def normalise_data(self, event):
+        for csv_file in self.world.session_dict['lines'].keys():
+            for species in self.world.session_dict['lines'][csv_file].keys():
+                self.world.session_dict['lines'][csv_file][species].normalise()
 
     def undo(self, event):
         self.world.undo()

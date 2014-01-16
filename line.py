@@ -183,6 +183,9 @@ class Line(object):
                 randrange(0, 200, 1),
                 randrange(0, 200, 1))
 
+    def normalise(self):
+        pass
+
 
     """
     Deepcopy stuff, used for copying the dictionary into the undo stack
