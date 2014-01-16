@@ -21,7 +21,12 @@ class Line(object):
 
     def __init__(self, results, time, csv, key, colour, graph_width, graph_height, xmin, xmax, ymin, ymax):
         self.results = results
+        self.original_results = results
+        self.interpolated_results = None
+        self.normalised_results = None
         self.time = time
+        self.original_time = time
+        self.interpolated_time = None
         self.graph_width = graph_width
         self.graph_height = graph_height
         self.xmin = xmin
@@ -121,8 +126,8 @@ class Line(object):
 
             interpolated_data.append(data_b)
             interpolated_time.append(time_b)
-        self.results = interpolated_data
-        self.time = interpolated_time
+        self.interpolated_results = interpolated_data
+        self.interpolated_time = interpolated_time
 
 
     """
@@ -152,7 +157,7 @@ class Line(object):
     Split the data into multiple lists padded with None to enable the intensity plot
     """
     def build_colour_plot_arrays(self):
-        plot_data = self.results
+        plot_data = self.interpolated_results
         plot_arrays = []
         self.min = min(plot_data)
         self.max = max(plot_data)
@@ -184,7 +189,7 @@ class Line(object):
                 randrange(0, 200, 1))
 
     def normalise(self):
-        pass
+        print self.results
 
 
     """
