@@ -430,7 +430,8 @@ class French75(wx.Frame):
         refresh_plot()
 
     def redo(self, event):
-        pass
+        self.world.redo()
+        refresh_plot()
 
     def toggle_xkcd(self, event):
         self.toggle_param('xkcd')

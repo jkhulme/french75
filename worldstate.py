@@ -142,6 +142,9 @@ class WorldState:
         except:
           pass
 
+    def redo(self):
+        self.session_dict = self.undo_stack.redo_pop()
+
     def push_state(self):
         """
         Put the current session dict onto the undo stack, change the title to
@@ -152,7 +155,7 @@ class WorldState:
         references
         """
         self.update_title("French75 - Unsaved Changes")
-        self.undo_stack.push(copy.deepcopy(self.session_dict))
+        self.undo_stack.undo_push(copy.deepcopy(self.session_dict))
 
     def pickle_session(self):
         """
