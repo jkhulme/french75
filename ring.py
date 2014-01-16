@@ -3,6 +3,9 @@ from utils import euclid_distance
 
 
 class Ring:
+    """
+    Don't think this is being used.  Model viewing is being taken out.
+    """
 
     def __init__(self, outer, inner, num_children, dc):
         self.dc = dc

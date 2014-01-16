@@ -643,7 +643,7 @@ class French75(wx.Frame):
 
     """
     Which biopepa model to display
-    """
+
     def open_model_file(self, e):
         file_chooser = wx.FileDialog(
             self,
@@ -661,13 +661,15 @@ class French75(wx.Frame):
             self.refresh_model_panel()
         else:
             file_chooser.Destroy()
+    """
 
     """
     refresh the model view pane
-    """
+
     def refresh_model_panel(self):
         self.model_panel.Bind(wx.EVT_PAINT, self.on_paint)
         self.model_panel.Refresh()
+    """
 
     """
     called when the animation pane is refreshed. -- OnPaint
