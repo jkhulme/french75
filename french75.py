@@ -437,6 +437,7 @@ class French75(wx.Frame):
         for csv_file in self.world.session_dict['lines'].keys():
             for species in self.world.session_dict['lines'][csv_file].keys():
                 self.world.session_dict['lines'][csv_file][species].plot_state = 2
+                print self.world.session_dict['lines'][csv_file][species].normalised_results
         refresh_plot()
 
     def undo(self, event):
