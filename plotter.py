@@ -127,7 +127,7 @@ class Plotter(object):
             #t0 = time.time()
             if not self.world.session_dict['normalised']:
                 if not line.intense_plot:
-                    self.world.graph_axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
+                    self.axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
                 else:
                     #self.world.graph_axes.set_xlim(self.world.session_dict['xmin'], self.world.session_dict['xmax'])
                     #self.world.graph_axes.set_ylim(self.world.session_dict['ymin'], self.world.session_dict['ymax'])
@@ -139,17 +139,17 @@ class Plotter(object):
                     for (sub_plot, new_colour) in line.sub_plot_tuples:
                         #segments.append(zip(line.time, sub_plot))
                         #colours.append(new_colour)
-                        self.world.graph_axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
+                        self.axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
                     #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
                     #self.world.graph_axes.add_collection(lines)
                     #1.22244095802s
             else:
                 if not line.intense_plot:
-                    self.world.graph_axes.plot(line.original_time, line.normalised_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
+                    self.axes.plot(line.original_time, line.normalised_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
                 else:
                     for (sub_plot, new_colour) in line.normalised_sub_plots:
                         #segments.append(zip(line.time, sub_plot))
                         #colours.append(new_colour)
-                        self.world.graph_axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
+                        self.axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
             #t1 = time.time()
             #print t1 - t0

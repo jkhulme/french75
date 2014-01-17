@@ -34,4 +34,5 @@ class LargePlotDialog(wx.Dialog):
         self.SetSize((self.world.session_dict['dispW'] - 10, ((self.world.session_dict['dispW']) / _PHI) + 50))
         self.Centre()
         self.draw_plot = Plotter(self.graph_axes)
+        self.draw_plot.mpl_legend = True
         self.draw_plot.plot()

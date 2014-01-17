@@ -69,8 +69,6 @@ class Line(object):
         self.counter = 0
         self.normalised_sub_plots = []
         self.normalise()
-        print len(self.sub_plot_tuples[0][0])
-        print len(self.normalised_sub_plots[0][0])
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
