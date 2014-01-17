@@ -55,20 +55,22 @@ class Line(object):
         self.intense_plot = False
         #see issue 40 if interval is too high
         #TODO: make interval some function of number of points?
-        self.interval = 10
         self.interpolated_results, self.interpolated_time = self.interpolate(self.results, self.time)
+        self.interval = len(self.interpolated_results)/100
         #self.line_distance()
         self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
         self.thickness = 2
         self.colour_change_points = []
         self.seg_colour = None
-        self.plot_sub_plots()
+        self.sub_plot_tuples = self.plot_sub_plots(self.interpolated_results, self.interval)
         self.time_points = []
         self.past_points = []
         self.counter = 0
+        self.normalised_sub_plots = []
         self.normalise()
-        self.interpolated_normalised_results, self.interpolated_normalised_time = self.interpolate(self.normalised_results, self.time)
+        print len(self.sub_plot_tuples[0][0])
+        print len(self.normalised_sub_plots[0][0])
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
@@ -143,9 +145,9 @@ class Line(object):
     Plots the sub plots and works out what colour the line should be
     this is for colour intensity plot
     """
-    def plot_sub_plots(self):
-        sub_plots = self.build_colour_plot_arrays()
-        self.sub_plot_tuples = []
+    def plot_sub_plots(self, results, interval):
+        sub_plots = self.build_colour_plot_arrays(results, interval)
+        sub_plot_tuples = []
         for sub_plot in sub_plots:
             count = 0
             current = 0
@@ -159,23 +161,24 @@ class Line(object):
             new_colour = rgb_to_hex(rgba_to_rgb(self.rgb_tuple, alpha))
             #new_colour = rgb_to_hex(self.random_colour())
             self.colour_change_points.append((count, new_colour))
-            self.sub_plot_tuples.append((sub_plot, new_colour))
+            sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
+        return sub_plot_tuples
 
     """
     Split the data into multiple lists padded with None to enable the intensity plot
     """
-    def build_colour_plot_arrays(self):
-        plot_data = self.interpolated_results
+    def build_colour_plot_arrays(self, results, interval):
+        plot_data = results
         plot_arrays = []
         self.min = min(plot_data)
         self.max = max(plot_data)
         count = 0
         while True:
-            plot_arrays.append([None] * count + plot_data[count:count + self.interval] + [None] * (len(plot_data) - self.interval - count))
+            plot_arrays.append([None] * count + plot_data[count:count + interval] + [None] * (len(plot_data) - interval - count))
             if (plot_arrays[-1][-1] is not None):
                 break
-            count += self.interval - 1
+            count += interval - 1
         return plot_arrays
 
     def update_animation_colour(self, world_clock):
@@ -202,6 +205,14 @@ class Line(object):
         d_min = min(self.results)
         for result in self.results:
             self.normalised_results.append((result - d_min) / float(d_max - d_min))
+        for (sub_plot, colour) in self.sub_plot_tuples:
+            new_sub_plot = []
+            for data in sub_plot:
+                if data is not None:
+                    new_sub_plot.append((data-d_min)/float(d_max - d_min))
+                else:
+                    new_sub_plot.append(None)
+            self.normalised_sub_plots.append((new_sub_plot, colour))
 
 
     """
