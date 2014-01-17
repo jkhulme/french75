@@ -186,11 +186,11 @@ class Line(object):
         for i, (time, colour) in enumerate(self.colour_change_points[self.counter:]):
             if world_clock < self.interpolated_time[time]:
                 if max_time:
+                    self.seg_colour = colour
+                    self.counter += i + 1
                     return
             else:
                 max_time = True
-                self.seg_colour = colour
-                self.counter += i + 1
 
     def random_colour(self):
         """
