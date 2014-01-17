@@ -428,6 +428,7 @@ class French75(wx.Frame):
         self.normalise_m = data_menu.AppendCheckItem(wx.ID_ANY, '&Normalise')
         self.export_data_m = data_menu.Append(wx.ID_ANY, '&Export Data')
         self.Bind(wx.EVT_MENU, self.normalise_data, self.normalise_m)
+        self.Bind(wx.EVT_MENU, self.export_data, self.export_data_m)
 
         menubar.Append(data_menu, '&Data')
 
@@ -436,6 +437,41 @@ class French75(wx.Frame):
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
         refresh_plot()
+
+    def export_data(self, event):
+        titles = []
+        data_arrays = []
+        for file_name in self.world.session_dict['lines'].keys():
+            for species in self.world.session_dict['lines'][file_name].keys():
+                titles.append(species)
+                data_arrays.append(self.world.session_dict['lines'][file_name][species].original_results)
+                titles.append(species + "-normalised")
+                data_arrays.append(self.world.session_dict['lines'][file_name][species].normalised_results)
+        out_str = ""
+        out_str += ','.join(titles)
+        out_str += "\n"
+        for line in zip(*data_arrays):
+            print line
+            out_str += ','.join(map(str,line))
+            out_str += "\n"
+        file_choices = "CSV (*.csv)|*.csv"
+
+        dlg = wx.FileDialog(
+            self,
+            message="Save session as...",
+            defaultDir=os.getcwd(),
+            defaultFile="exported_data.csv",
+            wildcard=file_choices,
+            style=wx.SAVE)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            with open(path, 'wb') as f:
+                f.write(out_str)
+            self.SetTitle(_TITLE)
+        else:
+            dlg.Destroy()
+
 
     def undo(self, event):
         self.world.undo()
