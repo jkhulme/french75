@@ -43,6 +43,42 @@ _DICT_ELEMS = [('results', None),
                ('graph_height', 0),
                ('normalised', False)]
 
+_DICT_RESET = [('results', None),
+               ('clock', 0),
+               ('first_circle', True),
+               ('clock_pause', False),
+               ('title', "Graph"),
+               #('dispW', 0),
+               #('dispH', 0),
+               ('max_time', 1),
+               ('clock_increment', 1/600.0),
+               ('annotate', False),
+               ('annotations', []),
+               ('temp_annotation', None),
+               ('annotation_mode', None),
+               ('max_height', 0),
+               ('annotation_text', ""),
+               ('species_dict', {}),
+               ('results', None),
+               ('lines', {}),
+               ('first_time', True),
+               ('start_playing', False),
+               ('click_one', False),
+               ('click_one_x', 0),
+               ('click_one_y', 0),
+               ('attached_file_locations', []),
+               ('xkcd', False),
+               ('redraw_legend', True),
+               ('draw_annotations', True),
+               ('ymin', 0),
+               ('ymax', 0),
+               ('xmin', 0),
+               ('xmax', 0),
+               ('tree_list', None),
+               #('graph_width', 0),
+               #('graph_height', 0),
+               ('normalised', False)]
+
 
 @Singleton
 class WorldState:
@@ -73,11 +109,11 @@ class WorldState:
         self.cell_segments = []
         self.graph_canvas = None
 
-    def reset_session(session_dict):
+    def reset_session(self, session_dict):
         """
         Set everything back to a default value
         """
-        for (key, value) in _DICT_ELEMS:
+        for (key, value) in _DICT_RESET:
             session_dict[key] = value
         return session_dict
 
