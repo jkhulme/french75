@@ -184,7 +184,7 @@ class Line(object):
     def update_animation_colour(self, world_clock):
         max_time = False
         for i, (time, colour) in enumerate(self.colour_change_points[self.counter:]):
-            if world_clock < self.time[time]:
+            if world_clock < self.interpolated_time[time]:
                 if max_time:
                     return
             else:
