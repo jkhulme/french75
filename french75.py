@@ -784,8 +784,7 @@ class French75(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             self.world.draw_plot.mpl_legend = True
-            self.world.session_dict['redraw_legend'] = False
-            self.world.draw_plot.plot()
+            refresh_plot()
             self.graph_canvas.print_figure(path, dpi=_DPI)
             self.world.draw_plot.mpl_legend = False
             self.world.draw_plot.plot()
