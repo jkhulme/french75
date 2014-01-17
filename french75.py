@@ -425,7 +425,7 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.redo, self.redo_m)
 
         data_menu = wx.Menu()
-        self.normalise_m = data_menu.Append(wx.ID_ANY, '&Normalise')
+        self.normalise_m = data_menu.AppendCheckItem(wx.ID_ANY, '&Normalise')
         self.export_data_m = data_menu.Append(wx.ID_ANY, '&Export Data')
         self.Bind(wx.EVT_MENU, self.normalise_data, self.normalise_m)
 
@@ -434,10 +434,7 @@ class French75(wx.Frame):
         return menubar
 
     def normalise_data(self, event):
-        for csv_file in self.world.session_dict['lines'].keys():
-            for species in self.world.session_dict['lines'][csv_file].keys():
-                self.world.session_dict['lines'][csv_file][species].plot_state = 2
-                print self.world.session_dict['lines'][csv_file][species].normalised_results
+        self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
         refresh_plot()
 
     def undo(self, event):

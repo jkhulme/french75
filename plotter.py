@@ -54,7 +54,11 @@ class Plotter(object):
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title(self.world.session_dict['title'])
-        self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], self.world.session_dict['ymin'], self.world.session_dict['ymax']*1.1))
+        if self.world.session_dict['normalised']:
+            self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], 0, 1.1))
+
+        else:
+            self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], self.world.session_dict['ymin'], self.world.session_dict['ymax']*1.1))
 
         if self.world.session_dict['draw_annotations']:
             self.redraw_annotations()
@@ -121,25 +125,25 @@ class Plotter(object):
     def plot_line(self, line):
         if line.plot_line:
             #t0 = time.time()
-            if line.plot_state == 0:
-                self.world.graph_axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
-            elif line.plot_state == 1:
-                self.world.graph_axes.set_xlim(self.world.session_dict['xmin'], self.world.session_dict['xmax'])
-                self.world.graph_axes.set_ylim(self.world.session_dict['ymin'], self.world.session_dict['ymax'])
-                #segments = []
-                #colours = []
-                """
-                Seems to be faster to just plot the lines separately rather than using line collection
-                """
-                for (sub_plot, new_colour) in line.sub_plot_tuples:
-                    #segments.append(zip(line.time, sub_plot))
-                    #colours.append(new_colour)
-                    self.world.graph_axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
-                #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
-                #self.world.graph_axes.add_collection(lines)
-                #1.22244095802s
-            elif line.plot_state == 2:
-                print "Normalised data"
+            if not self.world.session_dict['normalised']:
+                if not line.intense_plot:
+                    self.world.graph_axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
+                else:
+                    self.world.graph_axes.set_xlim(self.world.session_dict['xmin'], self.world.session_dict['xmax'])
+                    self.world.graph_axes.set_ylim(self.world.session_dict['ymin'], self.world.session_dict['ymax'])
+                    #segments = []
+                    #colours = []
+                    """
+                    Seems to be faster to just plot the lines separately rather than using line collection
+                    """
+                    for (sub_plot, new_colour) in line.sub_plot_tuples:
+                        #segments.append(zip(line.time, sub_plot))
+                        #colours.append(new_colour)
+                        self.world.graph_axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
+                    #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
+                    #self.world.graph_axes.add_collection(lines)
+                    #1.22244095802s
+            else:
                 self.world.graph_axes.plot(line.original_time, line.normalised_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
             #t1 = time.time()
             #print t1 - t0

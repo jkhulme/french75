@@ -40,7 +40,8 @@ _DICT_ELEMS = [('results', None),
                ('xmax', 0),
                ('tree_list', None),
                ('graph_width', 0),
-               ('graph_height', 0)]
+               ('graph_height', 0),
+               ('normalised', False)]
 
 
 @Singleton
