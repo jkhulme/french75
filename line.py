@@ -30,9 +30,11 @@ class Line(object):
         self.original_results = results
         self.interpolated_results = []
         self.normalised_results = []
+        self.interpolated_normalised_results = []
+        self.interpolated_normalised_time = []
         self.time = time
         self.original_time = time
-        self.interpolated_time = None
+        self.interpolated_time = []
         self.graph_width = graph_width
         self.graph_height = graph_height
         self.xmin = xmin
@@ -54,7 +56,7 @@ class Line(object):
         #see issue 40 if interval is too high
         #TODO: make interval some function of number of points?
         self.interval = 10
-        self.interpolate(self.results, self.time)
+        self.interpolated_results, self.interpolated_time = self.interpolate(self.results, self.time)
         #self.line_distance()
         self.rgb_tuple = colour
         self.flat_colour = rgb_to_hex(colour)
@@ -66,6 +68,7 @@ class Line(object):
         self.past_points = []
         self.counter = 0
         self.normalise()
+        self.interpolated_normalised_results, self.interpolated_normalised_time = self.interpolate(self.normalised_results, self.time)
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
@@ -133,8 +136,7 @@ class Line(object):
 
             interpolated_data.append(data_b)
             interpolated_time.append(time_b)
-        self.interpolated_results = interpolated_data
-        self.interpolated_time = interpolated_time
+        return (interpolated_data, interpolated_time)
 
 
     """
