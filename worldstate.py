@@ -109,13 +109,12 @@ class WorldState:
         self.cell_segments = []
         self.graph_canvas = None
 
-    def reset_session(self, session_dict):
+    def reset_session(self):
         """
         Set everything back to a default value
         """
         for (key, value) in _DICT_RESET:
-            session_dict[key] = value
-        return session_dict
+            self.session_dict[key] = value
 
     def update_clock_increment(self):
         """

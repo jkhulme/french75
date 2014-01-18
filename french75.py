@@ -498,10 +498,8 @@ class French75(wx.Frame):
     """
     def new_session(self, e):
         self.world.temp_session_dict = self.world.session_dict
-        print self.world.session_dict['lines']
-        self.world.session_dict = self.world.reset_session(self.world.session_dict)
-        print "$$$$$$$$$$$$$$$"
-        print self.world.session_dict['lines']
+        self.world.reset_session()
+        self.world.session_dict['lines'] = {}
         session_dialog = SessionWizard(title='Session Starter')
         session_dialog.run()
         session_dialog.Destroy()
