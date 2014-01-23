@@ -184,7 +184,7 @@ class French75(wx.Frame):
         self.Maximize()
 
     def add_annotation(self, e):
-        pass
+        self.world.session_dict['annotate_anime'] = True
 
     def delete_annotation(self, e):
         pass
@@ -588,6 +588,7 @@ class French75(wx.Frame):
             small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
             panel.SetBackgroundColour('white')
             panel.Bind(wx.EVT_PAINT, self.animate_cell)
+            panel.Bind(wx.EVT_LEFT_UP, self.annotate_cell)
             self.panels.append(panel)
             self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
             self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
@@ -595,6 +596,9 @@ class French75(wx.Frame):
         self.animation_panel.SetupScrolling(scroll_y=False)
         for panel in self.panels:
             panel.Refresh()
+
+    def annotate_cell(self, e):
+        print "Fuck Yeah Annotations"
 
     def create_cell_segments_by_species(self):
         (a_width, a_height) = self.animation_panel.GetSize()

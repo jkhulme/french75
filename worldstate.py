@@ -41,7 +41,8 @@ _DICT_ELEMS = [('results', None),
                ('tree_list', None),
                ('graph_width', 0),
                ('graph_height', 0),
-               ('normalised', False)]
+               ('normalised', False),
+               ('annotate_anime', False)]
 
 _DICT_RESET = [('results', None),
                ('clock', 0),
@@ -77,7 +78,8 @@ _DICT_RESET = [('results', None),
                ('tree_list', None),
                #('graph_width', 0),
                #('graph_height', 0),
-               ('normalised', False)]
+               ('normalised', False),
+               ('annotate_anime', False)]
 
 
 @Singleton
