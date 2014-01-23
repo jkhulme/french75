@@ -87,22 +87,40 @@ class French75(wx.Frame):
         self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
-        attached_label = wx.StaticText(self.files_panel, -1, "Attached Files:")
+        attached_label = wx.StaticText(self.model_panel, -1, "Attached Files:")
         attached_files_vbox.Add(attached_label)
-        self.attached_file_list = wx.ListBox(self.files_panel, -1, size=(300, 400))
+        self.attached_file_list = wx.ListBox(self.model_panel, -1, size=(300, 300))
         attached_files_vbox.Add(self.attached_file_list)
         attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
-        self.add_files_button = wx.Button(self.files_panel, -1, "Add")
+        self.add_files_button = wx.Button(self.model_panel, -1, "Add")
         self.add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
 
-        self.open_files_button = wx.Button(self.files_panel, -1, "Open")
+        self.open_files_button = wx.Button(self.model_panel, -1, "Open")
         self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
 
         attached_file_toolbar.Add(self.add_files_button)
         attached_file_toolbar.Add(self.open_files_button)
         attached_files_vbox.Add(attached_file_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
-        self.files_panel.SetSizer(attached_files_vbox)
+        self.model_panel.SetSizer(attached_files_vbox)
         attached_files_vbox.Fit(self)
+
+        anime_annotations_vbox = wx.BoxSizer(wx.VERTICAL)
+        anime_annotations_label = wx.StaticText(self.files_panel, -1, "Animation Annotations:")
+        anime_annotations_vbox.Add(anime_annotations_label)
+        self.anime_annotations_list = wx.ListBox(self.files_panel, -1, size=(300, 300))
+        anime_annotations_vbox.Add(self.anime_annotations_list)
+        anime_annotations_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+        self.add_anime_annotation_button = wx.Button(self.files_panel, -1, "Add")
+        self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_annotation)
+
+        self.delete_anime_annotation_button = wx.Button(self.files_panel, -1, "Delete")
+        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.delete_annotation)
+
+        anime_annotations_toolbar.Add(self.add_anime_annotation_button)
+        anime_annotations_toolbar.Add(self.delete_anime_annotation_button)
+        anime_annotations_vbox.Add(anime_annotations_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.files_panel.SetSizer(anime_annotations_vbox)
+        anime_annotations_vbox.Fit(self)
 
         animation_vbox = wx.BoxSizer(wx.VERTICAL)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -151,6 +169,7 @@ class French75(wx.Frame):
         self.splitter_left.SetSashPosition(self.world.session_dict['dispW']/6)
         splitter_right.SetSashPosition(4 * self.world.session_dict['dispW']/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
+        splitter_right_middle.SetSashPosition(self.world.session_dict['dispH']/2)
 
         #self.graph_canvas.Bind(wx.EVT_CONTEXT_MENU, self.onContext)
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
@@ -163,6 +182,12 @@ class French75(wx.Frame):
         self.filem_new_session.Enable(True)
         self.filem_load_session.Enable(True)
         self.Maximize()
+
+    def add_annotation(self, e):
+        pass
+
+    def delete_annotation(self, e):
+        pass
 
     def enable_all(self, state):
         """
