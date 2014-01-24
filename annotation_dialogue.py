@@ -11,23 +11,45 @@ class AnnotationDialogue(wx.Dialog):
     thickness
     """
     def __init__(self, *args, **kw):
-        wx.USER_TICMEPICKCTRL = 1
         super(AnnotationDialogue, self).__init__(*args, **kw)
 
         self.world = WorldState.Instance()
         #dialog_panel = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
-
+        annotation_label = wx.StaticText(self, -1, "Annotation Text:")
+        panel_vbox.Add(annotation_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
         self.text_ctrl = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE, size=(self.world.session_dict['dispW']/6, self.world.session_dict['dispH']/8))
         panel_vbox.Add(self.text_ctrl, 0, wx.EXPAND|wx.ALL, 10)
 
-        time_hbox = wx.BoxSizer(wx.HORIZONTAL)
-        self.start_time = wx.SpinCtrl(self, size=(120, -1))
-        time_hbox.Add(self.start_time, 0, wx.ALL, 5)
+        line1 = wx.StaticLine(self)
+        panel_vbox.Add(line1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
+        duration_label = wx.StaticText(self, -1, "Annotation Duration:")
+        panel_vbox.Add(duration_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
+        time_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        start_vbox = wx.BoxSizer(wx.VERTICAL)
+        start_label = wx.StaticText(self, -1, "Start:")
+        start_vbox.Add(start_label)
+        self.start_time = wx.SpinCtrl(self, size=(120, -1))
+        start_vbox.Add(self.start_time, 0, wx.ALL, 5)
+        time_hbox.Add(start_vbox)
+
+        end_vbox = wx.BoxSizer(wx.VERTICAL)
+        end_label = wx.StaticText(self, -1, "Finish:")
+        end_vbox.Add(end_label)
         self.end_time = wx.SpinCtrl(self, size=(120, -1))
-        time_hbox.Add(self.end_time, 0, wx.ALL, 5)
-        panel_vbox.Add(time_hbox, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
+        end_vbox.Add(self.end_time, 0, wx.ALL, 5)
+        time_hbox.Add(end_vbox)
+
+        panel_vbox.Add(time_hbox, 0, wx.ALL, 5)
+
+        total_duration_label = wx.StaticText(self, -1, "Duration: 0s")
+        panel_vbox.Add(total_duration_label, 0, wx.EXPAND|wx.BOTTOM|wx.LEFT, 5)
+        line3 = wx.StaticLine(self)
+        panel_vbox.Add(line3, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        panel_vbox.Add((0,0), 1, wx.EXPAND)
+        line2 = wx.StaticLine(self)
+        panel_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         btn_hbox = wx.BoxSizer(wx.HORIZONTAL)
         okButton = wx.Button(self, label='Ok')
