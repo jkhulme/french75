@@ -30,21 +30,24 @@ class AnnotationDialogue(wx.Dialog):
         start_vbox = wx.BoxSizer(wx.VERTICAL)
         start_label = wx.StaticText(self, -1, "Start:")
         start_vbox.Add(start_label)
-        self.start_time = wx.SpinCtrl(self, size=(120, -1))
+        self.start_time = wx.SpinCtrl(self, max=1000000, size=(120, -1), initial=int(self.world.session_dict['clock']), value=str(int(self.world.session_dict['clock'])))
+        self.start_time.Bind(wx.EVT_SPINCTRL, self.calculate_duration)
         start_vbox.Add(self.start_time, 0, wx.ALL, 5)
         time_hbox.Add(start_vbox)
 
         end_vbox = wx.BoxSizer(wx.VERTICAL)
         end_label = wx.StaticText(self, -1, "Finish:")
         end_vbox.Add(end_label)
-        self.end_time = wx.SpinCtrl(self, size=(120, -1))
+        self.end_time = wx.SpinCtrl(self, max=1000000, size=(120, -1), initial=int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*10), value=str(int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*10)))
+        self.end_time.Bind(wx.EVT_SPINCTRL, self.calculate_duration)
         end_vbox.Add(self.end_time, 0, wx.ALL, 5)
         time_hbox.Add(end_vbox)
 
         panel_vbox.Add(time_hbox, 0, wx.ALL, 5)
 
-        total_duration_label = wx.StaticText(self, -1, "Duration: 0s")
-        panel_vbox.Add(total_duration_label, 0, wx.EXPAND|wx.BOTTOM|wx.LEFT, 5)
+        self.total_duration_label = wx.StaticText(self, -1, "Duration: 0s")
+        panel_vbox.Add(self.total_duration_label, 0, wx.EXPAND|wx.BOTTOM|wx.LEFT, 5)
+        self.calculate_duration(None)
         line3 = wx.StaticLine(self)
         panel_vbox.Add(line3, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
         panel_vbox.Add((0,0), 1, wx.EXPAND)
@@ -69,6 +72,9 @@ class AnnotationDialogue(wx.Dialog):
         #self.Layout()
         self.Centre()
 
+    def calculate_duration(self, e):
+        duration = int((self.end_time.GetValue() - self.start_time.GetValue()) * self.world.session_dict['clock_increment'])
+        self.total_duration_label.SetLabel("Duration: " + str(duration) + "s")
 
     def on_ok(self, e):
         pass
