@@ -115,7 +115,7 @@ class French75(wx.Frame):
         self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_annotation)
 
         self.delete_anime_annotation_button = wx.Button(self.files_panel, -1, "Delete")
-        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.delete_annotation)
+        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_annotation)
 
         anime_annotations_toolbar.Add(self.add_anime_annotation_button)
         anime_annotations_toolbar.Add(self.delete_anime_annotation_button)
@@ -190,8 +190,7 @@ class French75(wx.Frame):
         annotation_dialogue.ShowModal()
         annotation_dialogue.Destroy()
 
-
-    def delete_annotation(self, e):
+    def remove_annotation(self, e):
         pass
 
     def enable_all(self, state):
@@ -603,10 +602,15 @@ class French75(wx.Frame):
             panel.Refresh()
 
     def annotate_cell(self, e):
-        (x, y) = e.GetPosition()
-        panel = e.GetEventObject()
-        idx = int(panel.GetName())
-        self.world.session_dict['anime_annotations'][idx] = [(x, y)]
+        if self.world.session_dict['annotate_anime']:
+            (x, y) = e.GetPosition()
+            self.world.temp_anime_annotation.set_position((x, y))
+            panel = e.GetEventObject()
+            idx = int(panel.GetName())
+            if idx not in self.world.session_dict['anime_annotations'].keys():
+                self.world.session_dict['anime_annotations'][idx] = [self.world.temp_anime_annotation]
+            else:
+                self.world.session_dict['anime_annotations'][idx].append(self.world.temp_anime_annotation)
         for panel in self.panels:
             panel.Refresh()
 

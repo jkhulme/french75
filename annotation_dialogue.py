@@ -1,5 +1,6 @@
 import wx
 from worldstate import WorldState
+from animation_annotation import AnimationAnnotation
 
 _PADDING = 5
 
@@ -77,7 +78,10 @@ class AnnotationDialogue(wx.Dialog):
         self.total_duration_label.SetLabel("Duration: " + str(duration) + "s")
 
     def on_ok(self, e):
-        pass
+        text = self.text_ctrl.GetValue()
+        start = self.start_time.GetValue()
+        finish = self.end_time.GetValue()
+        self.world.temp_anime_annotation = AnimationAnnotation(text, start, finish)
         self.Close()
 
     def on_cancel(self, e):
