@@ -10,3 +10,8 @@ class AnimationAnnotation():
     def set_position(self, (x, y)):
         self.x = x
         self.y = y
+
+    def in_time(self, cur_time):
+        if cur_time >= self.start and cur_time <= self.end:
+            return True
+        return False
