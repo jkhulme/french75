@@ -9,7 +9,7 @@ class CellSegment(object):
     the cell.
     """
 
-    def __init__(self, (tl_x, tl_y), radius, index, file_name, species):
+    def __init__(self,(tl_x, tl_y), radius, index, file_name, species):
         self.world = WorldState.Instance()
         self.counter = 0
         #Get an array of tuples of times when the colour changes and what
@@ -26,7 +26,7 @@ class CellSegment(object):
             self.sub_segments.append((line, self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
             change += radius / num_of_segments
 
-    def paint(self, dc):
+    def paint(self, dc, p_id):
         species_locations = ['whole_cell']
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             if line != None:
@@ -36,6 +36,8 @@ class CellSegment(object):
             else:
                 dc.SetBrush(wx.Brush('white'))
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
+        for (x, y) in self.world.session_dict['anime_annotations'].get(p_id,[]):
+            dc.DrawCircle(x, y, 10)
 
     def update_clock(self):
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:

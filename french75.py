@@ -603,7 +603,12 @@ class French75(wx.Frame):
             panel.Refresh()
 
     def annotate_cell(self, e):
-        print "Fuck Yeah Annotations"
+        (x, y) = e.GetPosition()
+        panel = e.GetEventObject()
+        idx = int(panel.GetName())
+        self.world.session_dict['anime_annotations'][idx] = [(x, y)]
+        for panel in self.panels:
+            panel.Refresh()
 
     def create_cell_segments_by_species(self):
         (a_width, a_height) = self.animation_panel.GetSize()
@@ -766,7 +771,7 @@ class French75(wx.Frame):
         panel = e.GetEventObject()
         idx = int(panel.GetName())
         dc2 = wx.PaintDC(panel)
-        self.world.cell_segments[idx].paint(dc2)
+        self.world.cell_segments[idx].paint(dc2, idx)
         self.i += 1
         #if self.save:
         #    self.save_snapshot(dc2, self.i)

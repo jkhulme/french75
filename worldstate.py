@@ -42,7 +42,8 @@ _DICT_ELEMS = [('results', None),
                ('graph_width', 0),
                ('graph_height', 0),
                ('normalised', False),
-               ('annotate_anime', False)]
+               ('annotate_anime', False),
+               ('anime_annotations', {})]
 
 _DICT_RESET = [('results', None),
                ('clock', 0),
@@ -79,7 +80,8 @@ _DICT_RESET = [('results', None),
                #('graph_width', 0),
                #('graph_height', 0),
                ('normalised', False),
-               ('annotate_anime', False)]
+               ('annotate_anime', False),
+               ('anime_annotations', {})]
 
 
 @Singleton
