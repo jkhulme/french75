@@ -85,4 +85,5 @@ class AnnotationDialogue(wx.Dialog):
         self.Close()
 
     def on_cancel(self, e):
+        self.world.temp_anime_annotation = None
         self.Close()
