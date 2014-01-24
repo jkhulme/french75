@@ -1,4 +1,4 @@
-from biopepa_model_parser import Biopepa_Model_Parser
+#from biopepa_model_parser import Biopepa_Model_Parser
 from plotter import Plotter
 import wx
 import matplotlib
@@ -18,6 +18,7 @@ from utils import euclid_distance, point_to_line_distance, calc_graph_size, rese
 from subprocess import call
 from annotation import Annotation
 import wx.lib.scrolledpanel as scrolled
+from annotation_dialogue import AnnotationDialogue
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -77,7 +78,7 @@ class French75(wx.Frame):
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
 
-        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(250, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(500, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
 
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
@@ -185,6 +186,10 @@ class French75(wx.Frame):
 
     def add_annotation(self, e):
         self.world.session_dict['annotate_anime'] = True
+        annotation_dialogue = AnnotationDialogue(None, title="Add Annotation")
+        annotation_dialogue.ShowModal()
+        annotation_dialogue.Destroy()
+
 
     def delete_annotation(self, e):
         pass
