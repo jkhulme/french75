@@ -15,3 +15,6 @@ class AnimationAnnotation():
         if cur_time >= self.start and cur_time <= self.end:
             return True
         return False
+
+    def set_id(self, a_id):
+        self.a_id = a_id
