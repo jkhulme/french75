@@ -36,9 +36,13 @@ class CellSegment(object):
             else:
                 dc.SetBrush(wx.Brush('white'))
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
+        dc.SetBrush(wx.Brush('black'))
         for annotation in self.world.session_dict['anime_annotations'].get(p_id,[]):
             if annotation.in_time(self.world.session_dict['clock']):
+                dc.SetBrush(wx.Brush('white'))
                 dc.DrawCircle(annotation.x, annotation.y, 10)
+                dc.SetBrush(wx.Brush('black'))
+                dc.DrawLabel(str(annotation.a_id), (annotation.x-4, annotation.y-7, 5, 5), alignment=wx.ALIGN_LEFT|wx.ALIGN_TOP)
 
     def update_clock(self):
         for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
