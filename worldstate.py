@@ -181,6 +181,7 @@ class WorldState:
         """
         try:
           self.session_dict = self.undo_stack.undo_pop()
+          #self.Legend.draw_legend()
         except:
           pass
 

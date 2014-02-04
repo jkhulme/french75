@@ -74,7 +74,6 @@ class AnnotationDialogue(wx.Dialog):
         self.Centre()
 
     def calculate_duration(self, e):
-        print self.world.session_dict['clock_increment']
         duration = int((self.end_time.GetValue() - self.start_time.GetValue()) * self.world.session_dict['clock_increment'])
         self.total_duration_label.SetLabel("Duration: " + str(duration/10000) + "s")
 
