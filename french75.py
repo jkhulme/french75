@@ -335,14 +335,15 @@ class French75(wx.Frame):
         """
         self.selected_annotation = None
         for annotation in self.world.session_dict['annotations']:
-            dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
-                                          (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
-                                          (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
-            if dist < 0.025:
-                if self.selected_annotation is None:
-                    self.selected_annotation = annotation
-                elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
-                    self.selected_annotation = annotation
+            if annotation.type == self.world._TEXT_ARROW or annotation.type == self.world._ARROW:
+                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
+                                              (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
+                                              (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                if dist < 0.025:
+                    if self.selected_annotation is None:
+                        self.selected_annotation = annotation
+                    elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
+                        self.selected_annotation = annotation
         if self.selected_annotation is not None:
             self.selected_annotation.colour = 'red'
             refresh_plot()
