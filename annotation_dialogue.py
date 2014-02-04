@@ -39,7 +39,7 @@ class AnnotationDialogue(wx.Dialog):
         end_vbox = wx.BoxSizer(wx.VERTICAL)
         end_label = wx.StaticText(self, -1, "Finish:")
         end_vbox.Add(end_label)
-        self.end_time = wx.SpinCtrl(self, max=1000000, size=(120, -1), initial=int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*10), value=str(int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*10)))
+        self.end_time = wx.SpinCtrl(self, max=1000000, size=(120, -1), initial=int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*100), value=str(int(self.world.session_dict['clock'] + self.world.session_dict['clock_increment']*100)))
         self.end_time.Bind(wx.EVT_SPINCTRL, self.calculate_duration)
         end_vbox.Add(self.end_time, 0, wx.ALL, 5)
         time_hbox.Add(end_vbox)
@@ -74,8 +74,9 @@ class AnnotationDialogue(wx.Dialog):
         self.Centre()
 
     def calculate_duration(self, e):
+        print self.world.session_dict['clock_increment']
         duration = int((self.end_time.GetValue() - self.start_time.GetValue()) * self.world.session_dict['clock_increment'])
-        self.total_duration_label.SetLabel("Duration: " + str(duration) + "s")
+        self.total_duration_label.SetLabel("Duration: " + str(duration/10000) + "s")
 
     def on_ok(self, e):
         text = self.text_ctrl.GetValue()
