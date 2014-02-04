@@ -1,4 +1,5 @@
 from matplotlib.ticker import MultipleLocator
+from matplotlib.ticker import LinearLocator
 import matplotlib.pyplot as plt
 import matplotlib.collections as mpl_collections
 from worldstate import WorldState
@@ -46,8 +47,11 @@ class Plotter(object):
             self.axes.legend()
 
         #Grid lines - TODO - make these not fixed
-        self.axes.xaxis.set_minor_locator(MultipleLocator(500))
-        self.axes.yaxis.set_minor_locator(MultipleLocator(5000))
+        self.axes.xaxis.set_minor_locator(MultipleLocator(self.world.session_dict['xmax']*1.1/20))
+        if self.world.session_dict['normalised']:
+            self.axes.yaxis.set_minor_locator(MultipleLocator(1.1/20))
+        else:
+            self.axes.yaxis.set_minor_locator(MultipleLocator(self.world.session_dict['ymax']*1.1/20))
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
