@@ -136,8 +136,8 @@ class Legend(object):
             if child.GetLabel() == "" and update:
                 child.SetBackgroundColour(self.world.session_dict['lines'][file_key][species_key].flat_colour)
             if child.GetName() == "check" and update:
-                if child.GetLabel() == "S":
+                if child.GetLabel() == "Show":
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].plot_line)
-                if child.GetLabel() == "I" and update:
+                if child.GetLabel() == "Ints" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
         self.legend_panel.Refresh()
