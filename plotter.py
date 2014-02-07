@@ -6,6 +6,8 @@ from worldstate import WorldState
 from annotation import Annotation
 from utils import rgb_to_hex
 import time
+from matplotlib.patches import Ellipse
+
 
 class Plotter(object):
 
@@ -80,7 +82,7 @@ class Plotter(object):
                 elif annotation.type == self.world._ARROW:
                     self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
                 elif annotation.type == self.world._CIRCLE:
-                    circle1 = plt.Circle((annotation.x1, annotation.y1), 0.2, facecolor='w', edgecolor=annotation.colour)
+                    circle1 = Ellipse((annotation.x1, annotation.y1), width=0.2*self.world.session_dict['xmax'], height=0.2*self.world.session_dict['ymax'], angle=90, facecolor='w', edgecolor=annotation.colour)
                     self.axes.add_artist(circle1)
                 elif annotation.type == self.world._TEXT:
                     self.axes.text(annotation.x1, annotation.y1, annotation.text)
@@ -109,10 +111,10 @@ class Plotter(object):
         self.world.graph_canvas.draw()
 
     def annotate_circle(self, (x, y), colour="black"):
-        circle1 = plt.Circle((x, y), 0.2, facecolor='w', edgecolor=colour)
+        circle1 = Ellipse((x, y), width=0.2*self.world.session_dict['xmax'], height=0.2*self.world.session_dict['ymax'], angle=90, facecolor='w', edgecolor=colour)
         self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour))
+        self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour=colour))
         self.world.graph_canvas.draw()
 
     def vertical_line(self):
