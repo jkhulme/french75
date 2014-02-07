@@ -277,57 +277,57 @@ class French75(wx.Frame):
         """
         Currently checks which annotation you want to draw and then creates it
         """
-
-        if self.world.session_dict['annotation_mode'] == self.world._ARROW:
-            if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
-                self.world.session_dict['click_one_x'] = event.xdata
-                self.world.session_dict['click_one_y'] = event.ydata
-                self.world.session_dict['click_one'] = True
-                return
-            if self.world.session_dict['click_one']:
-                click_two_x = event.xdata
-                click_two_y = event.ydata
-                self.world.draw_plot.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
-                self.world.session_dict['click_one'] = False
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.annotation_mode = self.world._NONE
-                self.world.session_dict['temp_annotation'] = None
-                self.world.session_dict['redraw_legend'] = False
-                self.world.draw_plot.plot()
-                self.world.session_dict['redraw_legend'] = True
-                self.world.push_state()
-                return
-        elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
-            if self.world.session_dict['annotate']:
-                self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.session_dict['annotation_mode'] = self.world._NONE
-                self.world.push_state()
-                return
-        elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
-            if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
-                self.world.session_dict['click_one_x'] = event.xdata
-                self.world.session_dict['click_one_y'] = event.ydata
-                self.world.session_dict['click_one'] = True
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                return
-            if self.world.session_dict['click_one']:
-                self.world.draw_plot.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata), text=self.world.session_dict['annotation_text'], colour='black')
-                self.world.session_dict['click_one'] = False
-                self.world.change_cursor(wx.CURSOR_ARROW)
-                self.world.session_dict['annotation_mode'] = self.world._NONE
-                self.world.session_dict['temp_annotation'] = None
-                self.world.session_dict['redraw_legend'] = False
-                self.world.draw_plot.plot()
-                self.world.session_dict['redraw_legend'] = True
-                self.world.push_state()
-                return
-        elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
-            if self.world.session_dict['annotate']:
-                self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
-                self.world.session_dict['annotation_mode'] = self.world._NONE
-                self.world.push_state()
-                return
+        if event.xdata is not None and event.ydata is not None:
+            if self.world.session_dict['annotation_mode'] == self.world._ARROW:
+                if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
+                    self.world.session_dict['click_one_x'] = event.xdata
+                    self.world.session_dict['click_one_y'] = event.ydata
+                    self.world.session_dict['click_one'] = True
+                    return
+                if self.world.session_dict['click_one']:
+                    click_two_x = event.xdata
+                    click_two_y = event.ydata
+                    self.world.draw_plot.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (click_two_x, click_two_y), colour='black')
+                    self.world.session_dict['click_one'] = False
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.annotation_mode = self.world._NONE
+                    self.world.session_dict['temp_annotation'] = None
+                    self.world.session_dict['redraw_legend'] = False
+                    self.world.draw_plot.plot()
+                    self.world.session_dict['redraw_legend'] = True
+                    self.world.push_state()
+                    return
+            elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
+                if self.world.session_dict['annotate']:
+                    self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.push_state()
+                    return
+            elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
+                if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
+                    self.world.session_dict['click_one_x'] = event.xdata
+                    self.world.session_dict['click_one_y'] = event.ydata
+                    self.world.session_dict['click_one'] = True
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    return
+                if self.world.session_dict['click_one']:
+                    self.world.draw_plot.annotate_arrow((self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata), text=self.world.session_dict['annotation_text'], colour='black')
+                    self.world.session_dict['click_one'] = False
+                    self.world.change_cursor(wx.CURSOR_ARROW)
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.session_dict['temp_annotation'] = None
+                    self.world.session_dict['redraw_legend'] = False
+                    self.world.draw_plot.plot()
+                    self.world.session_dict['redraw_legend'] = True
+                    self.world.push_state()
+                    return
+            elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
+                if self.world.session_dict['annotate']:
+                    self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
+                    self.world.session_dict['annotation_mode'] = self.world._NONE
+                    self.world.push_state()
+                    return
 
     def right_click_handler(self, event):
         """
