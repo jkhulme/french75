@@ -141,3 +141,6 @@ class Legend(object):
                 if child.GetLabel() == "Ints" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
         self.legend_panel.Refresh()
+        self.world.session_dict['redraw_legend'] = False
+        self.world.draw_plot.plot()
+        self.world.session_dict['redraw_legend'] = True
