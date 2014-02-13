@@ -69,6 +69,11 @@ class Line(object):
         self.counter = 0
         self.normalised_sub_plots = []
         self.normalise()
+        self.sub_lists = self.slice_lists(self.normalised_results)
+        print self.sub_lists
+
+    def slice_lists(self, l):
+        return zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:], l[8:], l[9:])
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
