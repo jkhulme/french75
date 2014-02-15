@@ -1,6 +1,7 @@
 from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 from copy import deepcopy
-from random import randrange
+from random import randrange, gauss
+from numpy import std, mean, var
 
 _MIN_INTENSITY = 70
 _MAX_INTENSITY = 255
@@ -70,10 +71,25 @@ class Line(object):
         self.normalised_sub_plots = []
         self.normalise()
         self.sub_lists = self.slice_lists(self.normalised_results)
-        print self.sub_lists
 
     def slice_lists(self, l):
-        return zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:], l[8:], l[9:])
+        #sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
+        sub_lists = zip(l, l[1:], l[2:], l[3:])
+        for i, sub_list in enumerate(sub_lists):
+            l_mean = mean(sub_list)
+            l_std = std(sub_list)
+            sub_lists[i] = [(x - l_mean) / l_std for x in sub_list]
+        for sub_list in sub_lists:
+            for i, element in enumerate(sub_list):
+                if element < -0.43:
+                    sub_list[i] = "a"
+                elif element > 0.43:
+                    sub_list[i] = "c"
+                else:
+                    sub_list[i] = "b"
+            print sub_list
+        return sub_lists
+
 
     def calc_line_length(self, results, time):
         data_time_points = zip(results, time)
