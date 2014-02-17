@@ -2,10 +2,8 @@ from math import sqrt
 import wx
 from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
-"""
-Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
-Taken from this thread: http://stackoverflow.com/questions/214359/converting-hex-color-to-rgb-and-vice-versa
-"""
+
+
 world = WorldState.Instance()
 
 
@@ -23,30 +21,68 @@ def open_results_file(self):
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
 
-        world.results = results
+        world.session_dict['results'] = results
         world.parser = parser
 
         file_chooser.Destroy()
     else:
         file_chooser.Destroy()
 
-
 def rgb_to_hex(rgb):
+    """
+    Having trouble getting matplotlib to take an rgb tuple, so convert to hex which is working.
+    Taken from this thread: http://stackoverflow.com/questions/214359/converting-hex-color-to-rgb-and-vice-versa
+    """
     return '#%02x%02x%02x' % rgb
 
 
 def euclid_distance(p1, p2):
     return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-"""
-Blend the colour of the line segment with the background - ration specified by
-alpha value.  This prevents the blending with the other line segment
-Taken from stack overflow:
-"""
-
+def point_to_line_distance((l1_x, l1_y), (l2_x, l2_y), (p_x, p_y)):
+    """
+    Used in annotations to see if we have selected it.  It is adapted from a
+    wikipedia page
+    """
+    m = float(l2_y - l1_y)/float(l2_x - l1_x)
+    a = -m
+    b = 1
+    c = l1_y - (m*l1_x)
+    top = abs(a*p_x + b*p_y - c)
+    bottom = sqrt(a**2 + b**2)
+    return top/float(bottom)
 
 def rgba_to_rgb((r, g, b), a):
+    """
+    Blend the colour of the line segment with the background - ration specified by
+    alpha value.  This prevents the blending with the other line segment
+    Taken from stack overflow:
+    """
     bg = tuple([255 * (1 - a)] * 3)
     fg = (r * a, g * a, b * a)
     add_tuples = lambda (r1, g1, b1), (r2, g2, b2): (r1 + r2, g1 + g2, b1 + b2)
     return add_tuples(bg, fg)
+
+def calc_graph_size(dpi, cols, num_sidebars, phi):
+    """
+    Want it to stick to the golden ration as Tufte recommends it hence phi
+    """
+    graph_width = int(((world.session_dict['dispW'] / cols) * (cols - num_sidebars)) / dpi)
+    graph_height = int(graph_width/phi)
+    return (graph_width, graph_height)
+
+def reset_sash_position(sash):
+    """
+    Gets rid of this ugly code everywhere
+    """
+    sash.SetSashPosition(sash.GetSashPosition() + 1)
+    sash.SetSashPosition(sash.GetSashPosition() - 1)
+
+def refresh_plot():
+    """
+    Null pointers on the mac if I don't tell it to not redraw the legend
+    unless necessary.
+    """
+    world.session_dict['redraw_legend'] = False
+    world.draw_plot.plot()
+    world.session_dict['redraw_legend'] = True

@@ -3,6 +3,9 @@ from utils import euclid_distance
 
 
 class Circle:
+    """
+    Currently not used, I think.  Model viewing has been taken out.
+    """
 
     def __init__(self, details, dc):
         self.dc = dc

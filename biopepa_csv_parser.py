@@ -45,7 +45,8 @@ class BioPepaCsvParser(object):
             transposed_data = map(None, *data)
             self.results_dict['results'] = {}
             for i, data_item in enumerate(self.results_dict['data']):
-                self.results_dict['results'][str(data_item)] = [float(n) for n in transposed_data[i]]
+                self.results_dict['results'][str(data_item)[:-1]] = [float(n) for n in transposed_data[i]]
+            self.results_dict['results']["Time"] = self.results_dict['results'].pop("Tim")
 
             self.results_dict = self.results_dict['results']
             self.min_max_values()
@@ -61,5 +62,10 @@ class BioPepaCsvParser(object):
             else:
                 self.xmin = min(self.xmin, min(self.results_dict[result]))
                 self.xmax = max(self.xmax, max(self.results_dict[result]))
-        self.world.max_time = self.xmax
+        self.world.session_dict['max_time'] = self.xmax
+        self.world.session_dict['max_height'] = self.ymax
+        self.world.session_dict['ymin'] = self.ymin
+        self.world.session_dict['ymax'] = self.ymax
+        self.world.session_dict['xmin'] = self.xmin
+        self.world.session_dict['xmax'] = self.xmax
         self.world.update_clock_increment()

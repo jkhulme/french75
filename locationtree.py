@@ -25,8 +25,12 @@ class LocationTree:
         self.tree.pop(old_root, None)
         for location_name in self.tree['root']:
             self.loc_data[location_name].parent = 'root'
+        return self.tree
 
     def draw_tree_one(self, dc):
+        """
+        Currently not used.  Model drawing is being removed.
+        """
         r = 90
         self.circles[self.tree['root'][0]] = Circle((100, 100, r), dc)
         self.circles[self.tree['root'][0]].paint()
@@ -46,7 +50,6 @@ class LocationTree:
                     self.circles[node].paint()
             except:
                 num_of_children = len(self.tree[self.loc_data[node].parent])
-                print num_of_children
                 new = self.circles[self.loc_data[node].parent].give_birth(node, num_of_children)
 
                 self.circles[node] = Circle(new, dc)
@@ -59,6 +62,9 @@ class LocationTree:
     were random and so hard to keep track of.  Its not doing it on the mac anymore.  I think it might have been linux only.  If it reappears then this should be integrated back into the other draw_tree method to aboid copy and paste code
     """
     def draw_tree_two(self, dc):
+        """
+        Also now not used.  Model drawing being taken out
+        """
         for key in self.loc_data:
             if (self.loc_data[key].l_type == 'membrane'):
                 self.circles[key].paint()
@@ -79,3 +85,6 @@ class LocationTree:
                 self.circles[node].paint()
 
         return self.output
+
+    def __str__(self):
+        return self.tree.__str__()

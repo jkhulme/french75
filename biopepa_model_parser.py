@@ -34,7 +34,8 @@ class Biopepa_Model_Parser():
                 loc_size = "Remove this"
                 loc_name = re.findall("location (.*?) ", location)[0].strip()
                 loc_parent = re.findall("in (.*?):", location)[0].strip() if len(re.findall("in (.*?):", location)) > 0 else "root"
-                self.loc_results[loc_name] = Location(loc_name, loc_size,
+                if loc_name != "mechanisms":
+                    self.loc_results[loc_name] = Location(loc_name, loc_size,
                                                       loc_parent, loc_type)
             except:
                 print "malformed location line: " + location
@@ -46,6 +47,8 @@ class Biopepa_Model_Parser():
         return output
 
     def build_graph(self):
-        self.tree = LocationTree(self.loc_results)
-
+        if self.loc_results != {}:
+            self.tree = LocationTree(self.loc_results)
+            return self.tree.build_tree()
+        return {}
 
