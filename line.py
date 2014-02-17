@@ -74,12 +74,14 @@ class Line(object):
         self.counter = 0
         self.normalised_sub_plots = []
         self.normalise()
-        self.sub_lists = self.slice_lists(self.normalised_results)
+        self.sub_lists = self.slice_lists(self.interpolated_results)
+        print self.species
         print self.sub_lists
 
     def slice_lists(self, l):
-        #sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
-        sub_lists = zip(l, l[1:], l[2:], l[3:])
+        sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
+        #sub_lists = zip(l, l[1:], l[2:], l[3:])
+        #sub_lists = zip(l, l[1:])
         for i, sub_list in enumerate(sub_lists):
             l_mean = mean(sub_list)
             l_std = std(sub_list)
