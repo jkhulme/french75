@@ -13,10 +13,11 @@ class French75Server():
     def __init__(self, port):
         print "starting server on port", port
         self.world = WorldState.Instance()
-        self.server = SimpleXMLRPCServer(("0.0.0.0", port), requestHandler=RequestHandler)
+        self.server = SimpleXMLRPCServer(("0.0.0.0", port), requestHandler=RequestHandler, allow_none=True)
         self.server.register_introspection_functions()
         self.server.register_function(self.start_client, 'start_client')
         self.server.register_function(self.test, 'test')
+        self.server.register_function(self.get_session_dict, 'get_session_dict')
 
         self.server.serve_forever()
 
@@ -31,3 +32,6 @@ class French75Server():
 
     def test(self):
         return "hello world"
+
+    def get_session_dict(self):
+        return self.world.pickle_session()

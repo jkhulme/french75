@@ -506,6 +506,7 @@ class French75(wx.Frame):
         self.world.client = French75Client(server_ip, 8000)
         self.world.client.test()
         self.world.client.start_partner_client(my_ip)
+        self.world.client.request_session()
 
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
