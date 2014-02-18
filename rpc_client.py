@@ -24,9 +24,4 @@ class French75Client():
     def request_session(self):
         data = self.server.get_session_dict()
         self.world.unpickle_session(data)
-        refresh_plot()
-        self.world.legend.draw_legend()
-        self.world.legend.legend_panel.Refresh()
-        for panel in self.world.panels:
-            panel.Refresh()
-        self.world.files_panel.Refresh()
+        return True

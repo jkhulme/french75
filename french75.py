@@ -40,7 +40,7 @@ class French75(wx.Frame):
     self.model_panel - where the legend for the standard graph is drawn
     self.legend - what is drawn on the legend panel
     self.paths - all the files to be read
-    self.splitter_left - where the legend goes
+    self.world.splitter_left - where the legend goes
     self.legend_panel - panel the legend goes on
     self.dc - drawing context
     self.world.draw_plot - the plotter which we use to draw lines
@@ -60,9 +60,9 @@ class French75(wx.Frame):
         self.i = 0
         #self.save = False
 
-        self.splitter_left = wx.SplitterWindow(self, -1)
-        self.legend_panel = scrolled.ScrolledPanel(self.splitter_left, -1)
-        splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        self.world.splitter_left = wx.SplitterWindow(self, -1)
+        self.legend_panel = scrolled.ScrolledPanel(self.world.splitter_left, -1)
+        splitter_right = wx.SplitterWindow(self.world.splitter_left, -1)
         splitter_middle = wx.SplitterWindow(splitter_right)
         splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
         self.graph_panel = wx.Panel(splitter_middle, -1)
@@ -164,13 +164,13 @@ class French75(wx.Frame):
         self.world.legend = Legend(self.legend_panel)
         self.SetMenuBar(self.build_menu_bar())
 
-        self.splitter_left.SplitVertically(self.legend_panel, splitter_right)
+        self.world.splitter_left.SplitVertically(self.legend_panel, splitter_right)
         splitter_right.SplitVertically(splitter_middle, splitter_right_middle)
         splitter_middle.SplitHorizontally(self.graph_panel, self.animation_panel)
         splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         #self.Maximize()
-        self.splitter_left.SetSashPosition(self.world.session_dict['dispW']/6)
+        self.world.splitter_left.SetSashPosition(self.world.session_dict['dispW']/6)
         splitter_right.SetSashPosition(4 * self.world.session_dict['dispW']/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
         splitter_right_middle.SetSashPosition(self.world.session_dict['dispH']/2)
@@ -507,7 +507,9 @@ class French75(wx.Frame):
         self.world.client = French75Client(server_ip, 8000)
         self.world.client.test()
         self.world.client.start_partner_client(my_ip)
-        self.world.client.request_session()
+        success = self.world.client.request_session()
+        if success:
+            self.sessiony_stuff()
 
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
@@ -592,7 +594,7 @@ class French75(wx.Frame):
     def sessiony_stuff(self):
         self.world.draw_plot = Plotter(self.graph_axes)
         self.world.draw_plot.plot()
-        reset_sash_position(self.splitter_left)
+        reset_sash_position(self.world.splitter_left)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
 
