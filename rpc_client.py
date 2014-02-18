@@ -1,5 +1,6 @@
 import xmlrpclib
 from worldstate import WorldState
+from utils import refresh_plot
 
 class French75Client():
 
@@ -23,4 +24,4 @@ class French75Client():
     def request_session(self):
         data = self.server.get_session_dict()
         self.world.unpickle_session(data)
-        print self.world.session_dict
+        refresh_plot()
