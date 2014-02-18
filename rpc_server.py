@@ -10,22 +10,24 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 
 class French75Server():
 
-    def __init__(self):
+    def __init__(self, port):
+        print "starting server on port", port
         self.world = WorldState.Instance()
-        self.server = SimpleXMLRPCServer(("0.0.0.0", 8000), requestHandler=RequestHandler)
+        self.server = SimpleXMLRPCServer(("0.0.0.0", port), requestHandler=RequestHandler)
         self.server.register_introspection_functions()
-        self.server.register_function(self.start_client, 'start')
+        self.server.register_function(self.start_client, 'start_client')
         self.server.register_function(self.test, 'test')
 
         self.server.serve_forever()
 
     def start_client(self, ip):
-        client_thread = Thread(target=self.run_client, args=(ip))
+        client_thread = Thread(target=self.run_client, args=(ip,))
         client_thread.start()
         return True
 
     def run_client(self, ip):
-        self.world.client = French75Client(ip)
+        self.world.client = French75Client(ip, 8001)
+        self.world.client.test()
 
     def test(self):
         return "hello world"

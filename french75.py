@@ -484,24 +484,28 @@ class French75(wx.Frame):
         return menubar
 
     def start_rpc_server(self, e):
-        server_thread = Thread(target=self.run_server)
+        server_thread = Thread(target=self.run_server, args=(8000,))
         server_thread.start()
         wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
 
-    def run_server(self):
-        self.world.server = French75Server()
+    def run_server(self, port):
+        self.world.server = French75Server(port)
 
     def join_rpc_server(self, e):
         dialog = wx.TextEntryDialog(None, "Please Enter Server IP Address","Text Entry", "", style=wx.OK|wx.CANCEL)
         if dialog.ShowModal() == wx.ID_OK:
-            client_thread = Thread(target=self.run_client, args=(dialog.GetValue(),))
-            client_thread.start()
-            #server_thread = Thread(target=self.run_server)
-            #server_thread.start()
+            dialog2 = wx.TextEntryDialog(None, "Please Enter Your IP Address", "Text Entry", "", style=wx.OK|wx.CANCEL)
+            if dialog2.ShowModal() == wx.ID_OK:
+                client_thread = Thread(target=self.run_client, args=(dialog.GetValue(), dialog2.GetValue()))
+                client_thread.start()
 
-    def run_client(self, ip):
-        self.world.client = French75Client(ip)
-        print self.world.client.test()
+                server_thread = Thread(target=self.run_server, args=(8001,))
+                server_thread.start()
+
+    def run_client(self, server_ip, my_ip):
+        self.world.client = French75Client(server_ip, 8000)
+        self.world.client.test()
+        self.world.client.start_partner_client(my_ip)
 
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
