@@ -3,8 +3,8 @@ import xmlrpclib
 
 class French75Client():
 
-    def __init__(self):
-        self.server = xmlrpclib.ServerProxy('http://localhost:8000')
+    def __init__(self, ip):
+        self.server = xmlrpclib.ServerProxy('http://' + ip + ':8000')
 
     def perform_actions(self):
         print self.server.pow(2,3)

@@ -492,9 +492,15 @@ class French75(wx.Frame):
         server = French75Server()
 
     def join_rpc_server(self, e):
+
         dialog = wx.TextEntryDialog(None, "Please Enter Server IP Address","Text Entry", "", style=wx.OK|wx.CANCEL)
         if dialog.ShowModal() == wx.ID_OK:
-            client = French75Client(dialog.GetValue())
+            client_thread = Thread(target=self.run_client, args=(dialog.GetValue,))
+            client_thread.start()
+
+
+    def run_client(self, ip):
+        client = French75Client(ip)
 
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
