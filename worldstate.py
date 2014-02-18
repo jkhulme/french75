@@ -118,6 +118,8 @@ class WorldState:
         self.server = None
         self.client = None
 
+        self.panels = []
+
     def reset_session(self):
         """
         Set everything back to a default value

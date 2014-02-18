@@ -51,10 +51,10 @@ class French75(wx.Frame):
         Sets up the UI, binds the events etc
         """
         super(French75, self).__init__(*args, **kwargs)
-        self.Maximize()
-        self.panels = []
-        self.panel_vboxes = []
         self.world = WorldState.Instance()
+        self.Maximize()
+        self.world.panels = []
+        self.panel_vboxes = []
         (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
         self.end_of_time = False
         self.i = 0
@@ -68,6 +68,7 @@ class French75(wx.Frame):
         self.graph_panel = wx.Panel(splitter_middle, -1)
         self.model_panel = wx.Panel(splitter_right_middle, -1)
         self.files_panel = wx.Panel(splitter_right_middle, -1)
+        self.world.files_panel = self.files_panel
         #self.animation_panel = wx.Panel(splitter_middle, -1)
         self.animation_panel = scrolled.ScrolledPanel(splitter_middle, -1)
 
@@ -200,7 +201,7 @@ class French75(wx.Frame):
             new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
             self.world.session_dict['anime_annotations'][key] = new_annotation_list
         self.anime_annotations_list.Delete(selected)
-        for panel in self.panels:
+        for panel in self.world.panels:
             panel.Refresh()
 
     def enable_all(self, state):
@@ -620,7 +621,7 @@ class French75(wx.Frame):
                 child.Destroy()
             except:
                 pass
-        self.panels = []
+        self.world.panels = []
         self.panel_vboxes = []
         self.world.cell_segments = []
         #TODO: Fix these magic numbers
@@ -638,12 +639,12 @@ class French75(wx.Frame):
             panel.SetBackgroundColour('white')
             panel.Bind(wx.EVT_PAINT, self.animate_cell)
             panel.Bind(wx.EVT_LEFT_UP, self.annotate_cell)
-            self.panels.append(panel)
+            self.world.panels.append(panel)
             self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
             self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
-        for panel in self.panels:
+        for panel in self.world.panels:
             panel.Refresh()
 
     def annotate_cell(self, e):
@@ -659,7 +660,7 @@ class French75(wx.Frame):
                 self.world.session_dict['anime_annotations'][idx] = [self.world.temp_anime_annotation]
             else:
                 self.world.session_dict['anime_annotations'][idx].append(self.world.temp_anime_annotation)
-        for panel in self.panels:
+        for panel in self.world.panels:
             panel.Refresh()
 
     def create_cell_segments_by_species(self):
@@ -670,7 +671,7 @@ class French75(wx.Frame):
                 child.Destroy()
             except:
                 pass
-        self.panels = []
+        self.world.panels = []
         self.panel_vboxes = []
         self.world.cell_segments = []
         #TODO: Fix these magic numbers
@@ -688,12 +689,12 @@ class French75(wx.Frame):
                 small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
                 panel.SetBackgroundColour('white')
                 panel.Bind(wx.EVT_PAINT, self.animate_cell)
-                self.panels.append(panel)
+                self.world.panels.append(panel)
                 self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
                 self.world.cell_segments.append(CellSegment((a, b), c, d, self.drop_down_files.GetStringSelection(), species_name.split("@")[0]))
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
-        for panel in self.panels:
+        for panel in self.world.panels:
             panel.Refresh()
 
     def switch_animation(self, e):
@@ -840,7 +841,7 @@ class French75(wx.Frame):
             time.sleep(n)
             self.world.session_dict['clock'] += self.world.session_dict['clock_increment']
             self.slider_time.SetValue(self.world.session_dict['clock'])
-            for panel in self.panels:
+            for panel in self.world.panels:
                 panel.Refresh()
 
         self.slider_time.SetValue(self.world.session_dict['max_time'])
