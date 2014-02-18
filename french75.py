@@ -489,18 +489,19 @@ class French75(wx.Frame):
         wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
 
     def run_server(self):
-        server = French75Server()
+        self.world.server = French75Server()
 
     def join_rpc_server(self, e):
-
         dialog = wx.TextEntryDialog(None, "Please Enter Server IP Address","Text Entry", "", style=wx.OK|wx.CANCEL)
         if dialog.ShowModal() == wx.ID_OK:
-            client_thread = Thread(target=self.run_client, args=(dialog.GetValue,))
+            client_thread = Thread(target=self.run_client, args=(dialog.GetValue(),))
             client_thread.start()
-
+            #server_thread = Thread(target=self.run_server)
+            #server_thread.start()
 
     def run_client(self, ip):
-        client = French75Client(ip)
+        self.world.client = French75Client(ip)
+        print self.world.client.test()
 
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']

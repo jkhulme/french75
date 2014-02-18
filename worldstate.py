@@ -115,6 +115,9 @@ class WorldState:
         self.cell_segments = []
         self.graph_canvas = None
 
+        self.server = None
+        self.client = None
+
     def reset_session(self):
         """
         Set everything back to a default value
