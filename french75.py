@@ -19,6 +19,8 @@ from subprocess import call
 from annotation import Annotation
 import wx.lib.scrolledpanel as scrolled
 from annotation_dialogue import AnnotationDialogue
+from rpc_server import French75Server
+from rpc_client import French75Client
 
 _DPI = 80
 _BG_COLOUR = 'white'
@@ -482,10 +484,18 @@ class French75(wx.Frame):
         return menubar
 
     def start_rpc_server(self, e):
-        pass
+        server_thread = Thread(target=self.run_server)
+        server_thread.start()
+        wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
+
+    def run_server(self):
+        server = French75Server()
 
     def join_rpc_server(self, e):
-        pass
+        dialog = wx.TextEntryDialog(None, "Please Enter Server IP Address","Text Entry", "", style=wx.OK|wx.CANCEL)
+        if dialog.ShowModal() == wx.ID_OK:
+            client = French75Client(dialog.GetValue())
+
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
         refresh_plot()
