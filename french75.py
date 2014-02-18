@@ -471,8 +471,21 @@ class French75(wx.Frame):
 
         menubar.Append(data_menu, '&Data')
 
+        networking_menu = wx.Menu()
+        self.share_session_m = networking_menu.Append(wx.ID_ANY, '&Share Session')
+        self.Bind(wx.EVT_MENU, self.start_rpc_server, self.share_session_m)
+        self.join_session_m = networking_menu.Append(wx.ID_ANY, '&Join Session')
+        self.Bind(wx.EVT_MENU, self.join_rpc_server, self.join_session_m)
+
+        menubar.Append(networking_menu, '&Networking')
+
         return menubar
 
+    def start_rpc_server(self, e):
+        pass
+
+    def join_rpc_server(self, e):
+        pass
     def normalise_data(self, event):
         self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
         refresh_plot()

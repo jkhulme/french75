@@ -1,9 +1,20 @@
 import xmlrpclib
 
-s = xmlrpclib.ServerProxy('http://localhost:8000')
-print s.pow(2,3)  # Returns 2**3 = 8
-print s.add(2,3)  # Returns 5
-print s.div(5,2)  # Returns 5//2 = 2
 
-# Print list of available methods
-print s.system.listMethods()
+class French75Client():
+
+    def __init__(self):
+        self.server = xmlrpclib.ServerProxy('http://localhost:8000')
+
+    def perform_actions(self):
+        print self.server.pow(2,3)
+        print self.server.add(2,3)
+        print self.server.div(5,2)
+
+    def list_actions(self):
+        print self.server.system.listMethods()
+
+
+if __name__ == "__main__":
+    x = French75Client()
+    x.perform_actions()
