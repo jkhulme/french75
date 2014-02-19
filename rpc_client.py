@@ -1,6 +1,7 @@
 import xmlrpclib
 from worldstate import WorldState
 from utils import refresh_plot
+import pickle
 
 class French75Client():
 
@@ -25,3 +26,6 @@ class French75Client():
         data = self.server.get_session_dict()
         self.world.unpickle_session(data)
         return True
+
+    def add_annotation(self, annotation):
+        self.server.add_annotation(pickle.dumps(annotation))

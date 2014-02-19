@@ -3,6 +3,8 @@ from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 from rpc_client import French75Client
 from worldstate import WorldState
 from threading import Thread
+from utils import refresh_plot
+import pickle
 
 # Restrict to a particular path.
 class RequestHandler(SimpleXMLRPCRequestHandler):
@@ -18,6 +20,7 @@ class French75Server():
         self.server.register_function(self.start_client, 'start_client')
         self.server.register_function(self.test, 'test')
         self.server.register_function(self.get_session_dict, 'get_session_dict')
+        self.server.register_function(self.add_annotation, 'add_annotation')
 
         self.server.serve_forever()
 
@@ -35,3 +38,8 @@ class French75Server():
 
     def get_session_dict(self):
         return self.world.pickle_session()
+
+    def add_annotation(self, annotation):
+        self.world.session_dict['annotations'].append(pickle.loads(annotation))
+        refresh_plot()
+        return True

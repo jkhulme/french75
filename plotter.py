@@ -99,22 +99,30 @@ class Plotter(object):
         self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
         self.world.session_dict['annotate'] = False
         if text:
-            self.world.session_dict['annotations'].append(Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour))
+            annotation = Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour)
+            self.world.session_dict['annotations'].append(annotation)
+            self.world.client.add_annotation(annotation)
         else:
-            self.world.session_dict['annotations'].append(Annotation(self.world._ARROW, (x1, y1), (x2, y2)))
+            annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2))
+            self.world.session_dict['annotations'].append(annotation)
+            self.world.client.add_annotation(annotation)
         self.world.graph_canvas.draw()
 
     def annotate_text(self, (x, y), text="Annotation"):
         self.axes.text(x, y, text)
+        annotation = Annotation(self.world._TEXT, (x, y), text=text)
         self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(Annotation(self.world._TEXT, (x, y), text=text))
+        self.world.session_dict['annotations'].append(annotation)
+        self.world.client.add_annotation(annotation)
         self.world.graph_canvas.draw()
 
     def annotate_circle(self, (x, y), colour="black"):
         circle1 = Ellipse((x, y), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
+        annotation = Annotation(self.world._CIRCLE, (x, y), colour=colour)
         self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(Annotation(self.world._CIRCLE, (x, y), colour=colour))
+        self.world.session_dict['annotations'].append(annotation)
+        self.world.client.add_annotation(annotation)
         self.world.graph_canvas.draw()
 
     def vertical_line(self):
