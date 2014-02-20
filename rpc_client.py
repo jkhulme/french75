@@ -29,3 +29,24 @@ class French75Client():
 
     def add_annotation(self, annotation):
         self.server.add_annotation(pickle.dumps(annotation))
+
+    def update_annotation(self, a_id, text):
+        self.server.update_annotation(a_id, text)
+
+    def launch_large_plot(self):
+        self.server.launch_large_plot()
+
+    def update_legend(self, line, file_key, species_key):
+        self.server.update_legend(line, file_key, species_key)
+
+    def reset_session(self):
+        self.server.reset_session()
+
+    def change_cursor(self, cursor):
+        self.server.change_cursor(cursor)
+
+    def undo(self):
+        self.server.undo()
+
+    def redo(self):
+        self.server.redo()

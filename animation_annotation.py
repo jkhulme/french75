@@ -1,6 +1,10 @@
+import uuid
+
+
 class AnimationAnnotation():
 
     def __init__(self, text, start, end):
+        self.id = uuid.uuid4()
         self.x = None
         self.y = None
         self.text = text
@@ -18,3 +22,6 @@ class AnimationAnnotation():
 
     def set_id(self, a_id):
         self.a_id = a_id
+
+    def __eq__(self, other):
+        return self.id == other.id

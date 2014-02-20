@@ -132,9 +132,10 @@ print tf_weighted_cosine(line_2, line_1) #a,y
 print tf_weighted_cosine(line_2, line_2) #a,a
 print tf_weighted_cosine(line_2, line_3) #a,z
 print "%%%%%%"
-print tf_weighted_cosine(line_3, line_1) #z,y
+"""
+print tf_weighted_cosine(line_3, line_4) #z,y
 print tf_weighted_cosine(line_3, line_2) #z,a
 print tf_weighted_cosine(line_3, line_3) #z,z
-"""
 
-other_results("aSrc_total_MB@cytoplasm")
+
+#other_results("aSrc_total_MB@cytoplasm")

@@ -352,6 +352,7 @@ class French75(wx.Frame):
             refresh_plot()
             self.annotation_menu()
             self.selected_annotation.colour = 'black'
+            self.selected_annotation = None
             refresh_plot()
         else:
             print "Missed annotation"
@@ -384,6 +385,7 @@ class French75(wx.Frame):
             self.selected_annotation.text = self.world.session_dict['annotation_text']
             if self.selected_annotation.type == self.world._ARROW:
                 self.selected_annotation.type = self.world._TEXT_ARROW
+        self.world.client.update_annotation(self.selected_annotation.id, self.selected_annotation.text)
         self.world.push_state()
 
     def delete_annotation(self, event):

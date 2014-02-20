@@ -70,6 +70,7 @@ class BioPepaToolbar(NavigationToolbar):
              self.world.session_dict['annotation_text'] = dialog.GetValue()
 
     def _on_custom_enlarge(self, e):
+        self.world.client.launch_large_plot()
         large_plot = LargePlotDialog(None, title='Big Plot')
         large_plot.ShowModal()
         large_plot.Destroy()

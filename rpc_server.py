@@ -5,6 +5,7 @@ from worldstate import WorldState
 from threading import Thread
 from utils import refresh_plot
 import pickle
+from large_plot import LargePlotDialog
 
 # Restrict to a particular path.
 class RequestHandler(SimpleXMLRPCRequestHandler):
@@ -21,6 +22,13 @@ class French75Server():
         self.server.register_function(self.test, 'test')
         self.server.register_function(self.get_session_dict, 'get_session_dict')
         self.server.register_function(self.add_annotation, 'add_annotation')
+        self.server.register_function(self.update_annotation, 'update_annotation')
+        self.server.register_function(self.launch_large_plot, 'launch_large_plot')
+        self.server.register_function(self.update_legend, 'update_legend')
+        self.server.register_function(self.reset_session, 'reset_session')
+        self.server.register_function(self.change_cursor, 'change_cursor')
+        self.server.register_function(self.undo, 'undo')
+        self.server.register_function(self.redo, 'redo')
 
         self.server.serve_forever()
 
@@ -43,3 +51,32 @@ class French75Server():
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
         refresh_plot()
         return True
+
+    def update_annotation(self, a_id, text):
+        for annotation in self.world.session_dict['annotations']:
+            if annotation.id == a_id:
+                annotation.text = text
+                break
+        refresh_plot()
+
+    def launch_large_plot(self):
+        large_plot = LargePlotDialog(None, title='Big Plot')
+        large_plot.ShowModal()
+        large_plot.Destroy()
+
+    def update_legend(self, line, file_key, species_key):
+        self.world.session_dict['lines'][file_key][species_key]
+        self.world.legend.draw_legend()
+        self.world.legend.legend_panel.Refresh()
+
+    def reset_session(self):
+        self.world.reset_session()
+
+    def change_cursor(self, cursor):
+        self.world.change_cursor(cursor)
+
+    def undo(self):
+        self.world.undo()
+
+    def redo(self):
+        self.world.redo()

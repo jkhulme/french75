@@ -121,8 +121,9 @@ class Legend(object):
         plot_prefs.set_line(self.world.session_dict['lines'][file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
-        self.update(btn_props.GetParent(), file_key, species_key)
-        refresh_plot()
+        self.update(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
+        self.world.client.update_legend(btn_props.GetParent(), file_key, species_key)
+        #refresh_plot()
 
     def update(self, csv, file_key, species_key):
         """
@@ -141,6 +142,4 @@ class Legend(object):
                 if child.GetLabel() == "Ints" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
         self.legend_panel.Refresh()
-        self.world.session_dict['redraw_legend'] = False
-        self.world.draw_plot.plot()
-        self.world.session_dict['redraw_legend'] = True
+        refresh_plot()
