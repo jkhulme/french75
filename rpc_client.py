@@ -50,3 +50,12 @@ class French75Client():
 
     def redo(self):
         self.server.redo()
+
+    def delete_anime_annotation(self, a_id):
+        self.server.delete_anime_annotation(a_id)
+
+    def delete_annotation(self, a_id):
+        self.server.delete_annotation(a_id)
+
+    def toggle_param(self, param, value):
+        self.server.toggle_param(param, value)

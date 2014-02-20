@@ -201,6 +201,7 @@ class French75(wx.Frame):
             new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
             self.world.session_dict['anime_annotations'][key] = new_annotation_list
         self.anime_annotations_list.Delete(selected)
+        self.world.client.delete_anime_annotation(a_id)
         for panel in self.world.panels:
             panel.Refresh()
 
@@ -391,6 +392,7 @@ class French75(wx.Frame):
     def delete_annotation(self, event):
         new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
         self.world.session_dict['annotations'] = new_annotation_list
+        self.world.client.delete_annotation(self.selected_annotation.id)
         self.world.push_state()
 
     def get_label(self):
@@ -514,8 +516,7 @@ class French75(wx.Frame):
             self.sessiony_stuff()
 
     def normalise_data(self, event):
-        self.world.session_dict['normalised'] = not self.world.session_dict['normalised']
-        refresh_plot()
+        self.toggle_param('normalised')
 
     def export_data(self, event):
         titles = []
@@ -551,7 +552,6 @@ class French75(wx.Frame):
         else:
             dlg.Destroy()
 
-
     def undo(self, event):
         self.world.undo()
         refresh_plot()
@@ -569,8 +569,8 @@ class French75(wx.Frame):
 
     def toggle_param(self, param):
         self.world.session_dict[param] = not self.world.session_dict[param]
+        self.world.client.toggle_param(param, self.world.session_dict[param])
         refresh_plot()
-
 
     """
     Session starter dialogue
@@ -615,6 +615,7 @@ class French75(wx.Frame):
         self.enable_all(True)
 
     def change_animation_species(self, e):
+        #Does this do anything?
         self.create_cell_segments()
 
     def create_cell_segments_by_file(self):
@@ -741,7 +742,6 @@ class French75(wx.Frame):
             self.SetTitle(_TITLE)
         else:
             dlg.Destroy()
-
 
     def load_session(self, e):
         file_chooser = wx.FileDialog(

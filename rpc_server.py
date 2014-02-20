@@ -29,6 +29,9 @@ class French75Server():
         self.server.register_function(self.change_cursor, 'change_cursor')
         self.server.register_function(self.undo, 'undo')
         self.server.register_function(self.redo, 'redo')
+        self.server.register_function(self.delete_anime_annotation, 'delete_anime_annotation')
+        self.server.register_function(self.delete_annotation, 'delete_annotation')
+        self.server.register_function(self.toggle_param, 'toggle_param')
 
         self.server.serve_forever()
 
@@ -80,3 +83,20 @@ class French75Server():
 
     def redo(self):
         self.world.redo()
+
+    def delete_anime_annotation(self, a_id):
+        for key in self.world.session_dict['anime_annotations'].keys():
+            new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
+            self.world.session_dict['anime_annotations'][key] = new_annotation_list
+        #self.anime_annotations_list.Delete(selected)
+        #self.world.client.delete_anime_annotation(a_id)
+        for panel in self.world.panels:
+            panel.Refresh()
+
+    def delete_annotation(self, a_id):
+        new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
+        self.world.session_dict['annotations'] = new_annotation_list
+
+    def toggle_param(self, param, value):
+        self.world.session_dict[param] = value
+        refresh_plot()

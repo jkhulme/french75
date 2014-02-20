@@ -75,8 +75,6 @@ class Line(object):
         self.normalised_sub_plots = []
         self.normalise()
         self.sub_lists = self.slice_lists(self.interpolated_results)
-        print self.species
-        print self.sub_lists
 
     def slice_lists(self, l):
         sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
