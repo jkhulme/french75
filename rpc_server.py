@@ -50,8 +50,9 @@ class French75Server():
         return self.world.pickle_session()
 
     def add_annotation(self, annotation):
+        print "before", self.world.session_dict['annotations']
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
-        print self.world.session_dict['annotations']
+        print "after", self.world.session_dict['annotations']
         refresh_plot()
         return True
 

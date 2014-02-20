@@ -5,6 +5,7 @@ from math import sqrt
 from undo_stack import UndoStack
 import copy
 import pickle
+from method_sink import Sink
 
 
 _DICT_ELEMS = [('results', None),
@@ -115,8 +116,8 @@ class WorldState:
         self.cell_segments = []
         self.graph_canvas = None
 
-        self.server = None
-        self.client = None
+        self.server = Sink()
+        self.client = Sink()
 
         self.panels = []
 
