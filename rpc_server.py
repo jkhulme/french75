@@ -32,7 +32,6 @@ class French75Server():
         self.server.register_function(self.delete_anime_annotation, 'delete_anime_annotation')
         self.server.register_function(self.delete_annotation, 'delete_annotation')
         self.server.register_function(self.toggle_param, 'toggle_param')
-
         self.server.serve_forever()
 
     def start_client(self, ip):
@@ -52,6 +51,7 @@ class French75Server():
 
     def add_annotation(self, annotation):
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
+        print self.world.session_dict['annotations']
         refresh_plot()
         return True
 

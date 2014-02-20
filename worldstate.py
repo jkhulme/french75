@@ -124,7 +124,7 @@ class WorldState:
         """
         Set everything back to a default value
         """
-        self.client.reset_session()
+        #self.client.reset_session()
         for (key, value) in _DICT_RESET:
             self.session_dict[key] = value
 
@@ -135,7 +135,7 @@ class WorldState:
         self.session_dict['clock_increment'] = self.session_dict['max_time'] / 600.0
 
     def change_cursor(self, cursor):
-        self.client.change_cursor(cursor)
+        #self.client.change_cursor(cursor)
         self.graph_canvas.SetCursor(wx.StockCursor(cursor))
 
     def euclid_distance(self, p1, p2):
