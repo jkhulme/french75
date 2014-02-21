@@ -789,36 +789,6 @@ class French75(wx.Frame):
         self.btn_animate_play.SetLabel(title)
 
     """
-    Which biopepa model to display
-
-    def open_model_file(self, e):
-        file_chooser = wx.FileDialog(
-            self,
-            message="Choose a file",
-            wildcard="*.biopepa",
-            style=wx.OPEN | wx.CHANGE_DIR)
-        if file_chooser.ShowModal() == wx.ID_OK:
-            paths = file_chooser.GetPaths()
-            file_chooser.Destroy()
-
-            self.model_parser = Biopepa_Model_Parser()
-            self.model_parser.parse(paths[0])
-            self.model_parser.build_graph()
-
-            self.refresh_model_panel()
-        else:
-            file_chooser.Destroy()
-    """
-
-    """
-    refresh the model view pane
-
-    def refresh_model_panel(self):
-        self.model_panel.Bind(wx.EVT_PAINT, self.on_paint)
-        self.model_panel.Refresh()
-    """
-
-    """
     called when the animation pane is refreshed. -- OnPaint
     pane is refreshed by animate()
     update the position of the vertical line.  Draw each of the cell segments
@@ -853,19 +823,6 @@ class French75(wx.Frame):
         self.world.session_dict['start_playing'] = False
 
     """
-    Handles drawing of the model
-    """
-    def on_paint(self, e):
-        self.dc = wx.PaintDC(self.model_panel)
-        if self.world.session_dict['first_time']:
-            self.world.session_dict['first_time'] = False
-            #Do this when parsing the model?  Then I can remove this IF
-            self.model_parser.tree.build_tree()
-            self.model_parser.tree.draw_tree_one(self.dc)
-        else:
-            self.model_parser.tree.draw_tree_two(self.dc)
-
-    """
     Save the graph
     """
     def on_save_plot(self, event):
@@ -886,22 +843,6 @@ class French75(wx.Frame):
             self.graph_canvas.print_figure(path, dpi=_DPI)
             self.world.draw_plot.mpl_legend = False
             self.world.draw_plot.plot()
-
-    """
-    Save a picture of the model
-    based largely on code posted to wxpython-users by Andrea Gavana 2006-11-08
-
-    def save_snapshot(self, dc, i):
-        dcSource = dc
-        size = dcSource.Size
-        bmp = wx.EmptyBitmap(200, 200)
-        memDC = wx.MemoryDC()
-        memDC.SelectObject(bmp)
-        memDC.Blit(0, 0, size.width, size.height, dcSource, 0, 0)
-        memDC.SelectObject(wx.NullBitmap)
-        img = bmp.ConvertToImage()
-        img.SaveFile(str(i) + '.png', wx.BITMAP_TYPE_PNG)
-    """
 
     def move_animation(self, e):
         """
