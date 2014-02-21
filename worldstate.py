@@ -238,3 +238,10 @@ class WorldState:
         self.session_dict['redraw_legend'] = False
         self.draw_plot.plot()
         self.session_dict['redraw_legend'] = True
+
+    def delete_animate_annotation(self, a_id):
+        for key in self.world.session_dict['anime_annotations'].keys():
+            new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
+            self.world.session_dict['anime_annotations'][key] = new_annotation_list
+        for panel in self.world.panels:
+            panel.Refresh()

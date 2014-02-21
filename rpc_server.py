@@ -50,9 +50,7 @@ class French75Server():
         return self.world.pickle_session()
 
     def add_annotation(self, annotation):
-        print "before", self.world.session_dict['annotations']
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
-        print "after", self.world.session_dict['annotations']
         refresh_plot()
         return True
 
@@ -86,13 +84,7 @@ class French75Server():
         self.world.redo()
 
     def delete_anime_annotation(self, a_id):
-        for key in self.world.session_dict['anime_annotations'].keys():
-            new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
-            self.world.session_dict['anime_annotations'][key] = new_annotation_list
-        #self.anime_annotations_list.Delete(selected)
-        #self.world.client.delete_anime_annotation(a_id)
-        for panel in self.world.panels:
-            panel.Refresh()
+        self.world.delete_anime_annotation(a_id)
 
     def delete_annotation(self, a_id):
         self.world.delete_annotation(a_id)

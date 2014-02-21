@@ -1,6 +1,5 @@
 import xmlrpclib
 from worldstate import WorldState
-from utils import refresh_plot
 import pickle
 
 class French75Client():

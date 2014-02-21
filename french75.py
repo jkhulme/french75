@@ -197,13 +197,9 @@ class French75(wx.Frame):
         selected = self.anime_annotations_list.GetSelection()
         annotation = self.anime_annotations_list.GetString(selected)
         (a_id, text) = annotation.split(":")
-        for key in self.world.session_dict['anime_annotations'].keys():
-            new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
-            self.world.session_dict['anime_annotations'][key] = new_annotation_list
+        self.world.delete_anime_annotation(a_id)
         self.anime_annotations_list.Delete(selected)
         self.world.client.delete_anime_annotation(a_id)
-        for panel in self.world.panels:
-            panel.Refresh()
 
     def enable_all(self, state):
         """
