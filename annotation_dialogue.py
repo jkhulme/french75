@@ -19,7 +19,7 @@ class AnnotationDialogue(wx.Dialog):
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
         annotation_label = wx.StaticText(self, -1, "Annotation Text:")
         panel_vbox.Add(annotation_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
-        self.text_ctrl = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE, size=(self.world.session_dict['dispW']/6, self.world.session_dict['dispH']/8))
+        self.text_ctrl = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE, size=(self.world.dispW/6, self.world.dispH/8))
         panel_vbox.Add(self.text_ctrl, 0, wx.EXPAND|wx.ALL, 10)
 
         line1 = wx.StaticLine(self)
@@ -68,7 +68,7 @@ class AnnotationDialogue(wx.Dialog):
 
         self.SetSizer(panel_vbox)
         panel_vbox.Fit(self)
-        self.SetSize((self.world.session_dict['dispW']/4, self.world.session_dict['dispH']/2))
+        self.SetSize((self.world.dispW/4, self.world.dispH/2))
 
         #self.Layout()
         self.Centre()

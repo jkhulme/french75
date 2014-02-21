@@ -1,7 +1,7 @@
 from utils import rgb_to_hex, euclid_distance, rgba_to_rgb
 from copy import deepcopy
-from random import randrange, gauss
-from numpy import std, mean, var
+from random import randrange
+from numpy import std, mean
 from itertools import groupby
 from collections import Counter
 
@@ -107,30 +107,6 @@ class Line(object):
 
     def scale(self, (x, y)):
         return ((self.horizontal_scale*x, self.vertical_scale*y))
-
-    """
-    Handles the details of what needs to be done to interpolate.  Then
-    updates the data to be used.
-
-    def line_distance(self):
-        dist = (ceil(self.time[-1]) / len(self.results)) * 1.1
-        output_time = []
-        output_results = []
-        for i in range(0, len(self.results) - 1):
-            p1 = (self.time[i], self.results[i])
-            p2 = (self.time[i + 1], self.results[i + 1])
-            if (euclid_distance(p1, p2) > dist):
-                step = ceil(euclid_distance(p1, p2) / dist)
-                output_time.extend([self.time[i]] + self.interpolate([self.time[i], self.time[i + 1]], step))
-                output_results.extend([self.results[i]] + self.interpolate([self.results[i], self.results[i + 1]], step))
-            else:
-                output_time.append(self.time[i])
-                output_results.append(self.results[i])
-        output_time.append(self.time[-1])
-        output_results.append(self.results[-1])
-        self.time = output_time
-        self.results = output_results
-    """
 
     """
     Handles the interpolation of points, need to test to make sure this is

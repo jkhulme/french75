@@ -67,7 +67,7 @@ def calc_graph_size(dpi, cols, num_sidebars, phi):
     """
     Want it to stick to the golden ration as Tufte recommends it hence phi
     """
-    graph_width = int(((world.session_dict['dispW'] / cols) * (cols - num_sidebars)) / dpi)
+    graph_width = int(((world.dispW / cols) * (cols - num_sidebars)) / dpi)
     graph_height = int(graph_width/phi)
     return (graph_width, graph_height)
 

@@ -123,7 +123,6 @@ class Legend(object):
         plot_prefs.Destroy()
         self.update(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
         self.world.client.update_legend(btn_props.GetParent(), file_key, species_key)
-        #refresh_plot()
 
     def update(self, csv, file_key, species_key):
         """

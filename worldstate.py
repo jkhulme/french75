@@ -9,82 +9,78 @@ from method_sink import Sink
 
 
 _DICT_ELEMS = [('results', None),
-               ('clock', 0),
-               ('first_circle', True),
-               ('clock_pause', False),
-               ('title', "Graph"),
-               ('dispW', 0),
-               ('dispH', 0),
-               ('max_time', 1),
-               ('clock_increment', 1/600.0),
-               ('annotate', False),
-               ('annotations', []),
-               ('temp_annotation', None),
-               ('annotation_mode', None),
-               ('max_height', 0),
-               ('annotation_text', ""),
-               ('species_dict', {}),
-               ('results', None),
-               ('lines', {}),
-               ('first_time', True),
-               ('start_playing', False),
-               ('click_one', False),
-               ('click_one_x', 0),
-               ('click_one_y', 0),
-               ('attached_file_locations', []),
-               ('xkcd', False),
-               ('redraw_legend', True),
-               ('draw_annotations', True),
-               ('ymin', 0),
-               ('ymax', 0),
-               ('xmin', 0),
-               ('xmax', 0),
-               ('tree_list', None),
-               ('graph_width', 0),
-               ('graph_height', 0),
-               ('normalised', False),
-               ('annotate_anime', False),
-               ('anime_annotations', {}),
-               ('cur_annotation_id', 0)]
+('clock', 0),
+('first_circle', True),
+('clock_pause', False),
+('title', "Graph"),
+('max_time', 1),
+('clock_increment', 1/600.0),
+('annotate', False),
+('annotations', []),
+('temp_annotation', None),
+('annotation_mode', None),
+('max_height', 0),
+('annotation_text', ""),
+('species_dict', {}),
+('results', None),
+('lines', {}),
+('first_time', True),
+('start_playing', False),
+('click_one', False),
+('click_one_x', 0),
+('click_one_y', 0),
+('attached_file_locations', []),
+('xkcd', False),
+('redraw_legend', True),
+('draw_annotations', True),
+('ymin', 0),
+('ymax', 0),
+('xmin', 0),
+('xmax', 0),
+('tree_list', None),
+('graph_width', 0),
+('graph_height', 0),
+('normalised', False),
+('annotate_anime', False),
+('anime_annotations', {}),
+('cur_annotation_id', 0)]
 
 _DICT_RESET = [('results', None),
-               ('clock', 0),
-               ('first_circle', True),
-               ('clock_pause', False),
-               ('title', "Graph"),
-               #('dispW', 0),
-               #('dispH', 0),
-               ('max_time', 1),
-               ('clock_increment', 1/600.0),
-               ('annotate', False),
-               ('annotations', []),
-               ('temp_annotation', None),
-               ('annotation_mode', None),
-               ('max_height', 0),
-               ('annotation_text', ""),
-               ('species_dict', {}),
-               ('results', None),
-               ('lines', {}),
-               ('first_time', True),
-               ('start_playing', False),
-               ('click_one', False),
-               ('click_one_x', 0),
-               ('click_one_y', 0),
-               ('attached_file_locations', []),
-               ('xkcd', False),
-               ('redraw_legend', True),
-               ('draw_annotations', True),
-               ('ymin', 0),
-               ('ymax', 0),
-               ('xmin', 0),
-               ('xmax', 0),
-               ('tree_list', None),
-               #('graph_width', 0),
-               #('graph_height', 0),
-               ('normalised', False),
-               ('annotate_anime', False),
-               ('anime_annotations', {}),
-               ('cur_annotation_id', 1)]
+('clock', 0),
+('first_circle', True),
+('clock_pause', False),
+('title', "Graph"),
+('max_time', 1),
+('clock_increment', 1/600.0),
+('annotate', False),
+('annotations', []),
+('temp_annotation', None),
+('annotation_mode', None),
+('max_height', 0),
+('annotation_text', ""),
+('species_dict', {}),
+('results', None),
+('lines', {}),
+('first_time', True),
+('start_playing', False),
+('click_one', False),
+('click_one_x', 0),
+('click_one_y', 0),
+('attached_file_locations', []),
+('xkcd', False),
+('redraw_legend', True),
+('draw_annotations', True),
+('ymin', 0),
+('ymax', 0),
+('xmin', 0),
+('xmax', 0),
+('tree_list', None),
+#('graph_width', 0),
+#('graph_height', 0),
+('normalised', False),
+('annotate_anime', False),
+('anime_annotations', {}),
+('cur_annotation_id', 1)]
 
 
 @Singleton
@@ -100,6 +96,10 @@ class WorldState:
         self._TEXT = 2
         self._TEXT_ARROW = 3
         self._CIRCLE = 4
+        self.dispW = 0
+        self.dispH = 0
+        self.graph_height = 0
+        self.graph_height = 0
 
         self.colours = []
         self.hard_colours = self.populate_colours()
@@ -156,15 +156,15 @@ class WorldState:
         else:
             accept = False
 
-            while(not accept):
-                accept = True
-                temp_colour = self.random_colour()
-                for colour in self.colours:
-                    if (self.euclid_distance(temp_colour, colour) < 50):
-                        accept = False
-                        break
+        while(not accept):
+            accept = True
+            temp_colour = self.random_colour()
+            for colour in self.colours:
+                if (self.euclid_distance(temp_colour, colour) < 50):
+                    accept = False
+                    break
             self.colours.append(temp_colour)
-            return temp_colour
+        return temp_colour
 
     def random_colour(self):
         """
@@ -188,11 +188,11 @@ class WorldState:
         of the session dict <- TODO
         """
         try:
-          self.session_dict = self.undo_stack.undo_pop()
-          self.client.undo()
-          self.legend.draw_legend()
+            self.session_dict = self.undo_stack.undo_pop()
+            self.client.undo()
+            self.legend.draw_legend()
         except:
-          pass
+            pass
 
 
     def redo(self):
@@ -224,3 +224,17 @@ class WorldState:
         the important stuff is
         """
         self.session_dict = pickle.loads(data)
+
+    def delete_annotation(self, a_id):
+        new_annotation_list = [annotation for annotation in self.session_dict['annotations'] if annotation.id != a_id]
+        self.session_dict['annotations'] = new_annotation_list
+        self.refresh_plot()
+
+    def refresh_plot(self):
+        """
+        Null pointers on the mac if I don't tell it to not redraw the legend
+        unless necessary.
+        """
+        self.session_dict['redraw_legend'] = False
+        self.draw_plot.plot()
+        self.session_dict['redraw_legend'] = True

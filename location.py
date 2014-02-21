@@ -1,5 +1,3 @@
-
-
 class Location():
 
     def __init__(self, name, size, parent, l_type):

@@ -55,7 +55,7 @@ class French75(wx.Frame):
         self.Maximize()
         self.world.panels = []
         self.panel_vboxes = []
-        (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = self.GetSize()
+        (self.world.dispW, self.world.dispH) = self.GetSize()
         self.end_of_time = False
         self.i = 0
         #self.save = False
@@ -142,8 +142,8 @@ class French75(wx.Frame):
         self.animation_panel.SetupScrolling(scroll_y=False)
 
         (graph_width, graph_height) = calc_graph_size(_DPI, _COLS, _NUM_OF_SIDEBARS, _PHI)
-        self.world.session_dict['graph_width'] = graph_width
-        self.world.session_dict['graph_height'] = graph_height
+        self.world.graph_width = graph_width
+        self.world.graph_height = graph_height
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
 
@@ -170,10 +170,10 @@ class French75(wx.Frame):
         splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         #self.Maximize()
-        self.world.splitter_left.SetSashPosition(self.world.session_dict['dispW']/6)
-        splitter_right.SetSashPosition(4 * self.world.session_dict['dispW']/6)
+        self.world.splitter_left.SetSashPosition(self.world.dispW/6)
+        splitter_right.SetSashPosition(4 * self.world.dispW/6)
         splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
-        splitter_right_middle.SetSashPosition(self.world.session_dict['dispH']/2)
+        splitter_right_middle.SetSashPosition(self.world.dispH/2)
 
         #self.graph_canvas.Bind(wx.EVT_CONTEXT_MENU, self.onContext)
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
@@ -390,8 +390,7 @@ class French75(wx.Frame):
         self.world.push_state()
 
     def delete_annotation(self, event):
-        new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
-        self.world.session_dict['annotations'] = new_annotation_list
+        self.world.delete_annotation(self.selected_annotation.id)
         self.world.client.delete_annotation(self.selected_annotation.id)
         self.world.push_state()
 
@@ -410,10 +409,10 @@ class French75(wx.Frame):
 
     def get_resolution(self):
         for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
-            (self.world.session_dict['dispW'], self.world.session_dict['dispH']) = monitor.GetGeometry().GetSize()
+            (self.world.dispW, self.world.dispH) = monitor.GetGeometry().GetSize()
             (mouseX, mouseY) = wx.GetMousePosition()
-            if (mouseX < self.world.session_dict['dispW']):
-                return (self.world.session_dict['dispW'], self.world.session_dict['dispH'])
+            if (mouseX < self.world.dispW):
+                return (self.world.dispW, self.world.dispH)
     Currently not called
     """
 

@@ -95,8 +95,7 @@ class French75Server():
             panel.Refresh()
 
     def delete_annotation(self, a_id):
-        new_annotation_list = [annotation for annotation in self.world.session_dict['annotations'] if annotation != self.selected_annotation]
-        self.world.session_dict['annotations'] = new_annotation_list
+        self.world.delete_annotation(a_id)
 
     def toggle_param(self, param, value):
         self.world.session_dict[param] = value
