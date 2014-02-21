@@ -203,13 +203,29 @@ class French75(wx.Frame):
         self.undo_m.Enable(state)
         self.redo_m.Enable(state)
 
-        if self.world.session_dict['tree_list'] and state:
+        if self.world.session_dict['tree_list']:
             self.btn_animate_play.Enable(state)
             self.slider_time.Enable(state)
             self.drop_down_species.Enable(state)
+            self.drop_down_files.Enable(state)
+            self.switch_animation_button.Enable(state)
+        else:
+            self.btn_animate_play.Enable(False)
+            self.slider_time.Enable(False)
+            self.drop_down_species.Enable(False)
+            self.drop_down_files.Enable(False)
+            self.switch_animation_button.Enable(False)
+
 
         self.add_files_button.Enable(state)
         self.open_files_button.Enable(state)
+        self.add_anime_annotation_button.Enable(state)
+        self.delete_anime_annotation_button.Enable(state)
+
+        self.normalise_m.Enable(state)
+        self.export_data_m.Enable(state)
+
+        self.share_session_m.Enable(state)
 
     def move_mouse(self, event):
         """
@@ -327,7 +343,10 @@ class French75(wx.Frame):
                 if dist < 0.025:
                     if self.selected_annotation is None:
                         self.selected_annotation = annotation
-                    elif euclid_distance((event.xdata, event.ydata), (self.selected_annotation.x1, self.selected_annotation.ys)):
+            else:
+                dist = euclid_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])), (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                if dist < 0.025:
+                    if self.selected_annotation is None:
                         self.selected_annotation = annotation
         if self.selected_annotation is not None:
             self.selected_annotation.colour = 'red'
@@ -343,23 +362,10 @@ class French75(wx.Frame):
         annotate_menu = wx.Menu()
         m_edit_annotation = annotate_menu.Append(wx.ID_ANY, 'Edit')
         m_delete_annotation = annotate_menu.Append(wx.ID_ANY, 'Delete')
-        #self.m_toggle_annotation = annotate_menu.AppendCheckItem(wx.ID_ANY, '&Show')
-        #self.m_toggle_annotation.Check(True)
         self.Bind(wx.EVT_MENU, self.edit_annotation_text, m_edit_annotation)
         self.Bind(wx.EVT_MENU, self.delete_annotation, m_delete_annotation)
-        #self.Bind(wx.EVT_MENU, self.show_hide_annotation, self.m_toggle_annotation)
         self.graph_panel.PopupMenu(annotate_menu)
         annotate_menu.Destroy()
-
-    """
-    def show_hide_annotation(self, e):
-        is_checked = self.m_toggle_annotation.IsChecked()
-        new_check = not is_checked
-        print new_check
-        self.m_toggle_annotation.Check(check=False)
-        print self.m_toggle_annotation.IsChecked()
-        self.selected_annotation.show = self.m_toggle_annotation.IsChecked()
-    """
 
     def edit_annotation_text(self, event):
         self.get_label()
@@ -382,20 +388,6 @@ class French75(wx.Frame):
          #dialog.Bind(wx.EVT_LEFT_DOWN, self.clear_text_box)
          if dialog.ShowModal() == wx.ID_OK:
              self.world.session_dict['annotation_text'] = dialog.GetValue()
-
-    """
-    because of cases where there are multiple monitors we need to go through
-    all the monitors and decide which one to use - base this on mouse position.
-    n/b - self.GetSize() might need to be used
-
-    def get_resolution(self):
-        for monitor in [wx.Display(i) for i in range(wx.Display.GetCount())]:
-            (self.world.dispW, self.world.dispH) = monitor.GetGeometry().GetSize()
-            (mouseX, mouseY) = wx.GetMousePosition()
-            if (mouseX < self.world.dispW):
-                return (self.world.dispW, self.world.dispH)
-    Currently not called
-    """
 
     """
     The menu bar.
