@@ -1,4 +1,3 @@
-#from biopepa_model_parser import Biopepa_Model_Parser
 from plotter import Plotter
 import wx
 import matplotlib
@@ -34,18 +33,6 @@ _NUM_OF_SIDEBARS = 2
 
 class French75(wx.Frame):
 
-    """
-    self.graph_canvas - container where we draw the graph
-    self.graph_axes - container that holds the data about what has been plotted
-    self.model_panel - where the legend for the standard graph is drawn
-    self.legend - what is drawn on the legend panel
-    self.paths - all the files to be read
-    self.world.splitter_left - where the legend goes
-    self.legend_panel - panel the legend goes on
-    self.dc - drawing context
-    self.world.draw_plot - the plotter which we use to draw lines
-    """
-
     def __init__(self, *args, **kwargs):
         """
         Sets up the UI, binds the events etc
@@ -53,12 +40,10 @@ class French75(wx.Frame):
         super(French75, self).__init__(*args, **kwargs)
         self.world = WorldState.Instance()
         self.Maximize()
-        self.world.panels = []
         self.panel_vboxes = []
         (self.world.dispW, self.world.dispH) = self.GetSize()
         self.end_of_time = False
         self.i = 0
-        #self.save = False
 
         self.world.splitter_left = wx.SplitterWindow(self, -1)
         self.legend_panel = scrolled.ScrolledPanel(self.world.splitter_left, -1)
