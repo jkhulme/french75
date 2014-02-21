@@ -87,7 +87,7 @@ class French75Server():
         self.world.delete_anime_annotation(a_id)
 
     def delete_annotation(self, a_id):
-        self.world.delete_annotation(a_id)
+        self.world.delete_annotation(pickle.loads(a_id))
 
     def toggle_param(self, param, value):
         self.world.session_dict[param] = value
