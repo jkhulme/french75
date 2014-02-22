@@ -97,6 +97,7 @@ class French75(wx.Frame):
         anime_annotations_label = wx.StaticText(self.files_panel, -1, "Animation Annotations:")
         anime_annotations_vbox.Add(anime_annotations_label)
         self.anime_annotations_list = wx.ListBox(self.files_panel, -1, size=(300, 300))
+        self.world.anime_annotations_list = self.anime_annotations_list
         anime_annotations_vbox.Add(self.anime_annotations_list)
         anime_annotations_toolbar = wx.BoxSizer(wx.HORIZONTAL)
         self.add_anime_annotation_button = wx.Button(self.files_panel, -1, "Add")
@@ -181,7 +182,7 @@ class French75(wx.Frame):
         annotation = self.anime_annotations_list.GetString(selected)
         (a_id, text) = annotation.split(":")
         self.world.delete_anime_annotation(a_id)
-        self.anime_annotations_list.Delete(selected)
+        #self.anime_annotations_list.Delete(selected)
         self.world.client.delete_anime_annotation(a_id)
 
     def enable_all(self, state):

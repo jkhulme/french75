@@ -68,6 +68,8 @@ class WorldState:
 
         self.session_dict = dict(_DICT_ELEMS)
 
+        self.anime_annotations_list = None
+
         self.temp_session = None
         self.graph_axes = None
         self.legend = None
@@ -199,11 +201,12 @@ class WorldState:
         self.draw_plot.plot()
         self.session_dict['redraw_legend'] = True
 
-    def delete_animate_annotation(self, a_id):
-        for key in self.world.session_dict['anime_annotations'].keys():
-            new_annotation_list = [ann for ann in self.world.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
-            self.world.session_dict['anime_annotations'][key] = new_annotation_list
-        for panel in self.world.panels:
+    def delete_anime_annotation(self, a_id):
+        for key in self.session_dict['anime_annotations'].keys():
+            new_annotation_list = [ann for ann in self.session_dict['anime_annotations'][key] if int(a_id) != int(ann.a_id)]
+            self.session_dict['anime_annotations'][key] = new_annotation_list
+        self.populate_anime_annotation_lb()
+        for panel in self.panels:
             panel.Refresh()
 
     def update_annotation_text(self, a_id, text):
@@ -214,3 +217,9 @@ class WorldState:
                     annotation.type = self._TEXT_ARROW
                 break
         self.refresh_plot()
+
+    def populate_anime_annotation_lb(self):
+        self.anime_annotations_list.Clear()
+        for key in self.session_dict['anime_annotations'].keys():
+            for annotation in self.session_dict['anime_annotations'][key]:
+                self.anime_annotations_list.InsertItems([str(annotation.idx) + ": " + annotation.text], 0)

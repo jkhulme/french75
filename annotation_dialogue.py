@@ -81,7 +81,7 @@ class AnnotationDialogue(wx.Dialog):
         text = self.text_ctrl.GetValue()
         start = self.start_time.GetValue()
         finish = self.end_time.GetValue()
-        self.world.temp_anime_annotation = AnimationAnnotation(text, start, finish)
+        self.world.temp_anime_annotation = AnimationAnnotation(text, start, finish, self.world.session_dict['cur_annotation_id'])
         self.Close()
 
     def on_cancel(self, e):

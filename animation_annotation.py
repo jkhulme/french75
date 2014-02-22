@@ -3,13 +3,14 @@ import uuid
 
 class AnimationAnnotation():
 
-    def __init__(self, text, start, end):
+    def __init__(self, text, start, end, idx):
         self.id = uuid.uuid4()
         self.x = None
         self.y = None
         self.text = text
         self.start = start
         self.end = end
+        self.idx = idx
 
     def set_position(self, (x, y)):
         self.x = x
