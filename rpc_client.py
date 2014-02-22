@@ -80,5 +80,8 @@ class French75Client():
     def toggle_param(self, param, value):
         self.server.toggle_param(param, value)
 
+    def add_anime_annotation(self, (key, annotation)):
+        self.server.add_anime_annotation(pickle.dumps((key, annotation)))
+
     def do_animation_stuff():
         pass

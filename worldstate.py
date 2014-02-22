@@ -223,3 +223,12 @@ class WorldState:
         for key in self.session_dict['anime_annotations'].keys():
             for annotation in self.session_dict['anime_annotations'][key]:
                 self.anime_annotations_list.InsertItems([str(annotation.idx) + ": " + annotation.text], 0)
+
+    def add_anime_annotation(self, idx, annotation):
+        if idx not in self.session_dict['anime_annotations'].keys():
+            self.session_dict['anime_annotations'][idx] = [annotation]
+        else:
+            self.session_dict['anime_annotations'][idx].append(annotation)
+        self.populate_anime_annotation_lb()
+        for panel in self.panels:
+            panel.Refresh()
