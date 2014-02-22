@@ -77,7 +77,8 @@ class French75Server():
     def close_large_plot(self):
         self.large_plot.Destroy()
 
-    def update_legend(self, line, file_key, species_key):
+    def update_legend(self, update_tuple):
+        line, file_key, species_key = pickle.loads(update_tuple)
         self.world.session_dict['lines'][file_key][species_key] = line
         self.world.legend.draw_legend()
         self.world.legend.legend_panel.Refresh()
