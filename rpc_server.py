@@ -26,7 +26,6 @@ class French75Server():
         self.server.register_function(self.launch_large_plot, 'launch_large_plot')
         self.server.register_function(self.update_legend, 'update_legend')
         self.server.register_function(self.reset_session, 'reset_session')
-        self.server.register_function(self.change_cursor, 'change_cursor')
         self.server.register_function(self.undo, 'undo')
         self.server.register_function(self.redo, 'redo')
         self.server.register_function(self.delete_anime_annotation, 'delete_anime_annotation')
@@ -75,9 +74,15 @@ class French75Server():
         self.large_plot.Destroy()
 
     def close_large_plot(self):
+        """
+        works
+        """
         self.large_plot.Destroy()
 
     def update_legend(self, update_tuple):
+        """
+        works
+        """
         line, file_key, species_key = pickle.loads(update_tuple)
         self.world.session_dict['lines'][file_key][species_key] = line
         self.world.legend.draw_legend()
@@ -87,9 +92,6 @@ class French75Server():
     def reset_session(self):
         self.world.reset_session()
 
-    def change_cursor(self, cursor):
-        self.world.change_cursor(cursor)
-
     def undo(self):
         self.world.undo()
 
@@ -97,12 +99,12 @@ class French75Server():
         self.world.redo()
 
     def delete_anime_annotation(self, a_id):
-        """
-        Works
-        """
         self.world.delete_anime_annotation(a_id)
 
     def delete_annotation(self, a_id):
+        """
+        works
+        """
         self.world.delete_annotation(pickle.loads(a_id))
 
     def toggle_param(self, param, value):

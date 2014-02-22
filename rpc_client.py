@@ -54,13 +54,13 @@ class French75Client():
         self.server.close_large_plot()
 
     def update_legend(self, line, file_key, species_key):
+        """
+        works
+        """
         self.server.update_legend(pickle.dumps((line, file_key, species_key)))
 
     def reset_session(self):
         self.server.reset_session()
-
-    def change_cursor(self, cursor):
-        self.server.change_cursor(cursor)
 
     def undo(self):
         self.server.undo()
