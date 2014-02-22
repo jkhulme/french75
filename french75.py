@@ -639,13 +639,14 @@ class French75(wx.Frame):
             self.world.temp_anime_annotation.set_position((x, y))
             panel = e.GetEventObject()
             idx = int(panel.GetName())
-            self.anime_annotations_list.InsertItems([str(self.world.session_dict['cur_annotation_id']) + ": " + self.world.temp_anime_annotation.text], 0)
+            #self.anime_annotations_list.InsertItems([str(self.world.session_dict['cur_annotation_id']) + ": " + self.world.temp_anime_annotation.text], 0)
             self.world.temp_anime_annotation.set_id(self.world.session_dict['cur_annotation_id'])
             self.world.session_dict['cur_annotation_id'] += 1
             if idx not in self.world.session_dict['anime_annotations'].keys():
                 self.world.session_dict['anime_annotations'][idx] = [self.world.temp_anime_annotation]
             else:
                 self.world.session_dict['anime_annotations'][idx].append(self.world.temp_anime_annotation)
+            self.world.populate_anime_annotation_lb()
         for panel in self.world.panels:
             panel.Refresh()
 
