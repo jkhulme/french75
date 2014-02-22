@@ -205,3 +205,12 @@ class WorldState:
             self.world.session_dict['anime_annotations'][key] = new_annotation_list
         for panel in self.world.panels:
             panel.Refresh()
+
+    def update_annotation_text(self, a_id, text):
+        for annotation in self.session_dict['annotations']:
+            if annotation.id == a_id:
+                annotation.text = text
+                if annotation.type == self._ARROW:
+                    annotation.type = self._TEXT_ARROW
+                break
+        self.refresh_plot()

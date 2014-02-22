@@ -121,8 +121,8 @@ class Legend(object):
         plot_prefs.set_line(self.world.session_dict['lines'][file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
-        self.update(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
-        self.world.client.update_legend(btn_props.GetParent(), file_key, species_key)
+        self.update(btn_props.GetParent(), file_key, species_key)
+        self.world.client.update_legend(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
 
     def update(self, csv, file_key, species_key):
         """

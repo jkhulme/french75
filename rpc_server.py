@@ -32,6 +32,7 @@ class French75Server():
         self.server.register_function(self.delete_anime_annotation, 'delete_anime_annotation')
         self.server.register_function(self.delete_annotation, 'delete_annotation')
         self.server.register_function(self.toggle_param, 'toggle_param')
+        self.server.register_function(self.close_large_plot, 'close_large_plot')
         self.server.serve_forever()
 
     def start_client(self, ip):
@@ -50,26 +51,37 @@ class French75Server():
         return self.world.pickle_session()
 
     def add_annotation(self, annotation):
+        """
+        Works
+        """
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
         refresh_plot()
         return True
 
     def update_annotation(self, a_id, text):
-        for annotation in self.world.session_dict['annotations']:
-            if annotation.id == a_id:
-                annotation.text = text
-                break
-        refresh_plot()
+        """
+        works
+        """
+        text = pickle.loads(text)
+        a_id = pickle.loads(a_id)
+        self.world.update_annotation_text(a_id, text)
 
     def launch_large_plot(self):
-        large_plot = LargePlotDialog(None, title='Big Plot')
-        large_plot.ShowModal()
-        large_plot.Destroy()
+        """
+        works
+        """
+        self.large_plot = LargePlotDialog(None, title='Big Plot')
+        self.large_plot.ShowModal()
+        self.large_plot.Destroy()
+
+    def close_large_plot(self):
+        self.large_plot.Destroy()
 
     def update_legend(self, line, file_key, species_key):
-        self.world.session_dict['lines'][file_key][species_key]
+        self.world.session_dict['lines'][file_key][species_key] = line
         self.world.legend.draw_legend()
         self.world.legend.legend_panel.Refresh()
+        self.world.refresh_plot()
 
     def reset_session(self):
         self.world.reset_session()
@@ -84,6 +96,9 @@ class French75Server():
         self.world.redo()
 
     def delete_anime_annotation(self, a_id):
+        """
+        Works
+        """
         self.world.delete_anime_annotation(a_id)
 
     def delete_annotation(self, a_id):

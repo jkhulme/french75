@@ -362,10 +362,7 @@ class French75(wx.Frame):
 
     def edit_annotation_text(self, event):
         self.get_label()
-        if self.world.session_dict['annotation_text'] != "":
-            self.selected_annotation.text = self.world.session_dict['annotation_text']
-            if self.selected_annotation.type == self.world._ARROW:
-                self.selected_annotation.type = self.world._TEXT_ARROW
+        self.world.update_annotation_text(self.selected_annotation.id, self.world.session_dict['annotation_text'])
         self.world.client.update_annotation(self.selected_annotation.id, self.selected_annotation.text)
         self.world.push_state()
 

@@ -22,18 +22,36 @@ class French75Client():
         print self.server.test()
 
     def request_session(self):
+        """
+        works
+        """
         data = self.server.get_session_dict()
         self.world.unpickle_session(data)
         return True
 
     def add_annotation(self, annotation):
+        """
+        works
+        """
         self.server.add_annotation(pickle.dumps(annotation))
 
     def update_annotation(self, a_id, text):
-        self.server.update_annotation(a_id, text)
+        """
+        works
+        """
+        self.server.update_annotation(pickle.dumps(a_id), pickle.dumps(text))
 
     def launch_large_plot(self):
+        """
+        works
+        """
         self.server.launch_large_plot()
+
+    def close_large_plot(self):
+        """
+        works
+        """
+        self.server.close_large_plot()
 
     def update_legend(self, line, file_key, species_key):
         self.server.update_legend(line, file_key, species_key)
@@ -54,7 +72,13 @@ class French75Client():
         self.server.delete_anime_annotation(a_id)
 
     def delete_annotation(self, a_id):
+        """
+        works
+        """
         self.server.delete_annotation(pickle.dumps(a_id))
 
     def toggle_param(self, param, value):
         self.server.toggle_param(param, value)
+
+    def do_animation_stuff():
+        pass
