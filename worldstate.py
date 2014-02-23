@@ -232,3 +232,9 @@ class WorldState:
         self.populate_anime_annotation_lb()
         for panel in self.panels:
             panel.Refresh()
+
+    def set_time(self, time):
+        self.session_dict['clock'] = time
+        self.time_slider.SetValue(self.session_dict['clock'])
+        for panel in self.panels:
+                panel.Refresh()

@@ -69,6 +69,8 @@ class French75(wx.Frame):
 
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(500, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
+        self.slider_time.Bind(wx.EVT_SCROLL_THUMBRELEASE, self.released_slider)
+        self.world.time_slider = self.slider_time
 
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
         self.drop_down_species.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_species)
@@ -803,6 +805,9 @@ class French75(wx.Frame):
     def export_animation(self, e):
         self.save = True
         self.play_animation(None)
+
+    def released_slider(self, e):
+        self.world.client.set_clock()
 
 if __name__ == '__main__':
     app = wx.App()
