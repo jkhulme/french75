@@ -65,6 +65,7 @@ class French75(wx.Frame):
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
+        self.world.play_animation = self.real_play_animation
 
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(500, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
@@ -706,6 +707,10 @@ class French75(wx.Frame):
         """
         Create new threads, change button text
         """
+        self.world.client.play_animation()
+        self.real_play_animation()
+
+    def real_play_animation(self):
         if not self.world.session_dict['start_playing']:
             self.world.session_dict['clock'] = 0
             self.slider_time.SetValue(0)

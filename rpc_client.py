@@ -85,3 +85,7 @@ class French75Client():
 
     def do_animation_stuff():
         pass
+
+    def play_animation(self):
+        self.server.play_animation()
+

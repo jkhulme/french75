@@ -33,6 +33,7 @@ class French75Server():
         self.server.register_function(self.toggle_param, 'toggle_param')
         self.server.register_function(self.close_large_plot, 'close_large_plot')
         self.server.register_function(self.add_anime_annotation, 'add_anime_annotation')
+        self.server.register_function(self.play_animation, 'play_animation')
         self.server.serve_forever()
 
     def start_client(self, ip):
@@ -115,3 +116,8 @@ class French75Server():
     def add_anime_annotation(self, annotation_tuple):
         idx, annotation = pickle.loads(annotation_tuple)
         self.world.add_anime_annotation(idx, annotation)
+
+    def play_animation(self):
+        print "foo"
+        self.world.play_animation()
+        print "bar"
