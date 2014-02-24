@@ -77,6 +77,10 @@ class French75(wx.Frame):
         self.switch_animation_button = wx.Button(self.animation_panel, -1, "<->")
         self.switch_animation_button.Bind(wx.EVT_BUTTON, self.switch_animation)
         self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
+        self.drop_down_files.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_file)
+
+        self.world.create_cell_segments_by_file = self.create_cell_segments_by_file
+        self.world.create_cell_segments_by_species = self.create_cell_segments_by_species
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
         attached_label = wx.StaticText(self.model_panel, -1, "Attached Files:")
@@ -573,6 +577,12 @@ class French75(wx.Frame):
     def change_animation_species(self, e):
         #Does this do anything?
         self.create_cell_segments_by_file()
+        self.world.client.change_animation_species()
+
+    def change_animation_file(self, e):
+        #Does this do anything?
+        self.create_cell_segments_by_species()
+        self.world.client.change_animation_file()
 
     def create_cell_segments_by_file(self):
         (a_width, a_height) = self.animation_panel.GetSize()

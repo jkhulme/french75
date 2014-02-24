@@ -36,6 +36,8 @@ class French75Server():
         self.server.register_function(self.play_animation, 'play_animation')
         self.server.register_function(self.set_clock, 'set_clock')
         self.server.register_function(self.switch_animation, 'switch_animation')
+        self.server.register_function(self.change_animation_species, 'change_animation_species')
+        self.server.register_function(self.change_animation_file, 'change_animation_file')
 
         self.server.serve_forever()
 
@@ -129,3 +131,9 @@ class French75Server():
 
     def switch_animation(self, by_species):
         self.world.switch_animation()
+
+    def change_animation_species(self):
+        self.world.create_cell_segments_by_file()
+
+    def change_animation_file(self):
+        self.world.create_cell_segments_by_species()

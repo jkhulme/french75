@@ -92,3 +92,9 @@ class French75Client():
 
     def switch_animation(self, by_species):
         self.server.switch_animation(by_species)
+
+    def change_animation_species(self):
+        self.server.change_animation_species()
+
+    def change_animation_file(self):
+        self.server.change_animation_file()
