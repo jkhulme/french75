@@ -35,6 +35,7 @@ class French75Server():
         self.server.register_function(self.add_anime_annotation, 'add_anime_annotation')
         self.server.register_function(self.play_animation, 'play_animation')
         self.server.register_function(self.set_clock, 'set_clock')
+        self.server.register_function(self.switch_animation, 'switch_animation')
 
         self.server.serve_forever()
 
@@ -125,3 +126,6 @@ class French75Server():
 
     def set_clock(self, time):
         self.world.set_time(pickle.loads(time))
+
+    def switch_animation(self, by_species):
+        self.world.switch_animation()

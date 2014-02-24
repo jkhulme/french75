@@ -5,7 +5,7 @@
 # Start time: 0.0
 # Model Parameters
 # Run time = 105.82099914550781
-# Time, "R", "aSrc_total_MB"
+# Time, "R@cytoplasm", "aSrc_total_MB@cytoplasm"
 0.0, 50000.0, 750.0
 202.02020202020202, 50000.0, 760.1
 404.04040404040404, 50000.0, 734.0

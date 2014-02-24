@@ -166,6 +166,12 @@ class French75(wx.Frame):
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
+
+        self.world.drop_down_species = self.drop_down_species
+        self.world.drop_down_files = self.drop_down_files
+        self.world.create_cell_segments_by_species = self.create_cell_segments_by_species
+        self.world.create_cell_segments_by_file = self.create_cell_segments_by_file
+
         self.SetTitle(_TITLE)
         self.world.update_title = self.SetTitle
         self.world.get_title = self.GetTitle
@@ -653,10 +659,12 @@ class French75(wx.Frame):
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(True)
             self.create_cell_segments_by_species()
+            self.world.client.switch_animation(True)
         else:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
             self.create_cell_segments_by_file()
+            self.world.client.switch_animation(False)
 
     def list_of_species(self):
         species_list = []
