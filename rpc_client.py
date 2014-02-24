@@ -27,6 +27,7 @@ class French75Client():
         """
         data = self.server.get_session_dict()
         self.world.unpickle_session(data)
+        self.world.push_state()
         return True
 
     def add_annotation(self, annotation):
@@ -82,9 +83,6 @@ class French75Client():
 
     def add_anime_annotation(self, (key, annotation)):
         self.server.add_anime_annotation(pickle.dumps((key, annotation)))
-
-    def do_animation_stuff():
-        pass
 
     def play_animation(self):
         self.server.play_animation()

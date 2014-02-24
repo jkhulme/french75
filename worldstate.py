@@ -151,15 +151,16 @@ class WorldState:
         """
         try:
             self.session_dict = self.undo_stack.undo_pop()
-            self.client.undo()
             self.legend.draw_legend()
+            self.refresh_plot()
         except:
             pass
 
 
     def redo(self):
-        self.client.redo()
         self.session_dict = self.undo_stack.redo_pop()
+        self.legend.draw_legend()
+        self.refresh_plot()
 
     def push_state(self):
         """

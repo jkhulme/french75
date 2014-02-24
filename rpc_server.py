@@ -58,6 +58,7 @@ class French75Server():
         Works
         """
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
+        self.world.push_state()
         refresh_plot()
         return True
 
@@ -120,9 +121,7 @@ class French75Server():
         self.world.add_anime_annotation(idx, annotation)
 
     def play_animation(self):
-        print "foo"
         self.world.play_animation()
-        print "bar"
 
     def set_clock(self, time):
         self.world.set_time(pickle.loads(time))

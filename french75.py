@@ -504,11 +504,11 @@ class French75(wx.Frame):
 
     def undo(self, event):
         self.world.undo()
-        refresh_plot()
+        self.world.client.undo()
 
     def redo(self, event):
         self.world.redo()
-        refresh_plot()
+        self.world.client.redo()
 
     def toggle_xkcd(self, event):
         self.toggle_param('xkcd')
