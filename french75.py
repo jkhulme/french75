@@ -568,7 +568,7 @@ class French75(wx.Frame):
             self.drop_down_species.SetSelection(0)
             self.drop_down_files.SetSelection(0)
 
-            self.create_cell_segments_by_file()
+            self.create_cell_segments_by_file(self.drop_down_files.GetSelection())
 
 
         self.world.push_state()
@@ -576,15 +576,18 @@ class French75(wx.Frame):
 
     def change_animation_species(self, e):
         #Does this do anything?
-        self.create_cell_segments_by_file()
-        self.world.client.change_animation_species()
+        n = self.drop_down_species.GetSelection()
+        self.create_cell_segments_by_file(n)
+        self.world.client.change_animation_species(n)
 
     def change_animation_file(self, e):
         #Does this do anything?
-        self.create_cell_segments_by_species()
-        self.world.client.change_animation_file()
+        n = self.drop_down_files.GetSelection()
+        self.create_cell_segments_by_species(n)
+        self.world.client.change_animation_file(n)
 
-    def create_cell_segments_by_file(self):
+    def create_cell_segments_by_file(self, n):
+        self.drop_down_species.SetSelection(n)
         (a_width, a_height) = self.animation_panel.GetSize()
         for child in self.animation_panel.GetChildren():
             try:
@@ -600,7 +603,7 @@ class French75(wx.Frame):
         b = (a_height * 0.7) - 10
         c = (a_height * 0.7) - 20
         d = 0
-        for i, file_name in enumerate(self.world.session_dict['results'].keys()):
+        for i, file_name in enumerate(sorted(self.world.session_dict['results'].keys())):
             small_vbox = wx.BoxSizer(wx.VERTICAL)
             self.panel_vboxes.append(small_vbox)
             title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
@@ -618,7 +621,8 @@ class French75(wx.Frame):
         for panel in self.world.panels:
             panel.Refresh()
 
-    def create_cell_segments_by_species(self):
+    def create_cell_segments_by_species(self, n):
+        self.drop_down_files.SetSelection(n)
         (a_width, a_height) = self.animation_panel.GetSize()
         for child in self.animation_panel.GetChildren():
             try:
@@ -634,7 +638,7 @@ class French75(wx.Frame):
         b = (a_height * 0.7) - 10
         c = (a_height * 0.7) - 20
         d = 0
-        for i, species_name in enumerate(self.list_of_species()):
+        for i, species_name in enumerate(sorted(self.list_of_species())):
             if species_name != "Time":
                 small_vbox = wx.BoxSizer(wx.VERTICAL)
                 self.panel_vboxes.append(small_vbox)
@@ -668,13 +672,13 @@ class French75(wx.Frame):
         if self.drop_down_species.IsEnabled():
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(True)
-            self.create_cell_segments_by_species()
-            self.world.client.switch_animation(True)
+            self.create_cell_segments_by_species(self.drop_down_files.GetSelection())
+            self.world.client.switch_animation()
         else:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
-            self.create_cell_segments_by_file()
-            self.world.client.switch_animation(False)
+            self.create_cell_segments_by_file(self.drop_down_species.GetSelection())
+            self.world.client.switch_animation()
 
     def list_of_species(self):
         species_list = []

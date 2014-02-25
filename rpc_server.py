@@ -129,11 +129,11 @@ class French75Server():
     def set_clock(self, time):
         self.world.set_time(pickle.loads(time))
 
-    def switch_animation(self, by_species):
+    def switch_animation(self):
         self.world.switch_animation()
 
-    def change_animation_species(self):
-        self.world.create_cell_segments_by_file()
+    def change_animation_species(self, n):
+        self.world.create_cell_segments_by_file(n)
 
-    def change_animation_file(self):
-        self.world.create_cell_segments_by_species()
+    def change_animation_file(self, n):
+        self.world.create_cell_segments_by_species(n)

@@ -90,11 +90,11 @@ class French75Client():
     def set_clock(self):
         self.server.set_clock(pickle.dumps(self.world.session_dict['clock']))
 
-    def switch_animation(self, by_species):
-        self.server.switch_animation(by_species)
+    def switch_animation(self):
+        self.server.switch_animation()
 
-    def change_animation_species(self):
-        self.server.change_animation_species()
+    def change_animation_species(self, n):
+        self.server.change_animation_species(n)
 
-    def change_animation_file(self):
-        self.server.change_animation_file()
+    def change_animation_file(self, n):
+        self.server.change_animation_file(n)
