@@ -672,13 +672,15 @@ class French75(wx.Frame):
         if self.drop_down_species.IsEnabled():
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(True)
-            self.create_cell_segments_by_species(self.drop_down_files.GetSelection())
-            self.world.client.switch_animation()
+            n = self.drop_down_files.GetSelection()
+            self.create_cell_segments_by_species(n)
+            self.world.client.switch_animation(n)
         else:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
-            self.create_cell_segments_by_file(self.drop_down_species.GetSelection())
-            self.world.client.switch_animation()
+            n = self.drop_down_species.GetSelection()
+            self.create_cell_segments_by_file(n)
+            self.world.client.switch_animation(n)
 
     def list_of_species(self):
         species_list = []

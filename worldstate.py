@@ -240,12 +240,12 @@ class WorldState:
         for panel in self.panels:
                 panel.Refresh()
 
-    def switch_animation(self):
+    def switch_animation(self, n):
         if self.drop_down_species.IsEnabled():
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(True)
-            self.create_cell_segments_by_species()
+            self.create_cell_segments_by_species(n)
         else:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
-            self.create_cell_segments_by_file()
+            self.create_cell_segments_by_file(n)
