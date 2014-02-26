@@ -13,44 +13,61 @@ class Plot_Dialog(wx.Dialog):
         super(Plot_Dialog, self).__init__(*args, **kw)
 
         self.world = WorldState.Instance()
-        dialog_panel = wx.Panel(self)
+        #self = wx.Panel(self)
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
-        sb = wx.StaticBox(dialog_panel, label='Colors')
-        sbs = wx.StaticBoxSizer(sb, orient=wx.VERTICAL)
+        preferences_label = wx.StaticText(self, -1, "Line Preferences:")
+        panel_vbox.Add(preferences_label, 0, wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM, 10)
 
-        self.cb_show_hide = wx.CheckBox(dialog_panel, -1, 'Show', (10, 10))
-        sbs.Add(self.cb_show_hide)
+        line1 = wx.StaticLine(self)
+        panel_vbox.Add(line1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
-        self.cb_intense = wx.CheckBox(dialog_panel, -1, 'Intensity Plot',
-                                     (10, 10))
-        sbs.Add(self.cb_intense)
+        self.cb_show_hide = wx.CheckBox(self, -1, 'Show Line', (10, 10), style=wx.ALIGN_RIGHT)
+        panel_vbox.Add(self.cb_show_hide, 0, wx.EXPAND|wx.TOP|wx.LEFT, 10)
 
-        self.colour_picker = wx.ColourPickerCtrl(dialog_panel, -1)
-        sbs.Add(self.colour_picker)
+        self.cb_intense = wx.CheckBox(self, -1, 'Plot Intensity Gradient',
+                                     (10, 10), style=wx.ALIGN_RIGHT)
+        panel_vbox.Add(self.cb_intense, 0, wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM, 10)
 
-        #Should this be tied more to real units?
-        self.thick_spin = wx.SpinCtrl(dialog_panel, -1, "2")
-        sbs.Add(self.thick_spin)
+        line2 = wx.StaticLine(self)
+        panel_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
-        dialog_panel.SetSizer(sbs)
+        colour_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        colour_label = wx.StaticText(self, -1, "Line Colour:")
+        colour_hbox.Add(colour_label)
+        self.colour_picker = wx.ColourPickerCtrl(self, -1)
+        colour_hbox.Add(self.colour_picker)
+        panel_vbox.Add(colour_hbox, 0, wx.EXPAND|wx.TOP|wx.LEFT, 10)
+
+        thickness_hbox = wx.BoxSizer(wx.HORIZONTAL)
+        thickness_label = wx.StaticText(self, -1, "Line Thickness")
+        thickness_hbox.Add(thickness_label)
+        self.thick_spin = wx.SpinCtrl(self, -1, "2")
+        thickness_hbox.Add(self.thick_spin)
+        panel_vbox.Add(thickness_hbox, 0, wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM, 10)
+
+        line4 = wx.StaticLine(self)
+        panel_vbox.Add(line4, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+        panel_vbox.Add((0,0), 1, wx.EXPAND)
+        line5 = wx.StaticLine(self)
+        panel_vbox.Add(line5, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
+        #self.SetSizer(panel_vbox)
 
         btn_hbox = wx.BoxSizer(wx.HORIZONTAL)
         okButton = wx.Button(self, label='Ok')
         closeButton = wx.Button(self, label='Cancel')
         btn_hbox.Add(okButton)
-        btn_hbox.Add(closeButton, flag=wx.LEFT, border=5)
+        btn_hbox.Add(closeButton, flag=wx.LEFT, border=10)
 
-        panel_vbox.Add(dialog_panel, proportion=1, flag=wx.ALL |
-                       wx.EXPAND, border=5)
         panel_vbox.Add(btn_hbox, flag=wx.ALIGN_CENTER | wx.TOP |
                        wx.BOTTOM, border=10)
-
-        self.SetSizer(panel_vbox)
 
         okButton.Bind(wx.EVT_BUTTON, self.on_ok)
         closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
 
+        self.SetSizer(panel_vbox)
+        panel_vbox.Fit(self)
         self.SetSize((self.world.dispW/4, self.world.dispH/2))
         self.Centre()
 
