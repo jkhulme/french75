@@ -5,7 +5,7 @@ from utils import refresh_plot
 from worldstate import WorldState
 
 _HEIGHT = 20
-_WIDTH = 45
+_WIDTH = 20
 _BG_COLOUR = 'white'
 
 
@@ -44,32 +44,37 @@ class Legend(object):
             collpane_body.SetBackgroundColour(_BG_COLOUR)
             vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
+            line1 = wx.StaticLine(collpane_body)
+            vbox_collpane.Add(line1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
             for key in self.world.session_dict['lines'][result]:
                 hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
                 vbox_coll = wx.BoxSizer(wx.VERTICAL)
                 species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
-                vbox_coll.Add(species_label)
+                vbox_coll.Add(species_label, 0, wx.TOP|wx.BOTTOM, 5)
 
                 btn_colour = wx.Button(collpane_body, -1, '', size=(_WIDTH, _HEIGHT))
                 btn_colour.Disable()
                 btn_colour.SetBackgroundColour(self.world.session_dict['lines'][result][key].flat_colour)
-                hbox_collpane.Add(btn_colour)
+                hbox_collpane.Add(btn_colour, 0, wx.ALL, 2)
 
                 cb_show_hide = wx.CheckBox(collpane_body, -1, 'Show')
-                hbox_collpane.Add(cb_show_hide)
+                hbox_collpane.Add(cb_show_hide, 0, wx.ALL, 2)
                 cb_show_hide.SetValue(self.world.session_dict['lines'][result][key].plot_line)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
-                cb_intense = wx.CheckBox(collpane_body, -1, 'Ints')
-                hbox_collpane.Add(cb_intense)
+                cb_intense = wx.CheckBox(collpane_body, -1, 'Intense')
+                hbox_collpane.Add(cb_intense, 0, wx.ALL, 2)
                 cb_intense.SetValue(self.world.session_dict['lines'][result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
-                btn_props = wx.Button(collpane_body, -1, 'Prefs', size=(_WIDTH, _HEIGHT))
+                btn_props = wx.Button(collpane_body, -1, 'Settings', size=(70, _HEIGHT))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
-                hbox_collpane.Add(btn_props)
-                vbox_coll.Add(hbox_collpane)
+                hbox_collpane.Add(btn_props, 0, wx.ALL, 2)
+                vbox_coll.Add(hbox_collpane, 0, wx.BOTTOM, 5)
                 vbox_collpane.Add(vbox_coll)
+                line2 = wx.StaticLine(collpane_body)
+                vbox_collpane.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
             collpane_body.SetSizer(vbox_collpane)
             vbox_collpane.Fit(collpane_body)
