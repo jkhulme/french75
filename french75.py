@@ -470,7 +470,6 @@ class French75(wx.Frame):
 
     def run_client(self, server_ip, my_ip):
         self.world.client = French75Client(server_ip, 8000)
-        self.world.client.test()
         self.world.client.start_partner_client(my_ip)
         success = self.world.client.request_session()
         if success:

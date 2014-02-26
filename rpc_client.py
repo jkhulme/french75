@@ -19,7 +19,8 @@ class French75Client():
         self.server.start_client(ip)
 
     def test(self):
-        print self.server.test()
+        self.world.lamport_clock += 1
+        self.server.test(self.world.lamport_clock)
 
     def request_session(self):
         """
@@ -34,7 +35,8 @@ class French75Client():
         """
         works
         """
-        self.server.add_annotation(pickle.dumps(annotation))
+        self.world.lamport_clock += 1
+        self.server.add_annotation(self.world.lamport_clock, pickle.dumps(annotation))
 
     def update_annotation(self, a_id, text):
         """

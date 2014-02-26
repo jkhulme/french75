@@ -17,15 +17,20 @@ class UndoStack:
 
     def undo_pop(self):
         self.redo_push(deepcopy(self.stack.pop(0)))
-        return deepcopy(self.stack[0])
+        return deepcopy(self.stack[0][1])
 
     def redo_push(self, item):
         self.redo_stack.insert(0, item)
 
     def redo_pop(self):
-        item = deepcopy(self.redo_stack.pop(0))
+        item = deepcopy(self.redo_stack.pop(0)[1])
         self.undo_push(item)
         return item
 
     def __len__(self):
         return len(self.stack)
+
+    def reorder(self):
+        self.stack.sort()
+        self.stack.reverse()
+        return deepcopy(self.stack.pop(0))

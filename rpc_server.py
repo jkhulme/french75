@@ -48,20 +48,22 @@ class French75Server():
 
     def run_client(self, ip):
         self.world.client = French75Client(ip, 8001)
-        self.world.client.test()
 
-    def test(self):
-        return "hello world"
+    def test(self, clock):
+        self.world.lamport_clock = max(clock, self.world.lamport_clock) + 1
+        print clock
 
     def get_session_dict(self):
         return self.world.pickle_session()
 
-    def add_annotation(self, annotation):
+    def add_annotation(self, clock, annotation):
         """
         Works
         """
+        print "my clock", self.world.lamport_clock
+        print "incoming clock", clock
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
-        self.world.push_state()
+        self.world.reorder(clock)
         refresh_plot()
         return True
 

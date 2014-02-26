@@ -83,6 +83,8 @@ class WorldState:
 
         self.panels = []
 
+        self.lamport_clock = 0
+
     def reset_session(self):
         """
         Set everything back to a default value
@@ -162,7 +164,7 @@ class WorldState:
         self.legend.draw_legend()
         self.refresh_plot()
 
-    def push_state(self):
+    def push_state(self, clock=None):
         """
         Put the current session dict onto the undo stack, change the title to
         indicate that there are unsaved changes.  Need to copy some values
@@ -171,8 +173,10 @@ class WorldState:
         Need to use deepcopy so that objects in the dictionary are not just
         references
         """
+        if clock is None:
+            clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
-        self.undo_stack.undo_push(copy.deepcopy(self.session_dict))
+        self.undo_stack.undo_push((clock, copy.deepcopy(self.session_dict)))
 
     def pickle_session(self):
         """
@@ -249,3 +253,8 @@ class WorldState:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
             self.create_cell_segments_by_file(n)
+
+    def reorder(self, clock):
+        self.push_state(clock)
+        self.session_dict = self.undo_stack.reorder()
+        self.refresh_plot()
