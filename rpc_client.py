@@ -37,13 +37,13 @@ class French75Client():
         """
         self.world.lamport_clock += 1
         self.server.add_annotation(self.world.lamport_clock, pickle.dumps(annotation))
-        print "win"
 
     def update_annotation(self, a_id, text):
         """
         works
         """
-        self.server.update_annotation(pickle.dumps(a_id), pickle.dumps(text))
+        self.world.lamport_clock += 1
+        self.server.update_annotation(self.world.lamport_clock, pickle.dumps(a_id), pickle.dumps(text))
 
     def launch_large_plot(self):
         """
@@ -61,7 +61,8 @@ class French75Client():
         """
         works
         """
-        self.server.update_legend(pickle.dumps((line, file_key, species_key)))
+        self.world.lamport_clock += 1
+        self.server.update_legend(self.world.lamport_clock, pickle.dumps((line, file_key, species_key)))
 
     def reset_session(self):
         self.server.reset_session()
@@ -73,31 +74,40 @@ class French75Client():
         self.server.redo()
 
     def delete_anime_annotation(self, a_id):
-        self.server.delete_anime_annotation(a_id)
+        self.world.lamport_clock += 1
+        self.server.delete_anime_annotation(self.world.lamport_clock, a_id)
 
     def delete_annotation(self, a_id):
         """
         works
         """
-        self.server.delete_annotation(pickle.dumps(a_id))
+        self.world.lamport_clock += 1
+        self.server.delete_annotation(self.world.lamport_clock, pickle.dumps(a_id))
 
     def toggle_param(self, param, value):
-        self.server.toggle_param(param, value)
+        self.world.lamport_clock += 1
+        self.server.toggle_param(self.world.lamport_clock, param, value)
 
     def add_anime_annotation(self, (key, annotation)):
-        self.server.add_anime_annotation(pickle.dumps((key, annotation)))
+        self.world.lamport_clock += 1
+        self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
     def play_animation(self):
-        self.server.play_animation()
+        self.world.lamport_clock += 1
+        self.server.play_animation(self.world.lamport_clock)
 
     def set_clock(self):
-        self.server.set_clock(pickle.dumps(self.world.session_dict['clock']))
+        self.world.lamport_clock += 1
+        self.server.set_clock(self.world.lamport_clock, pickle.dumps(self.world.session_dict['clock']))
 
     def switch_animation(self, n):
-        self.server.switch_animation(n)
+        self.world.lamport_clock += 1
+        self.server.switch_animation(self.world.lamport_clock, n)
 
     def change_animation_species(self, n):
-        self.server.change_animation_species(n)
+        self.world.lamport_clock += 1
+        self.server.change_animation_species(self.world.lamport_clock, n)
 
     def change_animation_file(self, n):
-        self.server.change_animation_file(n)
+        self.world.lamport_clock += 1
+        self.server.change_animation_file(self.world.lamport_clock, n)

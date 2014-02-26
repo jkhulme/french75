@@ -60,23 +60,21 @@ class French75Server():
         """
         Works
         """
-        print "my clock", self.world.lamport_clock
-        print "incoming clock", clock
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
-        print "fuck"
         self.world.reorder(clock)
-        print "shit"
         refresh_plot()
-        print "piss"
         return True
 
-    def update_annotation(self, a_id, text):
+    def update_annotation(self, clock, a_id, text):
         """
         works
         """
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         text = pickle.loads(text)
         a_id = pickle.loads(a_id)
         self.world.update_annotation_text(a_id, text)
+        self.world.reorder(clock)
 
     def launch_large_plot(self):
         """
@@ -92,15 +90,17 @@ class French75Server():
         """
         self.large_plot.Destroy()
 
-    def update_legend(self, update_tuple):
+    def update_legend(self, clock, update_tuple):
         """
         works
         """
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         line, file_key, species_key = pickle.loads(update_tuple)
         self.world.session_dict['lines'][file_key][species_key] = line
         self.world.legend.draw_legend()
         self.world.legend.legend_panel.Refresh()
         self.world.refresh_plot()
+        self.world.reorder()
 
     def reset_session(self):
         self.world.reset_session()
@@ -111,34 +111,52 @@ class French75Server():
     def redo(self):
         self.world.redo()
 
-    def delete_anime_annotation(self, a_id):
+    def delete_anime_annotation(self, clock, a_id):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.delete_anime_annotation(a_id)
+        self.world.reorder()
 
-    def delete_annotation(self, a_id):
+    def delete_annotation(self, clock, a_id):
         """
         works
         """
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.delete_annotation(pickle.loads(a_id))
+        self.world.reorder()
 
-    def toggle_param(self, param, value):
+    def toggle_param(self, clock, param, value):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict[param] = value
         refresh_plot()
+        self.world.reorder()
 
-    def add_anime_annotation(self, annotation_tuple):
+    def add_anime_annotation(self, clock, annotation_tuple):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         idx, annotation = pickle.loads(annotation_tuple)
         self.world.add_anime_annotation(idx, annotation)
+        self.world.reorder()
 
-    def play_animation(self):
+    def play_animation(self, clock):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.play_animation()
+        self.world.reorder()
 
-    def set_clock(self, time):
+    def set_clock(self, clock, time):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.set_time(pickle.loads(time))
+        self.world.reorder()
 
-    def switch_animation(self, n):
+    def switch_animation(self, clock, n):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.switch_animation(n)
+        self.world.reorder()
 
-    def change_animation_species(self, n):
+    def change_animation_species(self, clock, n):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.create_cell_segments_by_file(n)
+        self.world.reorder()
 
-    def change_animation_file(self, n):
+    def change_animation_file(self, clock, n):
+        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.create_cell_segments_by_species(n)
+        self.world.reorder()
