@@ -44,6 +44,8 @@ class SessionWizard(wx.wizard.Wizard):
         self.title_text = wx.TextCtrl(page1, -1, size=(300, -1), validator = TextNotEmptyValidator(title_label))
         page1.add_widget(self.title_text)
         page1.add_widget(title_label)
+        line1 = wx.StaticLine(page1)
+        page1.add_widget(line1)
         self.add_page(page1)
 
         #PAGE 2
@@ -56,11 +58,15 @@ class SessionWizard(wx.wizard.Wizard):
         btn_add_file.Bind(wx.EVT_BUTTON, self.add_files)
         btn_rem_file = wx.Button(page2, -1, "Remove")
         btn_rem_file.Bind(wx.EVT_BUTTON, self.remove_files)
-        file_toolbar.Add(btn_add_file)
-        file_toolbar.Add(btn_rem_file)
-        page2.add_widget(file_toolbar)
+        file_toolbar.Add(btn_add_file, 0, wx.ALL, 5)
+        file_toolbar.Add(btn_rem_file, 0, wx.ALL, 5)
+        page2.add_widget(file_toolbar, expand=False)
 
         page2.add_widget(results_label)
+
+        line2 = wx.StaticLine(page2)
+        page2.add_widget(line2)
+
         self.add_page(page2)
 
         #PAGE 3
@@ -69,7 +75,11 @@ class SessionWizard(wx.wizard.Wizard):
         model_button = wx.Button(page3, -1, "Select")
         model_button.Bind(wx.EVT_BUTTON, self.select_model)
         page3.add_widget(self.model_list)
-        page3.add_widget(model_button)
+        page3.add_widget(model_button, expand=False)
+
+        line3 = wx.StaticLine(page3)
+        page3.add_widget(line3)
+
         self.add_page(page3)
 
         #PAGE 4
@@ -87,6 +97,7 @@ class SessionWizard(wx.wizard.Wizard):
         page4.add_widget(self.location_panel)
         page4.Bind(wizmod.EVT_WIZARD_PAGE_SHOWN, self.page4_location_panel_size)
         #page4.add_widget(self.species_list_peri)
+
         self.add_page(page4)
 
         """
@@ -256,9 +267,12 @@ class wizard_page(wizmod.PyWizardPage):
         self.sizer.AddWindow(wx.StaticLine(self, -1), 0, wx.EXPAND|wx.ALL, _PADDING)
         self.SetSizer(self.sizer)
 
-    def add_widget(self, stuff):
+    def add_widget(self, stuff, expand=True):
         '''Add additional widgets to the bottom of the page'''
-        self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, _PADDING)
+        if expand:
+            self.sizer.Add(stuff, 0, wx.EXPAND|wx.ALL, _PADDING)
+        else:
+            self.sizer.Add(stuff, 0, wx.ALL|wx.ALIGN_CENTRE, _PADDING)
 
     #Would like to get rid of the following methods, but they seem to be needed by some parent code
     def SetNext(self, next):
