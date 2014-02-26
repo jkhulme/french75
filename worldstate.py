@@ -177,7 +177,7 @@ class WorldState:
             clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
         self.undo_stack.undo_push((clock, copy.deepcopy(self.session_dict)))
-        self.reorder()
+        #self.reorder(clock)
 
     def pickle_session(self):
         """
