@@ -84,7 +84,7 @@ class French75(wx.Frame):
 
         attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
         attached_label = wx.StaticText(self.model_panel, -1, "Attached Files:")
-        attached_files_vbox.Add(attached_label)
+        attached_files_vbox.Add(attached_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
         self.attached_file_list = wx.ListBox(self.model_panel, -1, size=(300, 300))
         attached_files_vbox.Add(self.attached_file_list)
         attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
@@ -94,15 +94,15 @@ class French75(wx.Frame):
         self.open_files_button = wx.Button(self.model_panel, -1, "Open")
         self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
 
-        attached_file_toolbar.Add(self.add_files_button)
-        attached_file_toolbar.Add(self.open_files_button)
-        attached_files_vbox.Add(attached_file_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
+        attached_file_toolbar.Add(self.add_files_button, 0, wx.ALL, 5)
+        attached_file_toolbar.Add(self.open_files_button, 0, wx.ALL, 5)
+        attached_files_vbox.Add(attached_file_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
         self.model_panel.SetSizer(attached_files_vbox)
         attached_files_vbox.Fit(self)
 
         anime_annotations_vbox = wx.BoxSizer(wx.VERTICAL)
         anime_annotations_label = wx.StaticText(self.files_panel, -1, "Animation Annotations:")
-        anime_annotations_vbox.Add(anime_annotations_label)
+        anime_annotations_vbox.Add(anime_annotations_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
         self.anime_annotations_list = wx.ListBox(self.files_panel, -1, size=(300, 300))
         self.world.anime_annotations_list = self.anime_annotations_list
         anime_annotations_vbox.Add(self.anime_annotations_list)
@@ -113,9 +113,9 @@ class French75(wx.Frame):
         self.delete_anime_annotation_button = wx.Button(self.files_panel, -1, "Delete")
         self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_annotation)
 
-        anime_annotations_toolbar.Add(self.add_anime_annotation_button)
-        anime_annotations_toolbar.Add(self.delete_anime_annotation_button)
-        anime_annotations_vbox.Add(anime_annotations_toolbar, flag=wx.ALIGN_LEFT | wx.TOP)
+        anime_annotations_toolbar.Add(self.add_anime_annotation_button, 0, wx.ALL, 5)
+        anime_annotations_toolbar.Add(self.delete_anime_annotation_button, 0, wx.ALL, 5)
+        anime_annotations_vbox.Add(anime_annotations_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
         self.files_panel.SetSizer(anime_annotations_vbox)
         anime_annotations_vbox.Fit(self)
 
