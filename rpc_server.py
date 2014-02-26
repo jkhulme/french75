@@ -63,8 +63,11 @@ class French75Server():
         print "my clock", self.world.lamport_clock
         print "incoming clock", clock
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
+        print "fuck"
         self.world.reorder(clock)
+        print "shit"
         refresh_plot()
+        print "piss"
         return True
 
     def update_annotation(self, a_id, text):

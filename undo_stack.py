@@ -33,4 +33,4 @@ class UndoStack:
     def reorder(self):
         self.stack.sort()
         self.stack.reverse()
-        return deepcopy(self.stack.pop(0))
+        return deepcopy(self.stack.pop(0)[1])

@@ -37,6 +37,7 @@ class French75Client():
         """
         self.world.lamport_clock += 1
         self.server.add_annotation(self.world.lamport_clock, pickle.dumps(annotation))
+        print "win"
 
     def update_annotation(self, a_id, text):
         """
