@@ -184,6 +184,15 @@ class French75(wx.Frame):
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
+        title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_LEFT)
+        font = wx.Font(28, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        title.SetFont(font)
+
+        vbox_leg = wx.BoxSizer(wx.VERTICAL)
+        vbox_leg.Add(title, flag=wx.CENTER)
+
+        self.legend_panel.SetSizer(vbox_leg)
+        self.legend_panel.Layout()
 
         self.world.drop_down_species = self.drop_down_species
         self.world.drop_down_files = self.drop_down_files
