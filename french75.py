@@ -47,14 +47,14 @@ class French75(wx.Frame):
 
         self.splitter_left = wx.SplitterWindow(self, -1)
         self.splitter_right = wx.SplitterWindow(self.splitter_left, -1)
-        splitter_middle = wx.SplitterWindow(self.splitter_right)
-        self.legend_panel = scrolled.ScrolledPanel(splitter_middle, -1)
+        self.splitter_middle = wx.SplitterWindow(self.splitter_right)
+        self.legend_panel = scrolled.ScrolledPanel(self.splitter_middle, -1)
         self.splitter_right_middle = wx.SplitterWindow(self.splitter_left, -1)
-        self.graph_panel = wx.Panel(splitter_middle, -1)
+        self.graph_panel = wx.Panel(self.splitter_middle, -1)
         self.model_panel = wx.Panel(self.splitter_right_middle, -1)
         self.files_panel = wx.Panel(self.splitter_right_middle, -1)
         self.world.files_panel = self.files_panel
-        #self.animation_panel = wx.Panel(splitter_middle, -1)
+        #self.animation_panel = wx.Panel(self.splitter_middle, -1)
         self.animation_panel = scrolled.ScrolledPanel(self.splitter_right, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
@@ -172,12 +172,12 @@ class French75(wx.Frame):
         self.SetMenuBar(self.build_menu_bar())
 
         self.splitter_left.SplitVertically(self.splitter_right, self.splitter_right_middle)
-        self.splitter_right.SplitHorizontally(splitter_middle, self.animation_panel)
-        splitter_middle.SplitVertically(self.graph_panel, self.legend_panel)
+        self.splitter_right.SplitHorizontally(self.splitter_middle, self.animation_panel)
+        self.splitter_middle.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
         self.splitter_left.SetSashPosition(5 * self.world.dispW/6)
-        splitter_middle.SetSashPosition(4 * self.world.dispW/6)
+        self.splitter_middle.SetSashPosition(4 * self.world.dispW/6)
         self.splitter_right.SetSashPosition((graph_height * _DPI) + toolH)
         self.splitter_right_middle.SetSashPosition(self.world.dispH/2)
 
