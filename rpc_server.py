@@ -60,6 +60,7 @@ class French75Server():
         """
         Works
         """
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
         self.world.reorder(clock)
@@ -70,6 +71,9 @@ class French75Server():
         """
         works
         """
+        print "lamport clock", self.world.lamport_clock
+        print "incoming clock", clock
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         text = pickle.loads(text)
         a_id = pickle.loads(a_id)
