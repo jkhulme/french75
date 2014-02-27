@@ -37,6 +37,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.species_dict = {}
 
         self.world = WorldState.Instance()
+        height, width = self.GetSize()
 
         #PAGE 1
         page1 = wizard_page(self, 'Enter Title')  # Create a first page
@@ -46,6 +47,10 @@ class SessionWizard(wx.wizard.Wizard):
         page1.add_widget(title_label)
         line1 = wx.StaticLine(page1)
         page1.add_widget(line1)
+        p1_help_text = "This will be used as the title of your graph, and will appear on any pictures of the graph that are saved."
+        page1_help = wx.StaticText(page1, wx.ID_ANY, p1_help_text, style=wx.ALIGN_LEFT)
+        page1_help.Wrap(width)
+        page1.add_widget(page1_help)
         self.add_page(page1)
 
         #PAGE 2
@@ -67,6 +72,11 @@ class SessionWizard(wx.wizard.Wizard):
         line2 = wx.StaticLine(page2)
         page2.add_widget(line2)
 
+        p2_help_text = "Results files are the CSVs output from BioPEPA.\nMultiple files can be selected."
+        page2_help = wx.StaticText(page2, wx.ID_ANY, p2_help_text, style=wx.ALIGN_LEFT)
+        page2_help.Wrap(width)
+        page2.add_widget(page2_help)
+
         self.add_page(page2)
 
         #PAGE 3
@@ -79,6 +89,11 @@ class SessionWizard(wx.wizard.Wizard):
 
         line3 = wx.StaticLine(page3)
         page3.add_widget(line3)
+
+        p3_help_text = "Model files are the .biopepa files.  They are used for visualising species moving through the cell.\n\nModel files are not required."
+        page3_help = wx.StaticText(page3, wx.ID_ANY, p3_help_text, style=wx.ALIGN_LEFT)
+        page3_help.Wrap(width)
+        page3.add_widget(page3_help)
 
         self.add_page(page3)
 
@@ -94,25 +109,17 @@ class SessionWizard(wx.wizard.Wizard):
         #self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page4.add_widget(self.file_dd)
         page4.add_widget(self.species_dd)
+
+        p4_help_text = "Green: Present at location\nWhite: Absent at location"
+        page4_help = wx.StaticText(page4, wx.ID_ANY, p4_help_text, style=wx.ALIGN_LEFT)
+        page4_help.Wrap(width)
+        page4.add_widget(page4_help)
+
         page4.add_widget(self.location_panel)
         page4.Bind(wizmod.EVT_WIZARD_PAGE_SHOWN, self.page4_location_panel_size)
         #page4.add_widget(self.species_list_peri)
 
         self.add_page(page4)
-
-        """
-        #PAGE 5
-        page5 = wizard_page(self, 'Cytoplasmic Species')
-        self.species_list_mid = wx.CheckListBox(page5, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-        page5.add_widget(self.species_list_mid)
-        self.add_page(page5)
-
-        #PAGE 6
-        page6 = wizard_page(self, 'Cell Membrane Species')
-        self.species_list_api = wx.CheckListBox(page6, -1, size=(200, -1), style=wx.LB_MULTIPLE)
-        page6.add_widget(self.species_list_api)
-        self.add_page(page6)
-        """
 
     def page4_location_panel_size(self, e):
         (width, height) = self.location_panel.GetSize()
