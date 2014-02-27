@@ -176,9 +176,9 @@ class French75(wx.Frame):
         self.splitter_middle.SplitVertically(self.graph_panel, self.legend_panel)
         self.splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
-        self.splitter_left.SetSashPosition(5 * self.world.dispW/6)
-        self.splitter_middle.SetSashPosition(4 * self.world.dispW/6)
-        self.splitter_right.SetSashPosition((graph_height * _DPI) + toolH)
+        self.splitter_left.SetSashPosition((5 * self.world.dispW/6) + 10)
+        self.splitter_middle.SetSashPosition((4 * self.world.dispW/6) - 10)
+        self.splitter_right.SetSashPosition((graph_height * _DPI) + toolH + 5)
         self.splitter_right_middle.SetSashPosition(self.world.dispH/2)
 
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
