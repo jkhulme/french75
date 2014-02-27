@@ -134,6 +134,7 @@ class Legend(object):
         Updates the legend to reflect any new changes - colour, show/hide,
         intense/normal
         """
+        update = False
         for child in csv.GetChildren():
             if (child.GetName() == "staticText"):
                 update = True if (child.GetLabel() == species_key) else False
