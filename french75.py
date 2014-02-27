@@ -45,17 +45,17 @@ class French75(wx.Frame):
         self.end_of_time = False
         self.i = 0
 
-        self.world.splitter_left = wx.SplitterWindow(self, -1)
-        self.legend_panel = scrolled.ScrolledPanel(self.world.splitter_left, -1)
-        splitter_right = wx.SplitterWindow(self.world.splitter_left, -1)
-        splitter_middle = wx.SplitterWindow(splitter_right)
-        splitter_right_middle = wx.SplitterWindow(splitter_right, -1)
+        self.splitter_left = wx.SplitterWindow(self, -1)
+        self.splitter_right = wx.SplitterWindow(self.splitter_left, -1)
+        splitter_middle = wx.SplitterWindow(self.splitter_right)
+        self.legend_panel = scrolled.ScrolledPanel(splitter_middle, -1)
+        self.splitter_right_middle = wx.SplitterWindow(self.splitter_left, -1)
         self.graph_panel = wx.Panel(splitter_middle, -1)
-        self.model_panel = wx.Panel(splitter_right_middle, -1)
-        self.files_panel = wx.Panel(splitter_right_middle, -1)
+        self.model_panel = wx.Panel(self.splitter_right_middle, -1)
+        self.files_panel = wx.Panel(self.splitter_right_middle, -1)
         self.world.files_panel = self.files_panel
         #self.animation_panel = wx.Panel(splitter_middle, -1)
-        self.animation_panel = scrolled.ScrolledPanel(splitter_middle, -1)
+        self.animation_panel = scrolled.ScrolledPanel(self.splitter_right, -1)
 
         self.model_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
@@ -134,8 +134,8 @@ class French75(wx.Frame):
         line3 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
         animation_hbox.Add(line3, 0, wx.EXPAND|wx.ALL, 5)
 
-        animation_hbox.Add(self.slider_time, 0, wx.BOTTOM|wx.EXPAND, 5)
-        animation_vbox.Add(animation_hbox, 0, wx.EXPAND, 5)
+        animation_hbox.Add(self.slider_time, 0, wx.BOTTOM|wx.EXPAND|wx.ALIGN_RIGHT, 5)
+        animation_vbox.Add(animation_hbox, 0)
 
         line2 = wx.StaticLine(self.animation_panel)
         animation_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
@@ -171,15 +171,15 @@ class French75(wx.Frame):
         self.world.legend = Legend(self.legend_panel)
         self.SetMenuBar(self.build_menu_bar())
 
-        self.world.splitter_left.SplitVertically(self.legend_panel, splitter_right)
-        splitter_right.SplitVertically(splitter_middle, splitter_right_middle)
-        splitter_middle.SplitHorizontally(self.graph_panel, self.animation_panel)
-        splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
+        self.splitter_left.SplitVertically(self.splitter_right, self.splitter_right_middle)
+        self.splitter_right.SplitHorizontally(splitter_middle, self.animation_panel)
+        splitter_middle.SplitVertically(self.graph_panel, self.legend_panel)
+        self.splitter_right_middle.SplitHorizontally(self.model_panel, self.files_panel)
 
-        self.world.splitter_left.SetSashPosition(self.world.dispW/6)
-        splitter_right.SetSashPosition(4 * self.world.dispW/6)
-        splitter_middle.SetSashPosition((graph_height * _DPI) + toolH)
-        splitter_right_middle.SetSashPosition(self.world.dispH/2)
+        self.splitter_left.SetSashPosition(5 * self.world.dispW/6)
+        splitter_middle.SetSashPosition(4 * self.world.dispW/6)
+        self.splitter_right.SetSashPosition((graph_height * _DPI) + toolH)
+        self.splitter_right_middle.SetSashPosition(self.world.dispH/2)
 
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
@@ -569,7 +569,7 @@ class French75(wx.Frame):
     def sessiony_stuff(self):
         self.world.draw_plot = Plotter(self.graph_axes)
         self.world.draw_plot.plot()
-        reset_sash_position(self.world.splitter_left)
+        reset_sash_position(self.splitter_left)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
 
