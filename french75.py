@@ -1,4 +1,3 @@
-from plotter import Plotter
 import wx
 import matplotlib
 matplotlib.use('WXAgg')
@@ -6,6 +5,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from legend import Legend
 import os
+from plotter import Plotter
 from custom_ui_elements import BioPepaToolbar
 from session_creator import SessionWizard
 from worldstate import WorldState
@@ -67,7 +67,7 @@ class French75(wx.Frame):
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
         self.world.play_animation = self.real_play_animation
 
-        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], size=(500, -1), style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
         self.slider_time.Bind(wx.EVT_SCROLL_THUMBRELEASE, self.released_slider)
         self.world.time_slider = self.slider_time
@@ -122,16 +122,30 @@ class French75(wx.Frame):
         animation_vbox = wx.BoxSizer(wx.VERTICAL)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
-        animation_hbox.Add(self.drop_down_files)
-        animation_hbox.Add(self.switch_animation_button)
-        animation_hbox.Add(self.drop_down_species)
-        animation_hbox.Add(self.btn_animate_play)
-        animation_hbox.Add(self.slider_time)
-        animation_vbox.Add(animation_hbox)
+        animation_hbox.Add(self.drop_down_files, 0, wx.ALL, 10)
+        animation_hbox.Add(self.switch_animation_button, 0, wx.TOP, 12)
+        animation_hbox.Add(self.drop_down_species, 0, wx.ALL, 10)
+
+        line1 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
+        animation_hbox.Add(line1, 0, wx.EXPAND|wx.ALL, 5)
+
+        animation_hbox.Add(self.btn_animate_play, 0, wx.TOP, 12)
+
+        line3 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
+        animation_hbox.Add(line3, 0, wx.EXPAND|wx.ALL, 5)
+
+        animation_hbox.Add(self.slider_time, 0, wx.BOTTOM|wx.EXPAND, 5)
+        animation_vbox.Add(animation_hbox, 0, wx.EXPAND, 5)
+
+        line2 = wx.StaticLine(self.animation_panel)
+        animation_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
         animation_vbox.Add(self.animation_panels_hbox)
+
         self.animation_panel.SetSizer(animation_vbox)
-        animation_vbox.Fit(self)
-        animation_hbox.Fit(self)
+        #animation_hbox.Fit(self)
+        #animation_vbox.Fit(self)
+        self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
 
         (graph_width, graph_height) = calc_graph_size(_DPI, _COLS, _NUM_OF_SIDEBARS, _PHI)
