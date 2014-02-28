@@ -238,20 +238,22 @@ class French75(wx.Frame):
             self.btn_animate_play.Enable(state)
             self.slider_time.Enable(state)
             self.drop_down_species.Enable(state)
-            self.drop_down_files.Enable(state)
+            self.drop_down_files.Enable(False)
             self.switch_animation_button.Enable(state)
+            self.add_anime_annotation_button.Enable(state)
+            self.delete_anime_annotation_button.Enable(state)
         else:
             self.btn_animate_play.Enable(False)
             self.slider_time.Enable(False)
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(False)
             self.switch_animation_button.Enable(False)
+            self.add_anime_annotation_button.Enable(False)
+            self.delete_anime_annotation_button.Enable(False)
 
 
         self.add_files_button.Enable(state)
         self.open_files_button.Enable(state)
-        self.add_anime_annotation_button.Enable(state)
-        self.delete_anime_annotation_button.Enable(state)
 
         self.normalise_m.Enable(state)
         self.export_data_m.Enable(state)
@@ -478,6 +480,9 @@ class French75(wx.Frame):
         wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
 
     def run_server(self, port):
+        self.share_session_m.Enable(False)
+        print "w00tasaurus"
+        self.join_session_m.Enable(False)
         self.world.server = French75Server(port)
 
     def join_rpc_server(self, e):
@@ -485,6 +490,8 @@ class French75(wx.Frame):
         if dialog.ShowModal() == wx.ID_OK:
             dialog2 = wx.TextEntryDialog(None, "Please Enter Your IP Address", "Text Entry", "", style=wx.OK|wx.CANCEL)
             if dialog2.ShowModal() == wx.ID_OK:
+                self.share_session_m.Enable(False)
+                self.join_session_m.Enable(False)
                 client_thread = Thread(target=self.run_client, args=(dialog.GetValue(), dialog2.GetValue()))
                 client_thread.start()
 
