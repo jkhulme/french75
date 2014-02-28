@@ -13,7 +13,7 @@ from cell_segment import CellSegment
 import time
 from threading import Thread
 import platform
-from utils import euclid_distance, point_to_line_distance, calc_graph_size, reset_sash_position, refresh_plot
+from utils import euclid_distance, point_to_line_distance, calc_graph_size, refresh_plot
 from subprocess import call
 from annotation import Annotation
 import wx.lib.scrolledpanel as scrolled
@@ -118,7 +118,7 @@ class French75(wx.Frame):
         self.add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
 
         self.open_files_button = wx.Button(attachment_panel, -1, "Open")
-        self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
+        self.open_files_button.Bind(wx.EVT_BUTTON, self.open_attached_file)
 
         attached_file_toolbar.Add(self.add_files_button, 0, wx.ALL, 5)
         attached_file_toolbar.Add(self.open_files_button, 0, wx.ALL, 5)
@@ -145,10 +145,10 @@ class French75(wx.Frame):
         anime_annotations_vbox.Add(self.anime_annotations_list)
 
         self.add_anime_annotation_button = wx.Button(annotation_panel, -1, "Add")
-        self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_annotation)
+        self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_anime_annotation)
 
         self.delete_anime_annotation_button = wx.Button(annotation_panel, -1, "Delete")
-        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_annotation)
+        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_anime_annotation)
 
         anime_annotations_toolbar.Add(self.add_anime_annotation_button, 0, wx.ALL, 5)
         anime_annotations_toolbar.Add(self.delete_anime_annotation_button, 0, wx.ALL, 5)
@@ -243,32 +243,26 @@ class French75(wx.Frame):
 
         self.Maximize()
 
-    def add_annotation(self, e):
-        self.world.session_dict['annotate_anime'] = True
-        annotation_dialogue = AnnotationDialogue(None, title="Add Annotation")
-        annotation_dialogue.ShowModal()
-        annotation_dialogue.Destroy()
-
-    def remove_annotation(self, e):
-        selected = self.anime_annotations_list.GetSelection()
-        annotation = self.anime_annotations_list.GetString(selected)
-        (a_id, text) = annotation.split(":")
-        self.world.delete_anime_annotation(a_id)
-        #self.anime_annotations_list.Delete(selected)
-        self.world.client.delete_anime_annotation(a_id)
-
     def enable_all(self, state):
         """
         Want stuff disables until after session has been set up
         """
         self.toolbar.enable_all(state)
+
         self.filem_new_session.Enable(state)
         self.filem_save_session.Enable(state)
         self.filem_load_session.Enable(state)
         self.filem_open_results_save_plot.Enable(state)
+
         self.annotationm_toggle.Enable(state)
+
         self.undo_m.Enable(state)
         self.redo_m.Enable(state)
+
+        self.normalise_m.Enable(state)
+        self.export_data_m.Enable(state)
+
+        self.share_session_m.Enable(state)
 
         if self.world.session_dict['tree_list']:
             self.btn_animate_play.Enable(state)
@@ -276,6 +270,7 @@ class French75(wx.Frame):
             self.drop_down_species.Enable(state)
             self.drop_down_files.Enable(False)
             self.switch_animation_button.Enable(state)
+
             self.add_anime_annotation_button.Enable(state)
             self.delete_anime_annotation_button.Enable(state)
         else:
@@ -284,17 +279,53 @@ class French75(wx.Frame):
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(False)
             self.switch_animation_button.Enable(False)
+
             self.add_anime_annotation_button.Enable(False)
             self.delete_anime_annotation_button.Enable(False)
-
 
         self.add_files_button.Enable(state)
         self.open_files_button.Enable(state)
 
-        self.normalise_m.Enable(state)
-        self.export_data_m.Enable(state)
+    def add_anime_annotation(self, e):
+        self.world.session_dict['annotate_anime'] = True
 
-        self.share_session_m.Enable(state)
+        annotation_dialogue = AnnotationDialogue(None, title="Add Annotation")
+        annotation_dialogue.ShowModal()
+        annotation_dialogue.Destroy()
+
+    def annotate_cell(self, e):
+        """
+        When we click on a cell viz panel
+        """
+        if self.world.session_dict['annotate_anime']:
+            (x, y) = e.GetPosition()
+            self.world.temp_anime_annotation.set_position((x, y))
+
+            panel = e.GetEventObject()
+            idx = int(panel.GetName())
+
+            self.world.temp_anime_annotation.set_id(self.world.session_dict['cur_annotation_id'])
+            self.world.session_dict['cur_annotation_id'] += 1
+
+            self.world.add_anime_annotation(idx, self.world.temp_anime_annotation)
+
+            self.world.push_state()
+            self.world.reorder(self.world.lamport_clock)
+
+            self.world.client.add_anime_annotation((idx, self.world.temp_anime_annotation))
+
+    def remove_anime_annotation(self, e):
+        selected = self.anime_annotations_list.GetSelection()
+        annotation = self.anime_annotations_list.GetString(selected)
+
+        (a_id, text) = annotation.split(":")
+
+        self.world.delete_anime_annotation(a_id)
+
+        self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
+
+        self.world.client.delete_anime_annotation(a_id)
 
     def move_mouse(self, event):
         """
@@ -303,21 +334,20 @@ class French75(wx.Frame):
         if self.world.draw_plot:
             if self.world.session_dict['click_one']:
                 self.world.session_dict['temp_annotation'] = Annotation(self.world._ARROW, (self.world.session_dict['click_one_x'], self.world.session_dict['click_one_y']), (event.xdata, event.ydata))
-            #TODO: Don't replot mid animation
             if self.world.session_dict['annotate']:
                 self.world.session_dict['redraw_legend'] = False
                 self.world.draw_plot.plot()
                 self.world.session_dict['redraw_legend'] = True
 
-    def open_file(self, event):
+    def open_attached_file(self, event):
         """
         Opening attached files, must be a better way of doing this
         """
-        i = self.attached_file_list.GetSelection()
+        idx = self.attached_file_list.GetSelection()
         if platform.system() == "Linux":
-            call(["gnome-open", self.world.session_dict['attached_file_locations'][i]])
+            call(["gnome-open", self.world.session_dict['attached_file_locations'][idx]])
         else:
-            call(["open", self.world.session_dict['attached_file_locations'][i]])
+            call(["open", self.world.session_dict['attached_file_locations'][idx]])
 
     def attach_file(self, event):
         file_chooser = wx.FileDialog(self, message="Choose a file to attach", style=wx.OPEN | wx.CHANGE_DIR | wx.MULTIPLE)
@@ -365,14 +395,12 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.push_state()
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
                     self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.push_state()
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
                 if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
@@ -390,13 +418,11 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.push_state()
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
                     self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.push_state()
                     return
 
     def right_click_handler(self, event):
@@ -407,11 +433,14 @@ class French75(wx.Frame):
         for annotation in self.world.session_dict['annotations']:
             dist = 1
             if annotation.type == self.world._TEXT_ARROW or annotation.type == self.world._ARROW:
-                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])),
-                                              (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
-                                              (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']),
+                    annotation.y1/float(self.world.session_dict['max_height'])),
+                    (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
+                    (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
             else:
-                dist = euclid_distance((annotation.x1/float(self.world.session_dict['max_time']), annotation.y1/float(self.world.session_dict['max_height'])), (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                dist = euclid_distance((annotation.x1/float(self.world.session_dict['max_time']),
+                    annotation.y1/float(self.world.session_dict['max_height'])),
+                    (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
             if dist < 0.025:
                 if self.selected_annotation is None:
                     self.selected_annotation = annotation
@@ -428,28 +457,38 @@ class French75(wx.Frame):
 
     def annotation_menu(self):
         annotate_menu = wx.Menu()
+
         m_edit_annotation = annotate_menu.Append(wx.ID_ANY, 'Edit')
-        m_delete_annotation = annotate_menu.Append(wx.ID_ANY, 'Delete')
         self.Bind(wx.EVT_MENU, self.edit_annotation_text, m_edit_annotation)
+
+        m_delete_annotation = annotate_menu.Append(wx.ID_ANY, 'Delete')
         self.Bind(wx.EVT_MENU, self.delete_annotation, m_delete_annotation)
+
         self.graph_panel.PopupMenu(annotate_menu)
         annotate_menu.Destroy()
 
     def edit_annotation_text(self, event):
         self.get_label()
+
         self.world.update_annotation_text(self.selected_annotation.id, self.world.session_dict['annotation_text'])
-        self.world.client.update_annotation(self.selected_annotation.id, self.selected_annotation.text)
+
         self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
+
+        self.world.client.update_annotation(self.selected_annotation.id, self.selected_annotation.text)
+
+    def get_label(self):
+         dialog = wx.TextEntryDialog(None, "Please Enter a New Label.","Edit Annotation", "", style=wx.OK|wx.CANCEL)
+         if dialog.ShowModal() == wx.ID_OK:
+             self.world.session_dict['annotation_text'] = dialog.GetValue()
 
     def delete_annotation(self, event):
         self.world.delete_annotation(self.selected_annotation.id)
-        self.world.client.delete_annotation(self.selected_annotation.id)
-        self.world.push_state()
 
-    def get_label(self):
-         dialog = wx.TextEntryDialog(None, "Please Enter a New Label.","Text Entry", "", style=wx.OK|wx.CANCEL)
-         if dialog.ShowModal() == wx.ID_OK:
-             self.world.session_dict['annotation_text'] = dialog.GetValue()
+        self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
+
+        self.world.client.delete_annotation(self.selected_annotation.id)
 
     def build_menu_bar(self):
         """
@@ -460,7 +499,12 @@ class French75(wx.Frame):
         menubar = wx.MenuBar()
         menubar.SetBackgroundColour(_BG_COLOUR)
 
+        """
+        File Menu
+        """
+
         file_menu = wx.Menu()
+
         self.filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
         self.filem_save_session = file_menu.Append(wx.ID_ANY, '&Save Session')
         self.filem_load_session  = file_menu.Append(wx.ID_ANY, '&Load Session')
@@ -474,7 +518,12 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.load_session, self.filem_load_session)
         self.Bind(wx.EVT_MENU, self.on_save_plot, self.filem_open_results_save_plot)
 
+        """
+        Preferences Menu
+        """
+
         preferences_menu = wx.Menu()
+
         self.annotationm_toggle = preferences_menu.AppendCheckItem(wx.ID_ANY, '&Annotations')
         self.annotationm_toggle.Check()
 
@@ -482,9 +531,13 @@ class French75(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.toggle_annotations, self.annotationm_toggle)
 
-        edit_menu = wx.Menu()
-        self.undo_m = edit_menu.Append(wx.ID_ANY, '&Undo')
+        """
+        Edit Menu
+        """
 
+        edit_menu = wx.Menu()
+
+        self.undo_m = edit_menu.Append(wx.ID_ANY, '&Undo')
         self.redo_m = edit_menu.Append(wx.ID_ANY, '&Redo')
 
         menubar.Append(edit_menu, '&Edit')
@@ -492,13 +545,23 @@ class French75(wx.Frame):
         self.Bind(wx.EVT_MENU, self.undo, self.undo_m)
         self.Bind(wx.EVT_MENU, self.redo, self.redo_m)
 
+        """
+        Data Menu
+        """
+
         data_menu = wx.Menu()
+
         self.normalise_m = data_menu.AppendCheckItem(wx.ID_ANY, '&Normalise')
         self.export_data_m = data_menu.Append(wx.ID_ANY, '&Export Data')
+
         self.Bind(wx.EVT_MENU, self.normalise_data, self.normalise_m)
         self.Bind(wx.EVT_MENU, self.export_data, self.export_data_m)
 
         menubar.Append(data_menu, '&Data')
+
+        """
+        Networking Menu
+        """
 
         networking_menu = wx.Menu()
         self.share_session_m = networking_menu.Append(wx.ID_ANY, '&Share Session')
@@ -719,18 +782,6 @@ class French75(wx.Frame):
         self.animation_panel.SetupScrolling(scroll_y=False)
         for panel in self.world.panels:
             panel.Refresh()
-
-    def annotate_cell(self, e):
-        if self.world.session_dict['annotate_anime']:
-            (x, y) = e.GetPosition()
-            self.world.temp_anime_annotation.set_position((x, y))
-            panel = e.GetEventObject()
-            idx = int(panel.GetName())
-            #self.anime_annotations_list.InsertItems([str(self.world.session_dict['cur_annotation_id']) + ": " + self.world.temp_anime_annotation.text], 0)
-            self.world.temp_anime_annotation.set_id(self.world.session_dict['cur_annotation_id'])
-            self.world.session_dict['cur_annotation_id'] += 1
-            self.world.add_anime_annotation(idx, self.world.temp_anime_annotation)
-            self.world.client.add_anime_annotation((idx, self.world.temp_anime_annotation))
 
     def switch_animation(self, e):
         if self.drop_down_species.IsEnabled():

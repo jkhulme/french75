@@ -100,12 +100,13 @@ class Plotter(object):
         self.world.session_dict['annotate'] = False
         if text:
             annotation = Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour)
-            self.world.session_dict['annotations'].append(annotation)
-            self.world.client.add_annotation(annotation)
         else:
             annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2))
-            self.world.session_dict['annotations'].append(annotation)
-            self.world.client.add_annotation(annotation)
+
+        self.world.session_dict['annotations'].append(annotation)
+        self.world.client.add_annotation(annotation)
+        self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
         self.world.graph_canvas.draw()
 
     def annotate_text(self, (x, y), text="Annotation"):

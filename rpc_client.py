@@ -44,10 +44,7 @@ class French75Client():
         works
         """
         self.world.lamport_clock += 1
-        self.world.reorder(self.world.lamport_clock)
         self.server.update_annotation(self.world.lamport_clock, pickle.dumps(a_id), pickle.dumps(text))
-        #self.world.reorder(2)
-        #self.server.update_annotation(2, pickle.dumps(a_id), pickle.dumps(text))
 
     def launch_large_plot(self):
         """
@@ -82,8 +79,11 @@ class French75Client():
 
     def delete_anime_annotation(self, a_id):
         self.world.lamport_clock += 1
-        self.world.reorder(self.world.lamport_clock)
         self.server.delete_anime_annotation(self.world.lamport_clock, a_id)
+
+    def add_anime_annotation(self, (key, annotation)):
+        self.world.lamport_clock += 1
+        self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
     def delete_annotation(self, a_id):
         """
@@ -97,11 +97,6 @@ class French75Client():
         self.world.lamport_clock += 1
         self.world.reorder(self.world.lamport_clock)
         self.server.toggle_param(self.world.lamport_clock, param, value)
-
-    def add_anime_annotation(self, (key, annotation)):
-        self.world.lamport_clock += 1
-        self.world.reorder(self.world.lamport_clock)
-        self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
     def play_animation(self):
         self.world.lamport_clock += 1
