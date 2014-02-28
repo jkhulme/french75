@@ -18,7 +18,6 @@ class Legend(object):
         self.legend_panel = leg_panel
         self.world = WorldState.Instance()
 
-
     def draw_legend(self):
         """
         Handles the legend, one collapsible pane for each file, one set of
@@ -40,8 +39,10 @@ class Legend(object):
         for result in self.world.session_dict['lines']:
             collpane = BioPepaCollapsiblePane(self.legend_panel, result)
             vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
+
             collpane_body = collpane.GetPane()
             collpane_body.SetBackgroundColour(_BG_COLOUR)
+
             vbox_collpane = wx.BoxSizer(wx.VERTICAL)
 
             line1 = wx.StaticLine(collpane_body)
@@ -49,7 +50,9 @@ class Legend(object):
 
             for key in self.world.session_dict['lines'][result]:
                 hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
+
                 vbox_coll = wx.BoxSizer(wx.VERTICAL)
+
                 species_label = wx.StaticText(collpane_body, -1, key, style=wx.ALIGN_CENTRE)
                 vbox_coll.Add(species_label, 0, wx.TOP|wx.BOTTOM, 5)
 
@@ -71,8 +74,10 @@ class Legend(object):
                 btn_props = wx.Button(collpane_body, -1, 'Settings', size=(70, _HEIGHT))
                 btn_props.Bind(wx.EVT_BUTTON, self.launch_dialog)
                 hbox_collpane.Add(btn_props, 0, wx.ALL, 2)
+
                 vbox_coll.Add(hbox_collpane, 0, wx.BOTTOM, 5)
                 vbox_collpane.Add(vbox_coll)
+
                 line2 = wx.StaticLine(collpane_body)
                 vbox_collpane.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
@@ -81,7 +86,6 @@ class Legend(object):
 
         self.legend_panel.SetSizer(vbox_leg)
         self.legend_panel.Layout()
-        #vbox_leg.Fit(self.legend_panel)
         self.legend_panel.SetupScrolling()
 
         for child in self.legend_panel.GetChildren():
@@ -89,26 +93,29 @@ class Legend(object):
                 child.Expand()
             except:
                 pass
-    """
-    Updates the line to say don't or do draw
-    """
+
     def show_hide_click(self, event):
+        """
+        Updates the line to say don't or do draw
+        """
         cb_show_hide = event.GetEventObject()
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_show_hide)
         self.world.session_dict['lines'][file_key][species_key].plot_line = cb_show_hide.GetValue()
         self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
         refresh_plot()
 
-    """
-    Event for toggling between colour intensity plot and normal plot
-    """
     def intensity_click(self, event):
+        """
+        Event for toggling between colour intensity plot and normal plot
+        """
         cb_intense = event.GetEventObject()
         file_key = cb_intense.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_intense)
         self.world.session_dict['lines'][file_key][species_key].intense_plot = cb_intense.GetValue()
         self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
         refresh_plot()
 
     def get_species(self, cb):
@@ -120,13 +127,20 @@ class Legend(object):
 
     def launch_dialog(self, event):
         btn_props = event.GetEventObject()
+
         file_key = btn_props.GetParent().GetParent().GetLabel()
         species_key = self.get_species(btn_props)
+
         plot_prefs = Plot_Dialog(None, title='Change Plot Style')
         plot_prefs.set_line(self.world.session_dict['lines'][file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
+
         self.update(btn_props.GetParent(), file_key, species_key)
+
+        self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
+
         self.world.client.update_legend(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
 
     def update(self, csv, file_key, species_key):
@@ -141,10 +155,10 @@ class Legend(object):
 
             if child.GetLabel() == "" and update:
                 child.SetBackgroundColour(self.world.session_dict['lines'][file_key][species_key].flat_colour)
-            if child.GetName() == "check" and update:
+            elif child.GetName() == "check" and update:
                 if child.GetLabel() == "Show":
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].plot_line)
-                if child.GetLabel() == "Ints" and update:
+                elif child.GetLabel() == "Ints" and update:
                     child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
         self.legend_panel.Refresh()
         refresh_plot()

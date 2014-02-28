@@ -1,11 +1,7 @@
 from matplotlib.ticker import MultipleLocator
-from matplotlib.ticker import LinearLocator
-import matplotlib.pyplot as plt
-import matplotlib.collections as mpl_collections
 from worldstate import WorldState
 from annotation import Annotation
 from utils import rgb_to_hex
-import time
 from matplotlib.patches import Ellipse
 
 
@@ -29,11 +25,12 @@ class Plotter(object):
         self.axes = axes
         self.mpl_legend = False
 
-    """
-    Attempt to plot each line.
-    Then set the environment of the graph
-    """
+
     def plot(self):
+        """
+        Attempt to plot each line.
+        Then set the environment of the graph
+        """
         self.axes.clear()
 
         for result in self.world.session_dict['lines']:
