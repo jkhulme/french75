@@ -20,7 +20,6 @@ class CellSegments2(object):
             change += radius / num_of_segments
 
     def paint(self, dc, species_locations):
-
         #Draws CCW
         for (location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             if location in species_locations or species_locations == ['whole_cell']:
@@ -29,8 +28,6 @@ class CellSegments2(object):
                 dc.SetBrush(wx.Brush('white'))
             dc.DrawArc(outer_x1 + 50, outer_y1, outer_x2 + 50, outer_y2, centre_x + 50, centre_y)
             dc.DrawLabel(location, (outer_x2 + 45, outer_y2, 5, 5), alignment=wx.ALIGN_RIGHT|wx.ALIGN_TOP)
-        #centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2 = self.sub_segments[0]
-        #dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
 
     def tree_to_list(self, tree):
         next_key = 'root'

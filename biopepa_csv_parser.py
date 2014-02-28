@@ -34,6 +34,7 @@ class BioPepaCsvParser(object):
         self.results_dict = {}
         with open(csv, 'r') as f:
             contents = f.read().strip()
+
             self.results_dict['simulator'] = re.findall('Simulator: (.*?)\n', contents)[0]
             self.results_dict['datapoints'] = re.findall('Number of data points: (.*?)\n', contents)[0]
             self.results_dict['replications'] = re.findall('Number of independent replications: (.*?)\n', contents)[0]
@@ -41,14 +42,20 @@ class BioPepaCsvParser(object):
             self.results_dict['start_time'] = re.findall('Start time: (.*?)\n', contents)[0]
             self.results_dict['run_time'] = re.findall('Run time = (.*?)\n', contents)[0]
             self.results_dict['data'] = ('Time, ' + re.findall('Time, (.*?)\n', contents)[0]).split(',')
+
             data = [line.split(',') for line in contents.split('\n') if not "#" in line]
+
             transposed_data = map(None, *data)
+
             self.results_dict['results'] = {}
+
             for i, data_item in enumerate(self.results_dict['data']):
                 self.results_dict['results'][str(data_item)[:-1]] = [float(n) for n in transposed_data[i]]
+
             self.results_dict['results']["Time"] = self.results_dict['results'].pop("Tim")
 
             self.results_dict = self.results_dict['results']
+
             self.min_max_values()
 
     """
@@ -62,10 +69,14 @@ class BioPepaCsvParser(object):
             else:
                 self.xmin = min(self.xmin, min(self.results_dict[result]))
                 self.xmax = max(self.xmax, max(self.results_dict[result]))
+
         self.world.session_dict['max_time'] = self.xmax
         self.world.session_dict['max_height'] = self.ymax
+
         self.world.session_dict['ymin'] = self.ymin
         self.world.session_dict['ymax'] = self.ymax
+
         self.world.session_dict['xmin'] = self.xmin
         self.world.session_dict['xmax'] = self.xmax
+
         self.world.update_clock_increment()

@@ -25,6 +25,7 @@ class BioPepaToolbar(NavigationToolbar):
         super(BioPepaToolbar, self).__init__(graph_canvas)
         cwd = os.getcwd()
         self.world = WorldState.Instance()
+
         if (platform.system() == "Linux"):
             #save
             self.DeleteToolByPos(8)
@@ -50,6 +51,7 @@ class BioPepaToolbar(NavigationToolbar):
         """
         Want them all to be disabled until the session has been created
         """
+        #Linux hates self.wx_ids['label']
         self.EnableTool(self.wx_ids['Home'], state)
         self.EnableTool(self.wx_ids['Pan'], state)
         self.EnableTool(self.wx_ids['Zoom'], state)
@@ -62,16 +64,14 @@ class BioPepaToolbar(NavigationToolbar):
         self.EnableTool(self.ANNOTATE_TEXT_ARROW, state)
 
     def get_label(self):
-         dialog = wx.TextEntryDialog(None, "Please Enter A Label:","Text Entry", "", style=wx.OK|wx.CANCEL)
+         dialog = wx.TextEntryDialog(None, "Please Enter A Label:","Annotation Text", "", style=wx.OK|wx.CANCEL)
          if dialog.ShowModal() == wx.ID_OK:
              self.world.session_dict['annotation_text'] = dialog.GetValue()
 
     def _on_custom_enlarge(self, e):
-        #self.world.client.launch_large_plot()
         large_plot = LargePlotDialog(None, title='Big Plot')
         large_plot.ShowModal()
         large_plot.Destroy()
-        #self.world.client.close_large_plot()
 
     def _on_custom_annotate_arrow(self, e):
         self.world.change_cursor(wx.CURSOR_HAND)
