@@ -98,6 +98,7 @@ class French75Server():
         """
         works
         """
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         line, file_key, species_key = pickle.loads(update_tuple)
         self.world.session_dict['lines'][file_key][species_key] = line
@@ -116,6 +117,7 @@ class French75Server():
         self.world.redo()
 
     def delete_anime_annotation(self, clock, a_id):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.delete_anime_annotation(a_id)
         self.world.reorder(clock)
@@ -124,43 +126,51 @@ class French75Server():
         """
         works
         """
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.delete_annotation(pickle.loads(a_id))
         self.world.reorder(clock)
 
     def toggle_param(self, clock, param, value):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict[param] = value
         refresh_plot()
         self.world.reorder(clock)
 
     def add_anime_annotation(self, clock, annotation_tuple):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         idx, annotation = pickle.loads(annotation_tuple)
         self.world.add_anime_annotation(idx, annotation)
         self.world.reorder(clock)
 
     def play_animation(self, clock):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.play_animation()
         self.world.reorder(clock)
 
     def set_clock(self, clock, time):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.set_time(pickle.loads(time))
         self.world.reorder(clock)
 
     def switch_animation(self, clock, n):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.switch_animation(n)
         self.world.reorder(clock)
 
     def change_animation_species(self, clock, n):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.create_cell_segments_by_file(n)
         self.world.reorder(clock)
 
     def change_animation_file(self, clock, n):
+        self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.create_cell_segments_by_species(n)
         self.world.reorder(clock)
