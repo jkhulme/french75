@@ -564,8 +564,10 @@ class French75(wx.Frame):
         """
 
         networking_menu = wx.Menu()
+
         self.share_session_m = networking_menu.Append(wx.ID_ANY, '&Share Session')
         self.Bind(wx.EVT_MENU, self.start_rpc_server, self.share_session_m)
+
         self.join_session_m = networking_menu.Append(wx.ID_ANY, '&Join Session')
         self.Bind(wx.EVT_MENU, self.join_rpc_server, self.join_session_m)
 
@@ -574,20 +576,22 @@ class French75(wx.Frame):
         return menubar
 
     def start_rpc_server(self, e):
+        wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
+
         server_thread = Thread(target=self.run_server, args=(8000,))
         server_thread.start()
-        wx.MessageBox("Run 'sudo ifconfig' and send ip address to collaborator.", 'Info', wx.OK | wx.ICON_INFORMATION)
 
     def run_server(self, port):
         self.share_session_m.Enable(False)
-        print "w00tasaurus"
         self.join_session_m.Enable(False)
         self.world.server = French75Server(port)
 
     def join_rpc_server(self, e):
         dialog = wx.TextEntryDialog(None, "Please Enter Server IP Address","Text Entry", "", style=wx.OK|wx.CANCEL)
+
         if dialog.ShowModal() == wx.ID_OK:
             dialog2 = wx.TextEntryDialog(None, "Please Enter Your IP Address", "Text Entry", "", style=wx.OK|wx.CANCEL)
+
             if dialog2.ShowModal() == wx.ID_OK:
                 self.share_session_m.Enable(False)
                 self.join_session_m.Enable(False)
@@ -657,13 +661,17 @@ class French75(wx.Frame):
 
     def toggle_param(self, param):
         self.world.session_dict[param] = not self.world.session_dict[param]
+
+        self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
+
         self.world.client.toggle_param(param, self.world.session_dict[param])
         refresh_plot()
 
-    """
-    Session starter dialogue
-    """
     def new_session(self, e):
+        """
+        Session starter dialogue
+        """
         self.world.temp_session_dict = self.world.session_dict
         self.world.reset_session()
         self.world.session_dict['lines'] = {}
@@ -684,7 +692,7 @@ class French75(wx.Frame):
     def sessiony_stuff(self):
         self.world.draw_plot = Plotter(self.graph_axes)
         self.world.draw_plot.plot()
-        self.legend_panel.Parent.Refresh()
+
         self.slider_time.SetMax(self.world.session_dict['max_time'])
 
         if self.world.session_dict['tree_list']:
@@ -692,23 +700,21 @@ class French75(wx.Frame):
                 self.drop_down_species.Append(species)
             for file_name in self.world.session_dict['results'].keys():
                 self.drop_down_files.Append(file_name)
+
             self.drop_down_species.SetSelection(0)
             self.drop_down_files.SetSelection(0)
 
             self.create_cell_segments_by_file(self.drop_down_files.GetSelection())
 
-
         self.world.push_state()
         self.enable_all(True)
 
     def change_animation_species(self, e):
-        #Does this do anything?
         n = self.drop_down_species.GetSelection()
         self.create_cell_segments_by_file(n)
         self.world.client.change_animation_species(n)
 
     def change_animation_file(self, e):
-        #Does this do anything?
         n = self.drop_down_files.GetSelection()
         self.create_cell_segments_by_species(n)
         self.world.client.change_animation_file(n)
@@ -716,40 +722,51 @@ class French75(wx.Frame):
     def create_cell_segments_by_file(self, n):
         self.drop_down_species.SetSelection(n)
         (a_width, a_height) = self.animation_panel.GetSize()
+
         for child in self.animation_panel.GetChildren():
             try:
                 int(child.GetName())
                 child.Destroy()
             except:
                 pass
+
         self.world.panels = []
         panel_vboxes = []
         self.world.cell_segments = []
+
         #TODO: Fix these magic numbers
         a = 10
         b = (a_height * 0.7) - 10
         c = (a_height * 0.7) - 20
         d = 0
+
         for i, file_name in enumerate(sorted(self.world.session_dict['results'].keys())):
             small_vbox = wx.BoxSizer(wx.VERTICAL)
             panel_vboxes.append(small_vbox)
+
             title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
             small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
+
             panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
-            small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
             panel.SetBackgroundColour('white')
             panel.Bind(wx.EVT_PAINT, self.animate_cell)
             panel.Bind(wx.EVT_LEFT_UP, self.annotate_cell)
+            small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
             self.world.panels.append(panel)
+
             self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
+
             self.world.cell_segments.append(CellSegment((a, b), c, d, file_name, self.drop_down_species.GetStringSelection()))
+
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
+
         for panel in self.world.panels:
             panel.Refresh()
 
     def create_cell_segments_by_species(self, n):
         self.drop_down_files.SetSelection(n)
+
         (a_width, a_height) = self.animation_panel.GetSize()
         for child in self.animation_panel.GetChildren():
             try:
@@ -760,6 +777,7 @@ class French75(wx.Frame):
         self.world.panels = []
         panel_vboxes = []
         self.world.cell_segments = []
+
         #TODO: Fix these magic numbers
         a = 10
         b = (a_height * 0.7) - 10
@@ -769,17 +787,22 @@ class French75(wx.Frame):
             if species_name != "Time":
                 small_vbox = wx.BoxSizer(wx.VERTICAL)
                 panel_vboxes.append(small_vbox)
+
                 title = wx.StaticText(self.animation_panel, -1, species_name, name=str(i))
                 small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
+
                 panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
-                small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
                 panel.SetBackgroundColour('white')
                 panel.Bind(wx.EVT_PAINT, self.animate_cell)
                 self.world.panels.append(panel)
+                small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
+
                 self.animation_panels_hbox.Add(small_vbox,0,wx.EXPAND|wx.ALL,border=2)
                 self.world.cell_segments.append(CellSegment((a, b), c, d, self.drop_down_files.GetStringSelection(), species_name.split("@")[0]))
+
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
+
         for panel in self.world.panels:
             panel.Refresh()
 
@@ -787,15 +810,11 @@ class French75(wx.Frame):
         if self.drop_down_species.IsEnabled():
             self.drop_down_species.Enable(False)
             self.drop_down_files.Enable(True)
-            n = self.drop_down_files.GetSelection()
-            self.create_cell_segments_by_species(n)
-            self.world.client.switch_animation(n)
+            self.change_animation_file(None)
         else:
             self.drop_down_species.Enable(True)
             self.drop_down_files.Enable(False)
-            n = self.drop_down_species.GetSelection()
-            self.create_cell_segments_by_file(n)
-            self.world.client.switch_animation(n)
+            self.change_animation_species(None)
 
     def list_of_species(self):
         species_list = []
@@ -831,7 +850,7 @@ class French75(wx.Frame):
     def load_session(self, e):
         file_chooser = wx.FileDialog(
             self,
-            message="Choose a file",
+            message="Choose session to load...",
             wildcard="*.f75",
             style=wx.OPEN | wx.CHANGE_DIR)
         if file_chooser.ShowModal() == wx.ID_OK:
@@ -855,13 +874,17 @@ class French75(wx.Frame):
         if not self.world.session_dict['start_playing']:
             self.world.session_dict['clock'] = 0
             self.slider_time.SetValue(0)
+
             for line_dict in self.world.session_dict['lines'].values():
                 for line in line_dict.values():
                     line.counter = 0
+
             self.world.session_dict['clock_pause'] = False
             self.world.session_dict['start_playing'] = True
+
             t4 = Thread(target=self.change_button_text, args=("Pause",))
             t = Thread(target=self.animate, args=(0.1,))
+
             t.start()
             t4.start()
         else:
@@ -916,7 +939,7 @@ class French75(wx.Frame):
 
         dlg = wx.FileDialog(
             self,
-            message="Save plot as...",
+            message="Export plot as...",
             defaultDir=os.getcwd(),
             defaultFile="plot.png",
             wildcard=file_choices,
@@ -928,7 +951,7 @@ class French75(wx.Frame):
             refresh_plot()
             self.graph_canvas.print_figure(path, dpi=_DPI)
             self.world.draw_plot.mpl_legend = False
-            self.world.draw_plot.plot()
+            refresh_plot()
 
     def move_animation(self, e):
         """
@@ -937,10 +960,6 @@ class French75(wx.Frame):
         self.world.session_dict['clock'] = self.slider_time.GetValue()
         for segment in self.world.cell_segments:
             segment.update_clock()
-
-    def export_animation(self, e):
-        self.save = True
-        self.play_animation(None)
 
     def released_slider(self, e):
         self.world.client.set_clock()
