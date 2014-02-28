@@ -42,122 +42,134 @@ class French75(wx.Frame):
         self.Maximize()
         (self.world.dispW, self.world.dispH) = self.GetSize()
 
-        self.world.play_animation = self.real_play_animation
-        self.world.create_cell_segments_by_file = self.create_cell_segments_by_file
-        self.world.create_cell_segments_by_species = self.create_cell_segments_by_species
+        splitter_far_right = wx.SplitterWindow(self, -1)
+        splitter_horiz_middle = wx.SplitterWindow(splitter_far_right, -1)
+        splitter_vert_middle = wx.SplitterWindow(splitter_horiz_middle)
+        splitter_far_right_middle = wx.SplitterWindow(splitter_far_right, -1)
 
-        self.panel_vboxes = []
-        self.end_of_time = False
-        self.i = 0
+        self.legend_panel = scrolled.ScrolledPanel(splitter_vert_middle, -1)
+        self.graph_panel = wx.Panel(splitter_vert_middle, -1)
 
-        self.splitter_far_right = wx.SplitterWindow(self, -1)
-        self.splitter_horiz_middle = wx.SplitterWindow(self.splitter_far_right, -1)
-        self.splitter_vert_middle = wx.SplitterWindow(self.splitter_horiz_middle)
-        self.splitter_far_right_middle = wx.SplitterWindow(self.splitter_far_right, -1)
-
-        self.legend_panel = scrolled.ScrolledPanel(self.splitter_vert_middle, -1)
-        self.graph_panel = wx.Panel(self.splitter_vert_middle, -1)
-        self.attachment_panel = wx.Panel(self.splitter_far_right_middle, -1)
-        self.annotation_panel = wx.Panel(self.splitter_far_right_middle, -1)
-        self.world.files_panel = self.annotation_panel
-        self.animation_panel = scrolled.ScrolledPanel(self.splitter_horiz_middle, -1)
-
-        self.attachment_panel.SetBackgroundColour(_BG_COLOUR)
         self.legend_panel.SetBackgroundColour(_BG_COLOUR)
         self.graph_panel.SetBackgroundColour(_BG_COLOUR)
+
+        """
+        Animation Panel Setup
+        """
+        self.animation_panel = scrolled.ScrolledPanel(splitter_horiz_middle, -1)
         self.animation_panel.SetBackgroundColour(_BG_COLOUR)
-        self.annotation_panel.SetBackgroundColour(_BG_COLOUR)
 
         self.btn_animate_play = wx.Button(self.animation_panel, -1, 'Play')
         self.btn_animate_play.Bind(wx.EVT_BUTTON, self.play_animation)
+
         self.slider_time = wx.Slider(self.animation_panel, -1, value=0, minValue=0, maxValue=self.world.session_dict['max_time'], style=wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
         self.slider_time.Bind(wx.EVT_SLIDER, self.move_animation)
         self.slider_time.Bind(wx.EVT_SCROLL_THUMBRELEASE, self.released_slider)
-        self.world.time_slider = self.slider_time
+
         self.drop_down_species = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
         self.drop_down_species.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_species)
+
         self.switch_animation_button = wx.Button(self.animation_panel, -1, "<->")
         self.switch_animation_button.Bind(wx.EVT_BUTTON, self.switch_animation)
+
         self.drop_down_files = wx.ComboBox(self.animation_panel, -1, style=wx.CB_READONLY)
         self.drop_down_files.Bind(wx.wx.EVT_COMBOBOX, self.change_animation_file)
 
-
-        attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
-        attached_label = wx.StaticText(self.attachment_panel, -1, "Attached Files:")
-        attached_files_vbox.Add(attached_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
-        self.attached_file_list = wx.ListBox(self.attachment_panel, -1, size=(300, 300))
-        attached_files_vbox.Add(self.attached_file_list)
-        attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
-        self.add_files_button = wx.Button(self.attachment_panel, -1, "Add")
-        self.add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
-
-        self.open_files_button = wx.Button(self.attachment_panel, -1, "Open")
-        self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
-
-        attached_file_toolbar.Add(self.add_files_button, 0, wx.ALL, 5)
-        attached_file_toolbar.Add(self.open_files_button, 0, wx.ALL, 5)
-        attached_files_vbox.Add(attached_file_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
-        self.attachment_panel.SetSizer(attached_files_vbox)
-        attached_files_vbox.Fit(self)
-
-        anime_annotations_vbox = wx.BoxSizer(wx.VERTICAL)
-        anime_annotations_label = wx.StaticText(self.annotation_panel, -1, "Animation Annotations:")
-        anime_annotations_vbox.Add(anime_annotations_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
-        self.anime_annotations_list = wx.ListBox(self.annotation_panel, -1, size=(300, 300))
-        self.world.anime_annotations_list = self.anime_annotations_list
-        anime_annotations_vbox.Add(self.anime_annotations_list)
-        anime_annotations_toolbar = wx.BoxSizer(wx.HORIZONTAL)
-        self.add_anime_annotation_button = wx.Button(self.annotation_panel, -1, "Add")
-        self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_annotation)
-
-        self.delete_anime_annotation_button = wx.Button(self.annotation_panel, -1, "Delete")
-        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_annotation)
-
-        anime_annotations_toolbar.Add(self.add_anime_annotation_button, 0, wx.ALL, 5)
-        anime_annotations_toolbar.Add(self.delete_anime_annotation_button, 0, wx.ALL, 5)
-        anime_annotations_vbox.Add(anime_annotations_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
-        self.annotation_panel.SetSizer(anime_annotations_vbox)
-        anime_annotations_vbox.Fit(self)
+        line1 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
+        line3 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
+        line2 = wx.StaticLine(self.animation_panel)
 
         animation_vbox = wx.BoxSizer(wx.VERTICAL)
         animation_hbox = wx.BoxSizer(wx.HORIZONTAL)
         self.animation_panels_hbox = wx.BoxSizer(wx.HORIZONTAL)
+
         animation_hbox.Add(self.drop_down_files, 0, wx.ALL, 10)
         animation_hbox.Add(self.switch_animation_button, 0, wx.TOP, 12)
         animation_hbox.Add(self.drop_down_species, 0, wx.ALL, 10)
-
-        line1 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
         animation_hbox.Add(line1, 0, wx.EXPAND|wx.ALL, 5)
-
         animation_hbox.Add(self.btn_animate_play, 0, wx.TOP, 12)
-
-        line3 = wx.StaticLine(self.animation_panel, -1, style=wx.LI_VERTICAL)
         animation_hbox.Add(line3, 0, wx.EXPAND|wx.ALL, 5)
-
         animation_hbox.Add(self.slider_time, 0, wx.BOTTOM|wx.EXPAND|wx.ALIGN_RIGHT, 5)
+
         animation_vbox.Add(animation_hbox, 0)
-
-        line2 = wx.StaticLine(self.animation_panel)
         animation_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
-
         animation_vbox.Add(self.animation_panels_hbox)
 
         self.animation_panel.SetSizer(animation_vbox)
-        #animation_hbox.Fit(self)
-        #animation_vbox.Fit(self)
         self.animation_panel.Layout()
         self.animation_panel.SetupScrolling(scroll_y=False)
 
+        """
+        Attached Files Panel Setup
+        """
+        attachment_panel = wx.Panel(splitter_far_right_middle, -1)
+        attachment_panel.SetBackgroundColour(_BG_COLOUR)
+
+        attached_files_vbox = wx.BoxSizer(wx.VERTICAL)
+        attached_file_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+
+        attached_label = wx.StaticText(attachment_panel, -1, "Attached Files:")
+        attached_files_vbox.Add(attached_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
+
+        self.attached_file_list = wx.ListBox(attachment_panel, -1, size=(300, 300))
+        attached_files_vbox.Add(self.attached_file_list)
+
+        self.add_files_button = wx.Button(attachment_panel, -1, "Add")
+        self.add_files_button.Bind(wx.EVT_BUTTON, self.attach_file)
+
+        self.open_files_button = wx.Button(attachment_panel, -1, "Open")
+        self.open_files_button.Bind(wx.EVT_BUTTON, self.open_file)
+
+        attached_file_toolbar.Add(self.add_files_button, 0, wx.ALL, 5)
+        attached_file_toolbar.Add(self.open_files_button, 0, wx.ALL, 5)
+
+        attached_files_vbox.Add(attached_file_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
+
+        attachment_panel.SetSizer(attached_files_vbox)
+        attached_files_vbox.Fit(self)
+
+        """
+        Animation Annotations Panel Setup
+        """
+
+        annotation_panel = wx.Panel(splitter_far_right_middle, -1)
+        annotation_panel.SetBackgroundColour(_BG_COLOUR)
+
+        anime_annotations_vbox = wx.BoxSizer(wx.VERTICAL)
+        anime_annotations_toolbar = wx.BoxSizer(wx.HORIZONTAL)
+
+        anime_annotations_label = wx.StaticText(annotation_panel, -1, "Animation Annotations:")
+        anime_annotations_vbox.Add(anime_annotations_label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
+
+        self.anime_annotations_list = wx.ListBox(annotation_panel, -1, size=(300, 300))
+        anime_annotations_vbox.Add(self.anime_annotations_list)
+
+        self.add_anime_annotation_button = wx.Button(annotation_panel, -1, "Add")
+        self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_annotation)
+
+        self.delete_anime_annotation_button = wx.Button(annotation_panel, -1, "Delete")
+        self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_annotation)
+
+        anime_annotations_toolbar.Add(self.add_anime_annotation_button, 0, wx.ALL, 5)
+        anime_annotations_toolbar.Add(self.delete_anime_annotation_button, 0, wx.ALL, 5)
+
+        anime_annotations_vbox.Add(anime_annotations_toolbar, 0, wx.ALL|wx.ALIGN_CENTRE, 5)
+
+        annotation_panel.SetSizer(anime_annotations_vbox)
+        anime_annotations_vbox.Fit(self)
+
+        """
+        Graph Panel Setup
+        """
+
         (graph_width, graph_height) = calc_graph_size(_DPI, _COLS, _NUM_OF_SIDEBARS, _PHI)
-        self.world.graph_width = graph_width
-        self.world.graph_height = graph_height
+
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
 
         self.graph_canvas = FigCanvas(self.graph_panel, -1, graph_fig)
-        self.world.graph_canvas = self.graph_canvas
         self.graph_axes = graph_fig.add_subplot(111)
-        self.world.graph_axes = self.graph_axes
+
         graph_vbox = wx.BoxSizer(wx.VERTICAL)
         graph_vbox.Add(self.graph_canvas)
 
@@ -168,22 +180,12 @@ class French75(wx.Frame):
         self.graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
 
-        self.world.legend = Legend(self.legend_panel)
-        self.SetMenuBar(self.build_menu_bar())
-
-        self.splitter_far_right.SplitVertically(self.splitter_horiz_middle, self.splitter_far_right_middle)
-        self.splitter_horiz_middle.SplitHorizontally(self.splitter_vert_middle, self.animation_panel)
-        self.splitter_vert_middle.SplitVertically(self.graph_panel, self.legend_panel)
-        self.splitter_far_right_middle.SplitHorizontally(self.attachment_panel, self.annotation_panel)
-
-        self.splitter_far_right.SetSashPosition((5 * self.world.dispW/6) + 10)
-        self.splitter_vert_middle.SetSashPosition((4 * self.world.dispW/6) - 10)
-        self.splitter_horiz_middle.SetSashPosition((graph_height * _DPI) + toolH + 5)
-        self.splitter_far_right_middle.SetSashPosition(self.world.dispH/2)
-
         self.graph_canvas.mpl_connect('button_press_event', self.onclick)
         self.graph_canvas.mpl_connect('motion_notify_event', self.move_mouse)
 
+        """
+        Legend Panel Setup
+        """
         title = wx.StaticText(self.legend_panel, wx.ID_ANY, 'Legend', style=wx.ALIGN_LEFT)
         font = wx.Font(28, wx.DEFAULT, wx.NORMAL, wx.BOLD)
         title.SetFont(font)
@@ -194,17 +196,51 @@ class French75(wx.Frame):
         self.legend_panel.SetSizer(vbox_leg)
         self.legend_panel.Layout()
 
+        """
+        Menubar Setup
+        """
+        self.SetMenuBar(self.build_menu_bar())
+
+        """
+        WorldState Stuff
+        """
         self.world.drop_down_species = self.drop_down_species
         self.world.drop_down_files = self.drop_down_files
         self.world.create_cell_segments_by_species = self.create_cell_segments_by_species
         self.world.create_cell_segments_by_file = self.create_cell_segments_by_file
-
-        self.SetTitle(_TITLE)
+        self.world.graph_canvas = self.graph_canvas
+        self.world.play_animation = self.real_play_animation
+        self.world.create_cell_segments_by_file = self.create_cell_segments_by_file
+        self.world.create_cell_segments_by_species = self.create_cell_segments_by_species
+        self.world.time_slider = self.slider_time
+        self.world.anime_annotations_list = self.anime_annotations_list
+        self.world.graph_axes = self.graph_axes
+        self.world.graph_width = graph_width
+        self.world.graph_height = graph_height
+        self.world.legend = Legend(self.legend_panel)
         self.world.update_title = self.SetTitle
         self.world.get_title = self.GetTitle
+
+        """
+        Whole UI Setup
+        """
+
+        splitter_far_right.SplitVertically(splitter_horiz_middle, splitter_far_right_middle)
+        splitter_horiz_middle.SplitHorizontally(splitter_vert_middle, self.animation_panel)
+        splitter_vert_middle.SplitVertically(self.graph_panel, self.legend_panel)
+        splitter_far_right_middle.SplitHorizontally(attachment_panel, annotation_panel)
+
+        splitter_far_right.SetSashPosition((5 * self.world.dispW/6) + 10)
+        splitter_vert_middle.SetSashPosition((4 * self.world.dispW/6) - 10)
+        splitter_horiz_middle.SetSashPosition((graph_height * _DPI) + toolH + 5)
+        splitter_far_right_middle.SetSashPosition(self.world.dispH/2)
+
+        self.SetTitle(_TITLE)
+
         self.enable_all(False)
         self.filem_new_session.Enable(True)
         self.filem_load_session.Enable(True)
+
         self.Maximize()
 
     def add_annotation(self, e):
@@ -585,7 +621,6 @@ class French75(wx.Frame):
     def sessiony_stuff(self):
         self.world.draw_plot = Plotter(self.graph_axes)
         self.world.draw_plot.plot()
-        reset_sash_position(self.splitter_far_right)
         self.legend_panel.Parent.Refresh()
         self.slider_time.SetMax(self.world.session_dict['max_time'])
 
@@ -625,7 +660,7 @@ class French75(wx.Frame):
             except:
                 pass
         self.world.panels = []
-        self.panel_vboxes = []
+        panel_vboxes = []
         self.world.cell_segments = []
         #TODO: Fix these magic numbers
         a = 10
@@ -634,7 +669,7 @@ class French75(wx.Frame):
         d = 0
         for i, file_name in enumerate(sorted(self.world.session_dict['results'].keys())):
             small_vbox = wx.BoxSizer(wx.VERTICAL)
-            self.panel_vboxes.append(small_vbox)
+            panel_vboxes.append(small_vbox)
             title = wx.StaticText(self.animation_panel, -1, file_name, name=str(i))
             small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
             panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
@@ -660,7 +695,7 @@ class French75(wx.Frame):
             except:
                 pass
         self.world.panels = []
-        self.panel_vboxes = []
+        panel_vboxes = []
         self.world.cell_segments = []
         #TODO: Fix these magic numbers
         a = 10
@@ -670,7 +705,7 @@ class French75(wx.Frame):
         for i, species_name in enumerate(sorted(self.list_of_species())):
             if species_name != "Time":
                 small_vbox = wx.BoxSizer(wx.VERTICAL)
-                self.panel_vboxes.append(small_vbox)
+                panel_vboxes.append(small_vbox)
                 title = wx.StaticText(self.animation_panel, -1, species_name, name=str(i))
                 small_vbox.Add(title,0,wx.EXPAND|wx.ALL,border=2)
                 panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
@@ -802,9 +837,6 @@ class French75(wx.Frame):
         idx = int(panel.GetName())
         dc2 = wx.PaintDC(panel)
         self.world.cell_segments[idx].paint(dc2, idx)
-        self.i += 1
-        #if self.save:
-        #    self.save_snapshot(dc2, self.i)
 
     def animate(self, n):
         """
