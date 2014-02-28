@@ -45,6 +45,7 @@ class French75Client():
         self.world.lamport_clock += 1
         #self.server.update_annotation(self.world.lamport_clock, pickle.dumps(a_id), pickle.dumps(text))
         self.server.update_annotation(2, pickle.dumps(a_id), pickle.dumps(text))
+        self.world.reorder(2)
 
     def launch_large_plot(self):
         """
