@@ -395,18 +395,18 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.push_state()
                     self.world.lamport_clock += 1
-                    self.world.reorder(self.world.lamport_clock)
+                    self.world.push_state()
+                    #self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
                     self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.push_state()
                     self.world.lamport_clock += 1
-                    self.world.reorder(self.world.lamport_clock)
+                    self.world.push_state()
+                    #self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
                 if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
@@ -424,17 +424,17 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.push_state()
                     self.world.lamport_clock += 1
-                    self.world.reorder(self.world.lamport_clock)
+                    self.world.push_state()
+                    #self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
                     self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.push_state()
                     self.world.lamport_clock += 1
-                    self.world.reorder(self.world.lamport_clock)
+                    self.world.push_state()
+                    #self.world.reorder(self.world.lamport_clock)
                     return
 
     def right_click_handler(self, event):
@@ -658,12 +658,10 @@ class French75(wx.Frame):
 
     def undo(self, event):
         self.world.undo()
-        print self.world.undo_stack.timestamps()
         self.world.client.undo()
 
     def redo(self, event):
         self.world.redo()
-        print self.world.undo_stack.timestamps()
         self.world.client.redo()
 
     def toggle_xkcd(self, event):

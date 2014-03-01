@@ -154,7 +154,7 @@ class WorldState:
             self.legend.draw_legend()
             self.refresh_plot()
         except:
-            pass
+            print "*****UNDO FAILED*****"
 
 
     def redo(self):
@@ -171,6 +171,7 @@ class WorldState:
         Need to use deepcopy so that objects in the dictionary are not just
         references
         """
+        print "$$$$$ PUSHED STATE $$$$$"
         if clock is None:
             clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
