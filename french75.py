@@ -323,6 +323,7 @@ class French75(wx.Frame):
 
         self.world.delete_anime_annotation(a_id)
 
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
 
