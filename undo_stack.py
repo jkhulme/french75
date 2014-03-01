@@ -38,6 +38,5 @@ class UndoStack:
     def timestamps(self):
         undo = [clock for clock, session in self.stack]
         redo = [clock for clock, session in self.redo_stack]
-        print undo
-        print redo
-        pass
+        print "Undo:", undo
+        print "Redo:", redo

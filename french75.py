@@ -658,10 +658,12 @@ class French75(wx.Frame):
 
     def undo(self, event):
         self.world.undo()
+        print self.world.undo_stack.timestamps()
         self.world.client.undo()
 
     def redo(self, event):
         self.world.redo()
+        print self.world.undo_stack.timestamps()
         self.world.client.redo()
 
     def toggle_xkcd(self, event):
