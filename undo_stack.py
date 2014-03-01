@@ -13,9 +13,7 @@ class UndoStack:
         self.redo_stack = []
 
     def undo_push(self, item):
-        print len(self.stack)
         self.stack.insert(0, item)
-        print len(self.stack)
 
     def undo_pop(self):
         self.redo_push(deepcopy(self.stack.pop(0)))
@@ -33,8 +31,6 @@ class UndoStack:
         return len(self.stack)
 
     def reorder(self):
-        print [clock for clock, stack in self.stack]
         self.stack.sort()
         self.stack.reverse()
-        print [clock for clock, stack in self.stack]
         return deepcopy(self.stack.pop(0)[1])

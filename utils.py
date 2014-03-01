@@ -6,7 +6,6 @@ from worldstate import WorldState
 
 world = WorldState.Instance()
 
-
 def open_results_file(self):
     file_chooser = wx.FileDialog(
         self,

@@ -13,11 +13,6 @@ class Plotter(object):
     Plots currently supported:
         Intensity plot.
         General line plots.
-
-    self.axes - Lines are plotted using this.
-    self.world.graph_canvas - Used to draw the axes/plots
-    self.parser - the csv parser
-    self.mpl_legend - used when saving the graph
     """
 
     def __init__(self, axes):
@@ -45,7 +40,6 @@ class Plotter(object):
         if (self.mpl_legend):
             self.axes.legend()
 
-        #Grid lines - TODO - make these not fixed
         self.axes.xaxis.set_minor_locator(MultipleLocator(self.world.session_dict['xmax']*1.1/20))
         if self.world.session_dict['normalised']:
             self.axes.yaxis.set_minor_locator(MultipleLocator(1.1/20))
@@ -57,9 +51,9 @@ class Plotter(object):
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
         self.axes.set_title(self.world.session_dict['title'])
+
         if self.world.session_dict['normalised']:
             self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], 0, 1.1))
-
         else:
             self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], self.world.session_dict['ymin'], self.world.session_dict['ymax']*1.1))
 
@@ -83,15 +77,12 @@ class Plotter(object):
                     self.axes.add_artist(circle1)
                 elif annotation.type == self.world._TEXT:
                     self.axes.text(annotation.x1, annotation.y1, annotation.text)
+
         #This is the arrow following mouse annotation thing
         if self.world.session_dict['temp_annotation'] is not None:
             annotation = self.world.session_dict['temp_annotation']
             self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
 
-    """
-    The following 3 methods create the annotations, and plot them for the
-    first time
-    """
     def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
         self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
         self.world.session_dict['annotate'] = False
@@ -131,37 +122,21 @@ class Plotter(object):
         self.world.graph_canvas.draw()
         self.axes.lines.pop()
 
-    """
-    Decides, for each line, how we're going to plot, normal or with intensities
-    """
+
     def plot_line(self, line):
+        """
+        Decides, for each line, how we're going to plot, normal or with intensities
+        """
         if line.plot_line:
-            #t0 = time.time()
             if not self.world.session_dict['normalised']:
                 if not line.intense_plot:
                     self.axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
                 else:
-                    #self.world.graph_axes.set_xlim(self.world.session_dict['xmin'], self.world.session_dict['xmax'])
-                    #self.world.graph_axes.set_ylim(self.world.session_dict['ymin'], self.world.session_dict['ymax'])
-                    #segments = []
-                    #colours = []
-                    """
-                    Seems to be faster to just plot the lines separately rather than using line collection
-                    """
                     for (sub_plot, new_colour) in line.sub_plot_tuples:
-                        #segments.append(zip(line.time, sub_plot))
-                        #colours.append(new_colour)
                         self.axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
-                    #lines = mpl_collections.LineCollection(segments, linewidths=line.thickness, colors=colours)
-                    #self.world.graph_axes.add_collection(lines)
-                    #1.22244095802s
             else:
                 if not line.intense_plot:
                     self.axes.plot(line.original_time, line.normalised_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
                 else:
                     for (sub_plot, new_colour) in line.normalised_sub_plots:
-                        #segments.append(zip(line.time, sub_plot))
-                        #colours.append(new_colour)
                         self.axes.plot(line.interpolated_time, sub_plot, color=new_colour, lw=line.thickness)
-            #t1 = time.time()
-            #print t1 - t0

@@ -20,8 +20,6 @@ class SessionWizard(wx.wizard.Wizard):
     def __init__(self, title, img_filename=""):
         wx.wizard.Wizard.__init__(self, None, -1, title)
 
-        #These states are so that I know what has or hasn't been done on
-        #completion or cancellation.  More will be added.
         self._STARTED = 0
         self._FINISHED = 1
         self._CANCELLED = 2
@@ -105,8 +103,6 @@ class SessionWizard(wx.wizard.Wizard):
         self.species_dd.Bind(wx.EVT_COMBOBOX, self.change_species)
 
         self.location_panel = wx.Panel(page4, -1, size=(1000000, 1000000))
-        #self.location_panel.SetBackgroundColour('white')
-        #self.species_list_peri = wx.CheckListBox(page4, -1, size=(200, -1), style=wx.LB_MULTIPLE)
         page4.add_widget(self.file_dd)
         page4.add_widget(self.species_dd)
 
@@ -117,7 +113,6 @@ class SessionWizard(wx.wizard.Wizard):
 
         page4.add_widget(self.location_panel)
         page4.Bind(wizmod.EVT_WIZARD_PAGE_SHOWN, self.page4_location_panel_size)
-        #page4.add_widget(self.species_list_peri)
 
         self.add_page(page4)
 
@@ -281,7 +276,6 @@ class wizard_page(wizmod.PyWizardPage):
         else:
             self.sizer.Add(stuff, 0, wx.ALL|wx.ALIGN_CENTRE, _PADDING)
 
-    #Would like to get rid of the following methods, but they seem to be needed by some parent code
     def SetNext(self, next):
         '''Set the next page'''
         self.next = next

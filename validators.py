@@ -23,7 +23,6 @@ class TextNotEmptyValidator(wx.PyValidator):
 
         if not text:
             self.error_label.SetLabel('***Please enter a title***')
-            #wx.MessageBox('validator error', 'Error')
             textCtrl.SetFocus()
             textCtrl.GetParent().Refresh()
             return False
@@ -55,7 +54,6 @@ class ResultsListNotEmptyValidator(wx.PyValidator):
 
         if not results_count:
             self.error_label.SetLabel('***Please select at least one results file***')
-            #wx.MessageBox('validator error', 'Error')
             results_list.SetFocus()
             results_list.GetParent().Refresh()
             return False

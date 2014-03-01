@@ -89,7 +89,6 @@ class WorldState:
         """
         Set everything back to a default value
         """
-        #self.client.reset_session()
         for (key, value) in _DICT_ELEMS:
             self.session_dict[key] = value
 
@@ -100,7 +99,6 @@ class WorldState:
         self.session_dict['clock_increment'] = self.session_dict['max_time'] / 600.0
 
     def change_cursor(self, cursor):
-        #self.client.change_cursor(cursor)
         self.graph_canvas.SetCursor(wx.StockCursor(cursor))
 
     def euclid_distance(self, p1, p2):
@@ -110,11 +108,11 @@ class WorldState:
         """
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-    """
-    Work through the list of set colours first.  Then start generating new
-    colours - if they are too close then regenerate
-    """
     def choose_colour(self):
+        """
+        Work through the list of set colours first.  Then start generating new
+        colours - if they are too close then regenerate
+        """
         if (len(self.hard_colours) > 0):
             return self.hard_colours.pop()
         else:
@@ -177,7 +175,6 @@ class WorldState:
             clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
         self.undo_stack.undo_push((clock, copy.deepcopy(self.session_dict)))
-        #self.reorder(clock)
 
     def pickle_session(self):
         """

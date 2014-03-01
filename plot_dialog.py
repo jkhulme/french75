@@ -9,11 +9,11 @@ class Plot_Dialog(wx.Dialog):
     The plot preferences dialog, user can change things like colour and
     thickness
     """
+
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
-
         self.world = WorldState.Instance()
-        #self = wx.Panel(self)
+
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
         preferences_label = wx.StaticText(self, -1, "Line Preferences:")
@@ -33,17 +33,23 @@ class Plot_Dialog(wx.Dialog):
         panel_vbox.Add(line2, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
         colour_hbox = wx.BoxSizer(wx.HORIZONTAL)
+
         colour_label = wx.StaticText(self, -1, "Line Colour:")
         colour_hbox.Add(colour_label)
+
         self.colour_picker = wx.ColourPickerCtrl(self, -1)
         colour_hbox.Add(self.colour_picker)
+
         panel_vbox.Add(colour_hbox, 0, wx.EXPAND|wx.TOP|wx.LEFT, 10)
 
         thickness_hbox = wx.BoxSizer(wx.HORIZONTAL)
+
         thickness_label = wx.StaticText(self, -1, "Line Thickness")
         thickness_hbox.Add(thickness_label)
+
         self.thick_spin = wx.SpinCtrl(self, -1, "2")
         thickness_hbox.Add(self.thick_spin)
+
         panel_vbox.Add(thickness_hbox, 0, wx.EXPAND|wx.TOP|wx.LEFT|wx.BOTTOM, 10)
 
         line4 = wx.StaticLine(self)
@@ -52,39 +58,38 @@ class Plot_Dialog(wx.Dialog):
         line5 = wx.StaticLine(self)
         panel_vbox.Add(line5, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
-        #self.SetSizer(panel_vbox)
-
         btn_hbox = wx.BoxSizer(wx.HORIZONTAL)
+
         okButton = wx.Button(self, label='Ok')
         closeButton = wx.Button(self, label='Cancel')
+        okButton.Bind(wx.EVT_BUTTON, self.on_ok)
+        closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
         btn_hbox.Add(okButton)
         btn_hbox.Add(closeButton, flag=wx.LEFT, border=10)
 
         panel_vbox.Add(btn_hbox, flag=wx.ALIGN_CENTER | wx.TOP |
                        wx.BOTTOM, border=10)
 
-        okButton.Bind(wx.EVT_BUTTON, self.on_ok)
-        closeButton.Bind(wx.EVT_BUTTON, self.on_cancel)
-
         self.SetSizer(panel_vbox)
         panel_vbox.Fit(self)
         self.SetSize((self.world.dispW/4, self.world.dispH/2))
+
         self.Centre()
 
-    """
-    Set dialog ui elements to values from line
-    """
     def set_line(self, line):
+        """
+        Set dialog ui elements to values from line
+        """
         self.line = line
         self.cb_show_hide.SetValue(self.line.plot_line)
         self.cb_intense.SetValue(self.line.intense_plot)
         self.colour_picker.SetColour(self.line.flat_colour)
         self.thick_spin.SetValue(self.line.thickness)
 
-    """
-    Update the line to values from ui elements
-    """
     def on_ok(self, e):
+        """
+        Update the line to values from ui elements
+        """
         self.line.plot_line = self.cb_show_hide.GetValue()
         self.line.intense_plot = self.cb_intense.GetValue()
         self.line.thickness = self.thick_spin.GetValue()
