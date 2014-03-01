@@ -93,8 +93,6 @@ class Plotter(object):
 
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
-        self.world.push_state()
-        self.world.reorder(self.world.lamport_clock)
         self.world.graph_canvas.draw()
 
     def annotate_text(self, (x, y), text="Annotation"):
@@ -104,6 +102,7 @@ class Plotter(object):
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
         self.world.graph_canvas.draw()
+        self.world.graph_canvas.draw()
 
     def annotate_circle(self, (x, y), colour="black"):
         circle1 = Ellipse((x, y), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
@@ -112,6 +111,7 @@ class Plotter(object):
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
+        self.world.graph_canvas.draw()
         self.world.graph_canvas.draw()
 
     def vertical_line(self):
