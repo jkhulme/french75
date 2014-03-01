@@ -309,6 +309,7 @@ class French75(wx.Frame):
 
             self.world.add_anime_annotation(idx, self.world.temp_anime_annotation)
 
+            self.world.lamport_clock += 1
             self.world.push_state()
             self.world.reorder(self.world.lamport_clock)
 
@@ -397,7 +398,7 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = True
                     self.world.lamport_clock += 1
                     self.world.push_state()
-                    #self.world.reorder(self.world.lamport_clock)
+                    self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT:
                 if self.world.session_dict['annotate']:
@@ -406,7 +407,7 @@ class French75(wx.Frame):
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     self.world.lamport_clock += 1
                     self.world.push_state()
-                    #self.world.reorder(self.world.lamport_clock)
+                    self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
                 if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:
@@ -426,7 +427,7 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = True
                     self.world.lamport_clock += 1
                     self.world.push_state()
-                    #self.world.reorder(self.world.lamport_clock)
+                    self.world.reorder(self.world.lamport_clock)
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
@@ -434,7 +435,7 @@ class French75(wx.Frame):
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     self.world.lamport_clock += 1
                     self.world.push_state()
-                    #self.world.reorder(self.world.lamport_clock)
+                    self.world.reorder(self.world.lamport_clock)
                     return
 
     def right_click_handler(self, event):
@@ -670,10 +671,12 @@ class French75(wx.Frame):
 
     def toggle_annotations(self, event):
         self.toggle_param('draw_annotations')
+        print self.world.session_dict['draw_annotations']
 
     def toggle_param(self, param):
         self.world.session_dict[param] = not self.world.session_dict[param]
 
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
 

@@ -153,6 +153,9 @@ class WorldState:
             self.session_dict = self.undo_stack.undo_pop()
             self.legend.draw_legend()
             self.refresh_plot()
+            for panel in self.panels:
+                panel.Refresh()
+            self.populate_anime_annotation_lb()
         except:
             print "*****UNDO FAILED*****"
 
@@ -161,6 +164,9 @@ class WorldState:
         self.session_dict = self.undo_stack.redo_pop()
         self.legend.draw_legend()
         self.refresh_plot()
+        for panel in self.panels:
+            panel.Refresh()
+        self.populate_anime_annotation_lb()
 
     def push_state(self, clock=None):
         """
@@ -171,7 +177,6 @@ class WorldState:
         Need to use deepcopy so that objects in the dictionary are not just
         references
         """
-        print "$$$$$ PUSHED STATE $$$$$"
         if clock is None:
             clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
