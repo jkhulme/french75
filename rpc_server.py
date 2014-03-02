@@ -71,8 +71,6 @@ class French75Server():
         """
         works
         """
-        print "lamport clock", self.world.lamport_clock
-        print "incoming clock", clock
         self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         text = pickle.loads(text)
@@ -102,10 +100,11 @@ class French75Server():
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         line, file_key, species_key = pickle.loads(update_tuple)
         self.world.session_dict['lines'][file_key][species_key] = line
+        self.world.reorder(clock)
         self.world.legend.draw_legend()
         self.world.legend.legend_panel.Refresh()
         self.world.refresh_plot()
-        self.world.reorder(clock)
+
 
     def reset_session(self):
         self.world.reset_session()
@@ -135,8 +134,8 @@ class French75Server():
         self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict[param] = value
-        refresh_plot()
         self.world.reorder(clock)
+        refresh_plot()
 
     def add_anime_annotation(self, clock, annotation_tuple):
         self.world.push_state()
