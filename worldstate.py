@@ -176,7 +176,7 @@ class WorldState:
         if clock is None:
             clock = self.lamport_clock
         self.update_title("French75 - Unsaved Changes")
-        self.undo_stack.undo_push((clock, copy.deepcopy(self.session_dict)))
+        self.undo_stack.undo_push(copy.deepcopy((clock, self.session_dict)))
 
     def pickle_session(self):
         """

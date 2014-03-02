@@ -99,9 +99,6 @@ class Plotter(object):
         annotation = Annotation(self.world._TEXT, (x, y), text=text)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
-        self.world.lamport_clock += 1
-        self.world.push_state()
-        self.world.reorder(self.world.lamport_clock)
         self.world.client.add_annotation(annotation)
         self.world.graph_canvas.draw()
 

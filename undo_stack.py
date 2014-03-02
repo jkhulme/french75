@@ -1,4 +1,5 @@
 from copy import deepcopy
+import inspect
 
 
 class UndoStack:
@@ -13,6 +14,7 @@ class UndoStack:
         self.redo_stack = []
 
     def undo_push(self, item):
+        print 'caller name:', inspect.stack()[1][3]
         self.stack.insert(0, deepcopy(item))
         self.history()
 
