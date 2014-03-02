@@ -145,10 +145,6 @@ class WorldState:
                 (0, 0, 255)]
 
     def undo(self):
-        """
-        Need to update values one by one because some need to be taken out
-        of the session dict <- TODO
-        """
         try:
             self.session_dict = self.undo_stack.undo_pop()
             self.legend.draw_legend()

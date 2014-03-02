@@ -14,6 +14,7 @@ class UndoStack:
 
     def undo_push(self, item):
         self.stack.insert(0, deepcopy(item))
+        self.history()
 
     def undo_pop(self):
         self.redo_push(deepcopy(self.stack.pop(0)))
@@ -40,3 +41,7 @@ class UndoStack:
         redo = [clock for clock, session in self.redo_stack]
         print "Undo:", undo
         print "Redo:", redo
+
+    def history(self):
+        num_annotations = [len(session['annotations']) for clock, session in self.stack]
+        print num_annotations

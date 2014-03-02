@@ -406,9 +406,7 @@ class French75(wx.Frame):
                     self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.lamport_clock += 1
-                    self.world.push_state()
-                    self.world.reorder(self.world.lamport_clock)
+                    #
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._TEXT_ARROW:
                 if self.world.session_dict['annotate'] and not self.world.session_dict['click_one']:

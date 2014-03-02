@@ -73,6 +73,7 @@ class French75Server():
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
         self.world.reorder(clock)
         refresh_plot()
+        print len(self.world.session_dict['annotations'])
         if old_clock != clock:
             return clock
         else:
