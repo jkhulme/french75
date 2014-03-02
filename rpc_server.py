@@ -61,17 +61,22 @@ class French75Server():
         """
         Works
         """
+        old_clock = clock
+        print "mine: ", self.world.lamport_clock
+        print "incoming: ", clock
         if self.world.lamport_clock == clock:
-            if self.port == 8000:
-                self.world.lamport_clock += 1
-            else:
-                clock += 1
+            clock += 1
+        print "mine: ", self.world.lamport_clock
+        print "incoming: ", clock
         self.world.push_state()
         self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
         self.world.session_dict['annotations'].append(pickle.loads(annotation))
         self.world.reorder(clock)
         refresh_plot()
-        return True
+        if old_clock != clock:
+            return clock
+        else:
+            None
 
     def update_annotation(self, clock, a_id, text):
         """
