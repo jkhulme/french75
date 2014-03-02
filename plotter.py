@@ -67,15 +67,29 @@ class Plotter(object):
         go through the list of annotations and plot them
         """
         for annotation in self.world.session_dict['annotations']:
+            if not self.world.session_dict['normalised']:
+                y1 = annotation.y1
+                try:
+                    y2 = annotation.y2
+                except:
+                    pass
+                width=0.075*self.world.session_dict['ymax']
+            else:
+                y1 = annotation.y1 / self.world.session_dict['ymax']
+                try:
+                    y2 = annotation.y2 / self.world.session_dict['ymax']
+                except:
+                    pass
+                width = 0.075
             if annotation.type == self.world._TEXT_ARROW:
-                self.axes.annotate(annotation.text, xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
+                self.axes.annotate(annotation.text, xy=(annotation.x2, y2), xytext=(annotation.x1, y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
             elif annotation.type == self.world._ARROW:
-                self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
+                self.axes.annotate("", xy=(annotation.x2, y2), xytext=(annotation.x1, y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
             elif annotation.type == self.world._CIRCLE:
-                circle1 = Ellipse((annotation.x1, annotation.y1), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=annotation.colour)
+                circle1 = Ellipse((annotation.x1, y1), width=width, height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=annotation.colour)
                 self.axes.add_artist(circle1)
             elif annotation.type == self.world._TEXT:
-                self.axes.text(annotation.x1, annotation.y1, annotation.text)
+                self.axes.text(annotation.x1, y1, annotation.text)
 
         #This is the arrow following mouse annotation thing
         if self.world.session_dict['temp_annotation'] is not None:
