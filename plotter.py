@@ -60,7 +60,9 @@ class Plotter(object):
         if self.world.session_dict['draw_annotations']:
             self.redraw_annotations()
 
-        self.world.graph_canvas.draw()
+        #self.world.graph_canvas.draw()
+
+        self.vertical_line()
 
     def redraw_annotations(self):
         """
@@ -129,7 +131,12 @@ class Plotter(object):
         """
         The sliding bar that follows the clock
         """
-        self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, 120000], label="time_line", color='red', lw=3)
+        if self.world.session_dict['normalised']:
+            height = 1
+        else:
+            height = self.world.session_dict['ymax']
+
+        self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, height], label="time_line", color='red', lw=3)
         self.world.graph_canvas.draw()
         self.axes.lines.pop()
 
