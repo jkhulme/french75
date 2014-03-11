@@ -101,7 +101,9 @@ class Plot_Dialog(wx.Dialog):
             self.line.normalise()
         except:
             print "No colour change"
+        self.world.lamport_clock += 1
         self.world.push_state()
+        self.world.reorder(self.world.lamport_clock)
         self.Close()
 
     def on_cancel(self, e):

@@ -102,6 +102,7 @@ class Legend(object):
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_show_hide)
         self.world.session_dict['lines'][file_key][species_key].plot_line = cb_show_hide.GetValue()
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
         refresh_plot()
@@ -114,6 +115,7 @@ class Legend(object):
         file_key = cb_intense.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_intense)
         self.world.session_dict['lines'][file_key][species_key].intense_plot = cb_intense.GetValue()
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
         refresh_plot()

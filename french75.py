@@ -486,6 +486,7 @@ class French75(wx.Frame):
         self.world.update_annotation_text(self.selected_annotation.id, self.world.session_dict['annotation_text'])
         self.selected_annotation.colour = 'black'
 
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
 
@@ -499,6 +500,7 @@ class French75(wx.Frame):
     def delete_annotation(self, event):
         self.world.delete_annotation(self.selected_annotation.id)
 
+        self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
 
