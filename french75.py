@@ -463,9 +463,8 @@ class French75(wx.Frame):
             self.selected_annotation.colour = 'red'
             refresh_plot()
             self.annotation_menu()
-            self.selected_annotation.colour = 'black'
-            self.selected_annotation = None
             refresh_plot()
+            self.selected_annotation = None
         else:
             print "Missed annotation"
 
@@ -485,6 +484,7 @@ class French75(wx.Frame):
         self.get_label()
 
         self.world.update_annotation_text(self.selected_annotation.id, self.world.session_dict['annotation_text'])
+        self.selected_annotation.colour = 'black'
 
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)

@@ -61,6 +61,10 @@ class AnnotationDialogue(wx.Dialog):
         line3 = wx.StaticLine(self)
         panel_vbox.Add(line3, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
+        instruction_text = wx.StaticText(self, -1, "After pressing OK, click on a cell segment to place.")
+        instruction_text.Wrap(self.world.dispW/4)
+        panel_vbox.Add(instruction_text, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
+
         panel_vbox.Add((0,0), 1, wx.EXPAND)
 
         line2 = wx.StaticLine(self)
