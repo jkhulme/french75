@@ -157,12 +157,15 @@ class WorldState:
 
 
     def redo(self):
-        self.session_dict = self.undo_stack.redo_pop()
-        self.legend.draw_legend()
-        self.refresh_plot()
-        for panel in self.panels:
-            panel.Refresh()
-        self.populate_anime_annotation_lb()
+        try:
+            self.session_dict = self.undo_stack.redo_pop()
+            self.legend.draw_legend()
+            self.refresh_plot()
+            for panel in self.panels:
+                panel.Refresh()
+            self.populate_anime_annotation_lb()
+        except:
+            print "*****REDO FAILED*****"
 
     def push_state(self, clock=None):
         """
