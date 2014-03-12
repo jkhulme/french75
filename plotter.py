@@ -69,20 +69,41 @@ class Plotter(object):
         go through the list of annotations and plot them
         """
         for annotation in self.world.session_dict['annotations']:
-            if not self.world.session_dict['normalised']:
-                y1 = annotation.y1
-                try:
-                    y2 = annotation.y2
-                except:
-                    pass
-                width=0.075*self.world.session_dict['ymax']
+            print annotation.normalised
+            if annotation.normalised:
+                if self.world.session_dict['normalised']:
+                    print "A"
+                    y1 = annotation.y1
+                    try:
+                        y2 = annotation.y2
+                    except:
+                        pass
+                    width = 0.075
+                else:
+                    print "B"
+                    y1 = annotation.y1 * self.world.session_dict['ymax']
+                    try:
+                        y2 = annotation.y2 * self.world.session_dict['ymax']
+                    except:
+                        pass
+                    width=0.075*self.world.session_dict['ymax']
             else:
-                y1 = annotation.y1 / self.world.session_dict['ymax']
-                try:
-                    y2 = annotation.y2 / self.world.session_dict['ymax']
-                except:
-                    pass
-                width = 0.075
+                if not self.world.session_dict['normalised']:
+                    print "C"
+                    y1 = annotation.y1
+                    try:
+                        y2 = annotation.y2
+                    except:
+                        pass
+                    width=0.075*self.world.session_dict['ymax']
+                else:
+                    print "D"
+                    y1 = annotation.y1 / self.world.session_dict['ymax']
+                    try:
+                        y2 = annotation.y2 / self.world.session_dict['ymax']
+                    except:
+                        pass
+                    width = 0.075
             if annotation.type == self.world._TEXT_ARROW:
                 self.axes.annotate(annotation.text, xy=(annotation.x2, y2), xytext=(annotation.x1, y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
             elif annotation.type == self.world._ARROW:
@@ -99,33 +120,36 @@ class Plotter(object):
             self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
 
     def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
-        self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
+        #self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
         self.world.session_dict['annotate'] = False
         if text:
-            annotation = Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour)
+            annotation = Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour, self.world.session_dict['normalised'])
         else:
-            annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2))
+            annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2), normalised=self.world.session_dict['normalised'])
 
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
-        self.world.graph_canvas.draw()
+        #self.world.graph_canvas.draw()
+        self.plot()
 
     def annotate_text(self, (x, y), text="Annotation"):
-        self.axes.text(x, y, text)
-        annotation = Annotation(self.world._TEXT, (x, y), text=text)
+        #self.axes.text(x, y, text)
+        annotation = Annotation(self.world._TEXT, (x, y), text=text, normalised=self.world.session_dict['normalised'])
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
-        self.world.graph_canvas.draw()
+        #self.world.graph_canvas.draw()
+        self.plot()
 
     def annotate_circle(self, (x, y), colour="black"):
-        circle1 = Ellipse((x, y), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
-        annotation = Annotation(self.world._CIRCLE, (x, y), colour=colour)
-        self.axes.add_artist(circle1)
+        #circle1 = Ellipse((x, y), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
+        annotation = Annotation(self.world._CIRCLE, (x, y), colour=colour, normalised=self.world.session_dict['normalised'])
+        #self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
         self.world.client.add_annotation(annotation)
-        self.world.graph_canvas.draw()
+        #self.world.graph_canvas.draw()
+        self.plot()
 
     def vertical_line(self):
         """
