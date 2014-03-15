@@ -444,29 +444,32 @@ class French75(wx.Frame):
         Select existing annotations, offer to edit or delete
         """
         self.selected_annotation = None
-        for annotation in self.world.session_dict['annotations']:
-            dist = 1
-            if annotation.type == self.world._TEXT_ARROW or annotation.type == self.world._ARROW:
-                dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']),
-                    annotation.y1/float(self.world.session_dict['max_height'])),
-                    (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
-                    (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+        try:
+            for annotation in self.world.session_dict['annotations']:
+                dist = 1
+                if annotation.type == self.world._TEXT_ARROW or annotation.type == self.world._ARROW:
+                    dist = point_to_line_distance((annotation.x1/float(self.world.session_dict['max_time']),
+                        annotation.y1/float(self.world.session_dict['max_height'])),
+                        (annotation.x2/float(self.world.session_dict['max_time']), annotation.y2/float(self.world.session_dict['max_height'])),
+                        (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                else:
+                    dist = euclid_distance((annotation.x1/float(self.world.session_dict['max_time']),
+                        annotation.y1/float(self.world.session_dict['max_height'])),
+                        (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
+                if dist < 0.025:
+                    if self.selected_annotation is None:
+                        self.selected_annotation = annotation
+                        break
+            if self.selected_annotation is not None:
+                self.selected_annotation.colour = 'red'
+                refresh_plot()
+                self.annotation_menu()
+                refresh_plot()
+                self.selected_annotation = None
             else:
-                dist = euclid_distance((annotation.x1/float(self.world.session_dict['max_time']),
-                    annotation.y1/float(self.world.session_dict['max_height'])),
-                    (event.xdata/float(self.world.session_dict['max_time']), event.ydata/float(self.world.session_dict['max_height'])))
-            if dist < 0.025:
-                if self.selected_annotation is None:
-                    self.selected_annotation = annotation
-                    break
-        if self.selected_annotation is not None:
-            self.selected_annotation.colour = 'red'
-            refresh_plot()
-            self.annotation_menu()
-            refresh_plot()
-            self.selected_annotation = None
-        else:
-            print "Missed annotation"
+                print "Missed annotation"
+        except:
+            print "Clicked outside of graph"
 
     def annotation_menu(self):
         annotate_menu = wx.Menu()
