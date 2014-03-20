@@ -78,12 +78,12 @@ class French75Client():
         self.server.delete_anime_annotation(self.world.lamport_clock, a_id)
 
     def add_anime_annotation(self, (key, annotation)):
-        thread = Thread(target=self.non_blocking, args=((key, annotation),))
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps((key, annotation)),))
         thread.start()
         #self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
-    def non_blocking(self, (key, annotation)):
-        self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
+    def non_blocking(self, *args):
+        self.server.add_anime_annotation(*args)
 
     def delete_annotation(self, a_id):
         """
