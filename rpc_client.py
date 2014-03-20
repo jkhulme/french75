@@ -78,7 +78,9 @@ class French75Client():
         self.server.delete_anime_annotation(self.world.lamport_clock, a_id)
 
     def add_anime_annotation(self, (key, annotation)):
-        self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
+        thread = Thread(target=self.server.add_anime_annotation, args=(self.world.lamport_clock, pickle.dumps((key, annotation),)))
+        thread.start()
+        #self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
     def delete_annotation(self, a_id):
         """
