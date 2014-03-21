@@ -37,7 +37,6 @@ class CellSegment(object):
             if line != None:
                 if location in species_locations or species_locations == ['whole_cell']:
                     line.update_animation_colour(self.world.session_dict['clock'])
-                    print line.debug_name
                     dc.SetBrush(wx.Brush(line.seg_colour))
             else:
                 dc.SetBrush(wx.Brush('white'))

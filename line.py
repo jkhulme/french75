@@ -115,8 +115,6 @@ class Line(object):
         Plots the sub plots and works out what colour the line should be
         this is for colour intensity plot
         """
-        if debug:
-            print self.colour_change_points[0][1]
         sub_plots = self.build_colour_plot_arrays(results, interval)
         sub_plot_tuples = []
         self.colour_change_points = []
@@ -134,8 +132,6 @@ class Line(object):
             self.colour_change_points.append((count, new_colour))
             sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
-        if debug:
-            print self.colour_change_points[0][1]
         return sub_plot_tuples
 
     def build_colour_plot_arrays(self, results, interval):

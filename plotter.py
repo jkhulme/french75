@@ -74,10 +74,8 @@ class Plotter(object):
         go through the list of annotations and plot them
         """
         for annotation in self.world.session_dict['annotations']:
-            print annotation.normalised
             if annotation.normalised:
                 if self.world.session_dict['normalised']:
-                    print "A"
                     y1 = annotation.y1
                     try:
                         y2 = annotation.y2
@@ -85,7 +83,6 @@ class Plotter(object):
                         pass
                     width = 0.075
                 else:
-                    print "B"
                     y1 = annotation.y1 * self.world.session_dict['ymax']
                     try:
                         y2 = annotation.y2 * self.world.session_dict['ymax']
@@ -94,7 +91,6 @@ class Plotter(object):
                     width=0.075*self.world.session_dict['ymax']
             else:
                 if not self.world.session_dict['normalised']:
-                    print "C"
                     y1 = annotation.y1
                     try:
                         y2 = annotation.y2
@@ -102,7 +98,6 @@ class Plotter(object):
                         pass
                     width=0.075*self.world.session_dict['ymax']
                 else:
-                    print "D"
                     y1 = annotation.y1 / self.world.session_dict['ymax']
                     try:
                         y2 = annotation.y2 / self.world.session_dict['ymax']
@@ -133,6 +128,7 @@ class Plotter(object):
             annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2), normalised=self.world.session_dict['normalised'])
 
         self.world.session_dict['annotations'].append(annotation)
+        self.world.lamport_clock += 1
         self.world.client.add_annotation(annotation)
         #self.world.graph_canvas.draw()
         self.plot()
@@ -142,6 +138,7 @@ class Plotter(object):
         annotation = Annotation(self.world._TEXT, (x, y), text=text, normalised=self.world.session_dict['normalised'])
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
+        self.world.lamport_clock += 1
         self.world.client.add_annotation(annotation)
         #self.world.graph_canvas.draw()
         self.plot()
@@ -152,6 +149,7 @@ class Plotter(object):
         #self.axes.add_artist(circle1)
         self.world.session_dict['annotate'] = False
         self.world.session_dict['annotations'].append(annotation)
+        self.world.lamport_clock += 1
         self.world.client.add_annotation(annotation)
         #self.world.graph_canvas.draw()
         self.plot()

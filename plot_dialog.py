@@ -102,11 +102,9 @@ class Plot_Dialog(wx.Dialog):
             self.line.debug_name = "Finish"
         except:
             print "No colour change"
-        print self.line.seg_colour
         self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
-        print self.line.seg_colour
         self.world.refresh_animation()
         self.Close()
 

@@ -397,7 +397,7 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.lamport_clock += 1
+                    #self.world.lamport_clock += 1
                     self.world.push_state()
                     self.world.reorder(self.world.lamport_clock)
                     return
@@ -406,7 +406,7 @@ class French75(wx.Frame):
                     self.world.draw_plot.annotate_text((event.xdata, event.ydata), text=self.world.session_dict['annotation_text'])
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.lamport_clock += 1
+                    #self.world.lamport_clock += 1
                     self.world.push_state()
                     self.world.reorder(self.world.lamport_clock)
                     return
@@ -426,7 +426,7 @@ class French75(wx.Frame):
                     self.world.session_dict['redraw_legend'] = False
                     self.world.draw_plot.plot()
                     self.world.session_dict['redraw_legend'] = True
-                    self.world.lamport_clock += 1
+                    #self.world.lamport_clock += 1
                     self.world.push_state()
                     self.world.reorder(self.world.lamport_clock)
                     return
@@ -435,7 +435,7 @@ class French75(wx.Frame):
                     self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
-                    self.world.lamport_clock += 1
+                    #self.world.lamport_clock += 1
                     self.world.push_state()
                     self.world.reorder(self.world.lamport_clock)
                     return
@@ -678,7 +678,6 @@ class French75(wx.Frame):
 
     def toggle_annotations(self, event):
         self.toggle_param('draw_annotations')
-        print self.world.session_dict['draw_annotations']
 
     def toggle_param(self, param):
         self.world.session_dict[param] = not self.world.session_dict[param]

@@ -93,7 +93,9 @@ class French75Client():
         #self.server.add_anime_annotation(self.world.lamport_clock, pickle.dumps((key, annotation)))
 
     def non_blocking(self, *args, **kwargs):
-        kwargs['name'](*args)
+        new_clock = kwargs['name'](*args)
+        if new_clock is not None:
+            self.world.lamport_clock = new_clock
 
     def delete_annotation(self, a_id):
         """

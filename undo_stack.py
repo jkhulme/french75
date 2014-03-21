@@ -14,7 +14,7 @@ class UndoStack:
         self.redo_stack = []
 
     def undo_push(self, item):
-        print 'caller name:', inspect.stack()[1][3]
+        #print 'caller name:', inspect.stack()[1][3]
         self.stack.insert(0, deepcopy(item))
         self.history()
 
@@ -41,9 +41,9 @@ class UndoStack:
     def timestamps(self):
         undo = [clock for clock, session in self.stack]
         redo = [clock for clock, session in self.redo_stack]
-        print "Undo:", undo
-        print "Redo:", redo
+        #print "Undo:", undo
+        #print "Redo:", redo
 
     def history(self):
         num_annotations = [len(session['annotations']) for clock, session in self.stack]
-        print num_annotations
+        #print num_annotations
