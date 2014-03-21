@@ -3,6 +3,7 @@ from worldstate import WorldState
 from annotation import Annotation
 from utils import rgb_to_hex
 from matplotlib.patches import Ellipse
+from threading import Thread
 
 
 class Plotter(object):
@@ -20,8 +21,12 @@ class Plotter(object):
         self.axes = axes
         self.mpl_legend = False
 
-
     def plot(self):
+        #plotting_thread = Thread(target=self.plot_thread)
+        #plotting_thread.start()
+        self.plot_thread()
+
+    def plot_thread(self):
         """
         Attempt to plot each line.
         Then set the environment of the graph
