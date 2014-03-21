@@ -6,6 +6,7 @@ from undo_stack import UndoStack
 import copy
 import pickle
 from method_sink import Sink
+from singleton2 import SingletonMixin
 
 
 _DICT_ELEMS = [('results', None),
@@ -45,6 +46,7 @@ _DICT_ELEMS = [('results', None),
 
 @Singleton
 class WorldState:
+#class WorldState(SingletonMixin):
 
     """
     Singleton for sharing data between different parts of the program.  Saves having to keep track of where everything has been passed
