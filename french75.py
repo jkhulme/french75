@@ -432,6 +432,7 @@ class French75(wx.Frame):
                     return
             elif self.world.session_dict['annotation_mode'] == self.world._CIRCLE:
                 if self.world.session_dict['annotate']:
+                    self.world.change_cursor(wx.CURSOR_ARROW)
                     self.world.draw_plot.annotate_circle((event.xdata, event.ydata), colour='black')
                     self.world.session_dict['annotation_mode'] = self.world._NONE
                     self.world.lamport_clock += 1
