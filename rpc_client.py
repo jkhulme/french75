@@ -37,45 +37,55 @@ class French75Client():
         """
         works
         """
-        new_clock = self.server.add_annotation(self.world.lamport_clock, pickle.dumps(annotation))
-        if new_clock is not None:
-            self.world.lamport_clock = new_clock
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps(annotation),), kwargs={'name':self.server.add_annotation})
+        thread.start()
+        #if new_clock is not None:
+        #    self.world.lamport_clock = new_clock
 
     def update_annotation(self, a_id, text):
         """
         works
         """
-        self.server.update_annotation(self.world.lamport_clock, pickle.dumps(a_id), pickle.dumps(text))
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps(a_id), pickle.dumps(text),), kwargs={'name':self.server.update_annotation})
+        thread.start()
 
     def launch_large_plot(self):
         """
         works
         """
-        self.server.launch_large_plot()
+        thread = Thread(target=self.non_blocking, args=(), kwargs={'name':self.server.launch_large_plot})
+        thread.start()
 
     def close_large_plot(self):
         """
         works
         """
-        self.server.close_large_plot()
+        thread = Thread(target=self.non_blocking, args=(), kwargs={'name':self.server.close_large_plot})
+        thread.start()
 
     def update_legend(self, line, file_key, species_key):
         """
         works
         """
-        self.server.update_legend(self.world.lamport_clock, pickle.dumps((line, file_key, species_key)))
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps((line, file_key, species_key)),), kwargs={'name':self.server.update_legend})
+        thread.start()
+
 
     def reset_session(self):
-        self.server.reset_session()
+        thread = Thread(target=self.non_blocking, args=(), kwargs={'name':self.server.reset_session})
+        thread.start()
 
     def undo(self):
-        self.server.undo()
+        thread = Thread(target=self.non_blocking, args=(), kwargs={'name':self.server.undo})
+        thread.start()
 
     def redo(self):
-        self.server.redo()
+        thread = Thread(target=self.non_blocking, args=(), kwargs={'name':self.server.redo})
+        thread.start()
 
     def delete_anime_annotation(self, a_id):
-        self.server.delete_anime_annotation(self.world.lamport_clock, a_id)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, a_id,), kwargs={'name':self.server.delete_anime_annotation})
+        thread.start()
 
     def add_anime_annotation(self, (key, annotation)):
         thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps((key, annotation)),), kwargs={'name':self.server.add_anime_annotation})
@@ -89,22 +99,29 @@ class French75Client():
         """
         works
         """
-        self.server.delete_annotation(self.world.lamport_clock, pickle.dumps(a_id))
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps(a_id),), kwargs={'name':self.server.delete_annotation})
+        thread.start()
 
     def toggle_param(self, param, value):
-        self.server.toggle_param(self.world.lamport_clock, param, value)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, param, value,), kwargs={'name':self.server.toggle_param})
+        thread.start()
 
     def play_animation(self):
-        self.server.play_animation(self.world.lamport_clock)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock,), kwargs={'name':self.server.play_animation})
+        thread.start()
 
     def set_clock(self):
-        self.server.set_clock(self.world.lamport_clock, pickle.dumps(self.world.session_dict['clock']))
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, pickle.dumps(self.world.session_dict['clock']),), kwargs={'name':self.server.set_clock})
+        thread.start()
 
     def switch_animation(self, n):
-        self.server.switch_animation(self.world.lamport_clock, n)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, n,), kwargs={'name':self.server.switch_animation})
+        thread.start()
 
     def change_animation_species(self, n):
-        self.server.change_animation_species(self.world.lamport_clock, n)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, n,), kwargs={'name':self.server.change_animation_species})
+        thread.start()
 
     def change_animation_file(self, n):
-        self.server.change_animation_file(self.world.lamport_clock, n)
+        thread = Thread(target=self.non_blocking, args=(self.world.lamport_clock, n,), kwargs={'name':self.server.change_animation_file})
+        thread.start()
