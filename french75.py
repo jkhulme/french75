@@ -726,6 +726,7 @@ class French75(wx.Frame):
             self.drop_down_files.SetSelection(0)
 
             self.create_cell_segments_by_file(self.drop_down_files.GetSelection())
+        self.world.populate_anime_annotation_lb()
 
         self.world.push_state()
         self.world.lamport_clock += 1
