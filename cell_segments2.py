@@ -5,7 +5,7 @@ from worldstate import WorldState
 class CellSegments2(object):
 
     def __init__(self, tree, (width, height)):
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         tree_list = self.tree_to_list(tree)
         num_of_segments = len(tree.keys())
         radius = height - 20
@@ -37,5 +37,5 @@ class CellSegments2(object):
             if next_key is None:
                 break
             tree_list.append(next_key)
-        self.world.session_dict['tree_list'] = tree_list
+        WorldState.Instance().session_dict['tree_list'] = tree_list
         return tree_list

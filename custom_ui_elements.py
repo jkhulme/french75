@@ -24,7 +24,7 @@ class BioPepaToolbar(NavigationToolbar):
     def __init__(self, graph_canvas):
         super(BioPepaToolbar, self).__init__(graph_canvas)
         cwd = os.getcwd()
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
 
         if (platform.system() == "Linux"):
             #save
@@ -66,7 +66,7 @@ class BioPepaToolbar(NavigationToolbar):
     def get_label(self):
          dialog = wx.TextEntryDialog(None, "Please Enter A Label:","Annotation Text", "", style=wx.OK|wx.CANCEL)
          if dialog.ShowModal() == wx.ID_OK:
-             self.world.session_dict['annotation_text'] = dialog.GetValue()
+             WorldState.Instance().session_dict['annotation_text'] = dialog.GetValue()
 
     def _on_custom_enlarge(self, e):
         large_plot = LargePlotDialog(None, title='Big Plot')
@@ -74,26 +74,26 @@ class BioPepaToolbar(NavigationToolbar):
         large_plot.Destroy()
 
     def _on_custom_annotate_arrow(self, e):
-        self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
-        self.world.session_dict['annotation_mode'] = self.world._ARROW
+        WorldState.Instance().change_cursor(wx.CURSOR_HAND)
+        WorldState.Instance().session_dict['annotate'] = not WorldState.Instance().session_dict['annotate']
+        WorldState.Instance().session_dict['annotation_mode'] = WorldState.Instance()._ARROW
 
     def _on_custom_annotate_text(self, e):
         self.get_label()
-        self.world.change_cursor(wx.CURSOR_IBEAM)
-        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
-        self.world.session_dict['annotation_mode'] = self.world._TEXT
+        WorldState.Instance().change_cursor(wx.CURSOR_IBEAM)
+        WorldState.Instance().session_dict['annotate'] = not WorldState.Instance().session_dict['annotate']
+        WorldState.Instance().session_dict['annotation_mode'] = WorldState.Instance()._TEXT
 
     def _on_custom_annotate_text_arrow(self, e):
         self.get_label()
-        self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
-        self.world.session_dict['annotation_mode'] = self.world._TEXT_ARROW
+        WorldState.Instance().change_cursor(wx.CURSOR_HAND)
+        WorldState.Instance().session_dict['annotate'] = not WorldState.Instance().session_dict['annotate']
+        WorldState.Instance().session_dict['annotation_mode'] = WorldState.Instance()._TEXT_ARROW
 
     def _on_custom_annotate_circle(self, e):
-        self.world.change_cursor(wx.CURSOR_HAND)
-        self.world.session_dict['annotate'] = not self.world.session_dict['annotate']
-        self.world.session_dict['annotation_mode'] = self.world._CIRCLE
+        WorldState.Instance().change_cursor(wx.CURSOR_HAND)
+        WorldState.Instance().session_dict['annotate'] = not WorldState.Instance().session_dict['annotate']
+        WorldState.Instance().session_dict['annotation_mode'] = WorldState.Instance()._CIRCLE
 
 #Different OSs use different collapsible pane implementations
 if (platform.system() == "Linux"):

@@ -34,7 +34,7 @@ class SessionWizard(wx.wizard.Wizard):
         self.chosen_paths = []
         self.species_dict = {}
 
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         height, width = self.GetSize()
 
         #PAGE 1
@@ -146,9 +146,9 @@ class SessionWizard(wx.wizard.Wizard):
         Results files.  There can be many, they can be added in multiple goes
         """
         open_results_file(self)
-        for key in self.world.session_dict['results'].keys():
+        for key in WorldState.Instance().session_dict['results'].keys():
             self.species_dict[key] = {}
-            for species in self.world.session_dict['results'][key].keys():
+            for species in WorldState.Instance().session_dict['results'][key].keys():
                 if species != 'Time':
                     try:
                         (name, location) = species.split("@")
@@ -235,25 +235,25 @@ class SessionWizard(wx.wizard.Wizard):
         self.Destroy()
 
     def parse_species(self):
-        self.world.session_dict['species_dict'] = self.species_dict
+        WorldState.Instance().session_dict['species_dict'] = self.species_dict
 
         #Create a line for each result
-        for result in self.world.session_dict['results']:
-            results_dict = self.world.session_dict['results'][result]
-            self.world.session_dict['lines'][result] = {}
+        for result in WorldState.Instance().session_dict['results']:
+            results_dict = WorldState.Instance().session_dict['results'][result]
+            WorldState.Instance().session_dict['lines'][result] = {}
             for key in results_dict:
                 if (not key == 'Time'):
-                    self.world.session_dict['lines'][result][key] = Line(
+                    WorldState.Instance().session_dict['lines'][result][key] = Line(
                                                      results_dict[key],
                                                      results_dict['Time'],
                                                      result, key,
-                                                     self.world.choose_colour(),
-                                                     self.world.graph_width,
-                                                     self.world.graph_height,
-                                                     self.world.session_dict['xmin'],
-                                                     self.world.session_dict['xmax'],
-                                                     self.world.session_dict['ymin'],
-                                                     self.world.session_dict['ymax'])
+                                                     WorldState.Instance().choose_colour(),
+                                                     WorldState.Instance().graph_width,
+                                                     WorldState.Instance().graph_height,
+                                                     WorldState.Instance().session_dict['xmin'],
+                                                     WorldState.Instance().session_dict['xmax'],
+                                                     WorldState.Instance().session_dict['ymin'],
+                                                     WorldState.Instance().session_dict['ymax'])
 
 
 class wizard_page(wizmod.PyWizardPage):

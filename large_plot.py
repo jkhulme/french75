@@ -16,10 +16,10 @@ class LargePlotDialog(wx.Dialog):
 
     def __init__(self, *args, **kw):
         super(LargePlotDialog, self).__init__(*args, **kw)
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         graph_panel = wx.Panel(self, -1)
         graph_panel.SetBackgroundColour(_BG_COLOUR)
-        graph_width = int((self.world.dispW - 10) / _DPI)
+        graph_width = int((WorldState.Instance().dispW - 10) / _DPI)
         graph_height = int(graph_width/_PHI)
         graph_fig = Figure((graph_width, graph_height))
         graph_fig.set_facecolor('white')
@@ -31,7 +31,7 @@ class LargePlotDialog(wx.Dialog):
         graph_vbox.Add(toolbar)
         graph_panel.SetSizer(graph_vbox)
         graph_vbox.Fit(self)
-        self.SetSize((self.world.dispW - 10, ((self.world.dispW) / _PHI) + 50))
+        self.SetSize((WorldState.Instance().dispW - 10, ((WorldState.Instance().dispW) / _PHI) + 50))
         self.Centre()
         self.draw_plot = Plotter(self.graph_axes)
         self.draw_plot.mpl_legend = True

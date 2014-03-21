@@ -16,7 +16,7 @@ class Legend(object):
         self.legend_panel - where this is drawn
         """
         self.legend_panel = leg_panel
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
 
     def draw_legend(self):
         """
@@ -36,7 +36,7 @@ class Legend(object):
 
         #For each results file add a collapsible pane
         #for each species in the file add a 'line' into the collpane
-        for result in self.world.session_dict['lines']:
+        for result in WorldState.Instance().session_dict['lines']:
             collpane = BioPepaCollapsiblePane(self.legend_panel, result)
             vbox_leg.Add(collpane, 0, wx.GROW | wx.ALL, 5)
 
@@ -48,7 +48,7 @@ class Legend(object):
             line1 = wx.StaticLine(collpane_body)
             vbox_collpane.Add(line1, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 10)
 
-            for key in self.world.session_dict['lines'][result]:
+            for key in WorldState.Instance().session_dict['lines'][result]:
                 hbox_collpane = wx.BoxSizer(wx.HORIZONTAL)
 
                 vbox_coll = wx.BoxSizer(wx.VERTICAL)
@@ -58,17 +58,17 @@ class Legend(object):
 
                 btn_colour = wx.Button(collpane_body, -1, '', size=(_WIDTH, _HEIGHT))
                 btn_colour.Disable()
-                btn_colour.SetBackgroundColour(self.world.session_dict['lines'][result][key].flat_colour)
+                btn_colour.SetBackgroundColour(WorldState.Instance().session_dict['lines'][result][key].flat_colour)
                 hbox_collpane.Add(btn_colour, 0, wx.ALL, 2)
 
                 cb_show_hide = wx.CheckBox(collpane_body, -1, 'Show')
                 hbox_collpane.Add(cb_show_hide, 0, wx.ALL, 2)
-                cb_show_hide.SetValue(self.world.session_dict['lines'][result][key].plot_line)
+                cb_show_hide.SetValue(WorldState.Instance().session_dict['lines'][result][key].plot_line)
                 cb_show_hide.Bind(wx.EVT_CHECKBOX, self.show_hide_click)
 
                 cb_intense = wx.CheckBox(collpane_body, -1, 'Intense')
                 hbox_collpane.Add(cb_intense, 0, wx.ALL, 2)
-                cb_intense.SetValue(self.world.session_dict['lines'][result][key].intense_plot)
+                cb_intense.SetValue(WorldState.Instance().session_dict['lines'][result][key].intense_plot)
                 cb_intense.Bind(wx.EVT_CHECKBOX, self.intensity_click)
 
                 btn_props = wx.Button(collpane_body, -1, 'Settings', size=(70, _HEIGHT))
@@ -101,10 +101,10 @@ class Legend(object):
         cb_show_hide = event.GetEventObject()
         file_key = cb_show_hide.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_show_hide)
-        self.world.session_dict['lines'][file_key][species_key].plot_line = cb_show_hide.GetValue()
-        self.world.lamport_clock += 1
-        self.world.push_state()
-        self.world.reorder(self.world.lamport_clock)
+        WorldState.Instance().session_dict['lines'][file_key][species_key].plot_line = cb_show_hide.GetValue()
+        WorldState.Instance().lamport_clock += 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().reorder(WorldState.Instance().lamport_clock)
         refresh_plot()
 
     def intensity_click(self, event):
@@ -114,10 +114,10 @@ class Legend(object):
         cb_intense = event.GetEventObject()
         file_key = cb_intense.GetParent().GetParent().GetLabel()
         species_key = self.get_species(cb_intense)
-        self.world.session_dict['lines'][file_key][species_key].intense_plot = cb_intense.GetValue()
-        self.world.lamport_clock += 1
-        self.world.push_state()
-        self.world.reorder(self.world.lamport_clock)
+        WorldState.Instance().session_dict['lines'][file_key][species_key].intense_plot = cb_intense.GetValue()
+        WorldState.Instance().lamport_clock += 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().reorder(WorldState.Instance().lamport_clock)
         refresh_plot()
 
     def get_species(self, cb):
@@ -134,16 +134,16 @@ class Legend(object):
         species_key = self.get_species(btn_props)
 
         plot_prefs = Plot_Dialog(None, title='Change Plot Style')
-        plot_prefs.set_line(self.world.session_dict['lines'][file_key][species_key])
+        plot_prefs.set_line(WorldState.Instance().session_dict['lines'][file_key][species_key])
         plot_prefs.ShowModal()
         plot_prefs.Destroy()
 
         self.update(btn_props.GetParent(), file_key, species_key)
 
-        #self.world.push_state()
-        #self.world.reorder(self.world.lamport_clock)
+        #WorldState.Instance().push_state()
+        #WorldState.Instance().reorder(WorldState.Instance().lamport_clock)
 
-        self.world.client.update_legend(self.world.session_dict['lines'][file_key][species_key], file_key, species_key)
+        WorldState.Instance().client.update_legend(WorldState.Instance().session_dict['lines'][file_key][species_key], file_key, species_key)
 
     def update(self, csv, file_key, species_key):
         """
@@ -156,11 +156,11 @@ class Legend(object):
                 update = True if (child.GetLabel() == species_key) else False
 
             if child.GetLabel() == "" and update:
-                child.SetBackgroundColour(self.world.session_dict['lines'][file_key][species_key].flat_colour)
+                child.SetBackgroundColour(WorldState.Instance().session_dict['lines'][file_key][species_key].flat_colour)
             elif child.GetName() == "check" and update:
                 if child.GetLabel() == "Show":
-                    child.SetValue(self.world.session_dict['lines'][file_key][species_key].plot_line)
+                    child.SetValue(WorldState.Instance().session_dict['lines'][file_key][species_key].plot_line)
                 elif child.GetLabel() == "Ints" and update:
-                    child.SetValue(self.world.session_dict['lines'][file_key][species_key].intense_plot)
+                    child.SetValue(WorldState.Instance().session_dict['lines'][file_key][species_key].intense_plot)
         self.legend_panel.Refresh()
         refresh_plot()

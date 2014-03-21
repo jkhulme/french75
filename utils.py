@@ -4,7 +4,7 @@ from biopepa_csv_parser import BioPepaCsvParser
 from worldstate import WorldState
 
 
-world = WorldState.Instance()
+#world = WorldState.Instance()
 
 def open_results_file(self):
     file_chooser = wx.FileDialog(
@@ -20,8 +20,8 @@ def open_results_file(self):
             parser.parse_csv(path)
             results[path.split('/')[-1]] = parser.results_dict
 
-        world.session_dict['results'] = results
-        world.parser = parser
+        WorldState.Instance().session_dict['results'] = results
+        WorldState.Instance().parser = parser
 
         file_chooser.Destroy()
     else:
@@ -66,7 +66,7 @@ def calc_graph_size(dpi, cols, num_sidebars, phi):
     """
     Want it to stick to the golden ration as Tufte recommends it hence phi
     """
-    graph_width = int(((world.dispW / cols) * (cols - num_sidebars)) / dpi)
+    graph_width = int(((WorldState.Instance().dispW / cols) * (cols - num_sidebars)) / dpi)
     graph_height = int(graph_width/phi)
     return (graph_width, graph_height)
 
@@ -82,6 +82,6 @@ def refresh_plot():
     Null pointers on the mac if I don't tell it to not redraw the legend
     unless necessary.
     """
-    world.session_dict['redraw_legend'] = False
-    world.draw_plot.plot()
-    world.session_dict['redraw_legend'] = True
+    WorldState.Instance().session_dict['redraw_legend'] = False
+    WorldState.Instance().draw_plot.plot()
+    WorldState.Instance().session_dict['redraw_legend'] = True
