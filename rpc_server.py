@@ -63,7 +63,10 @@ class French75Server():
         """
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().session_dict['annotations'].append(pickle.loads(annotation))
@@ -80,14 +83,16 @@ class French75Server():
         """
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         text = pickle.loads(text)
         a_id = pickle.loads(a_id)
         WorldState.Instance().update_annotation_text(a_id, text)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -113,20 +118,23 @@ class French75Server():
         """
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         line, file_key, species_key = pickle.loads(update_tuple)
         WorldState.Instance().session_dict['lines'][file_key][species_key] = line
+        WorldState.Instance().reorder(clock)
         WorldState.Instance().legend.draw_legend()
         WorldState.Instance().legend.legend_panel.Refresh()
         WorldState.Instance().refresh_plot()
-        WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
             None
+
 
     def reset_session(self):
         WorldState.Instance().reset_session()
@@ -140,12 +148,14 @@ class French75Server():
     def delete_anime_annotation(self, clock, a_id):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().delete_anime_annotation(a_id)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -157,12 +167,14 @@ class French75Server():
         """
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().delete_annotation(pickle.loads(a_id))
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -171,7 +183,10 @@ class French75Server():
     def toggle_param(self, clock, param, value):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().session_dict[param] = value
@@ -185,13 +200,15 @@ class French75Server():
     def add_anime_annotation(self, clock, annotation_tuple):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         idx, annotation = pickle.loads(annotation_tuple)
         WorldState.Instance().add_anime_annotation(idx, annotation)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -200,12 +217,14 @@ class French75Server():
     def play_animation(self, clock):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().play_animation()
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -214,12 +233,14 @@ class French75Server():
     def set_clock(self, clock, time):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().set_time(pickle.loads(time))
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -228,12 +249,14 @@ class French75Server():
     def switch_animation(self, clock, n):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().switch_animation(n)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
@@ -242,25 +265,30 @@ class French75Server():
     def change_animation_species(self, clock, n):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().create_cell_segments_by_file(n)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
             None
+
     def change_animation_file(self, clock, n):
         old_clock = clock
         if WorldState.Instance().lamport_clock == clock:
-            clock += 1
+            if self.port == 8000:
+                WorldState.Instance().lamport_clock += 1
+            else:
+                clock += 1
         WorldState.Instance().push_state()
         WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         WorldState.Instance().create_cell_segments_by_species(n)
         WorldState.Instance().reorder(clock)
-        refresh_plot()
         if old_clock != clock:
             return clock
         else:
