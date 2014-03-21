@@ -97,13 +97,17 @@ class Plot_Dialog(wx.Dialog):
             (r, g, b) = self.colour_picker.GetColour().Get()
             self.line.rgb_tuple = (r, g, b)
             self.line.flat_colour = rgb_to_hex((r, g, b))
-            self.line.sub_plot_tuples = self.line.plot_sub_plots(self.line.interpolated_results, self.line.interval)
+            self.line.sub_plot_tuples = self.line.plot_sub_plots(self.line.interpolated_results, self.line.interval, debug=False)
             self.line.normalise()
+            self.line.debug_name = "Finish"
         except:
             print "No colour change"
+        print self.line.seg_colour
         self.world.lamport_clock += 1
         self.world.push_state()
         self.world.reorder(self.world.lamport_clock)
+        print self.line.seg_colour
+        self.world.refresh_animation()
         self.Close()
 
     def on_cancel(self, e):

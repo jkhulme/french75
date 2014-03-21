@@ -23,19 +23,21 @@ class CellSegment(object):
             outer_x1, outer_y1 = centre_x + radius - change, centre_y
             outer_x2, outer_y2 = centre_x, 10 + change
 
-            line = self.world.session_dict['lines'][file_name].get(species+"@"+self.world.session_dict['tree_list'][i], None)
 
-            self.sub_segments.append((line, self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
+
+            self.sub_segments.append((file_name, species, i, self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
 
             change += radius / num_of_segments
 
     def paint(self, dc, p_id):
         species_locations = ['whole_cell']
 
-        for (line, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
+        for (file_name, species, i, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
+            line = self.world.session_dict['lines'][file_name].get(species+"@"+self.world.session_dict['tree_list'][i], None)
             if line != None:
                 if location in species_locations or species_locations == ['whole_cell']:
                     line.update_animation_colour(self.world.session_dict['clock'])
+                    print line.debug_name
                     dc.SetBrush(wx.Brush(line.seg_colour))
             else:
                 dc.SetBrush(wx.Brush('white'))

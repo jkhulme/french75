@@ -42,6 +42,7 @@ class Line(object):
         self.normalised_sub_plots = []
         self.normalise()
         self.sub_lists = self.slice_lists(self.interpolated_results)
+        self.debug_name = "Begin"
 
     def slice_lists(self, l):
         sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
@@ -109,13 +110,16 @@ class Line(object):
             interpolated_time.append(time_b)
         return (interpolated_data, interpolated_time)
 
-    def plot_sub_plots(self, results, interval):
+    def plot_sub_plots(self, results, interval, debug=False):
         """
         Plots the sub plots and works out what colour the line should be
         this is for colour intensity plot
         """
+        if debug:
+            print self.colour_change_points[0][1]
         sub_plots = self.build_colour_plot_arrays(results, interval)
         sub_plot_tuples = []
+        self.colour_change_points = []
         for sub_plot in sub_plots:
             count = 0
             current = 0
@@ -130,6 +134,8 @@ class Line(object):
             self.colour_change_points.append((count, new_colour))
             sub_plot_tuples.append((sub_plot, new_colour))
         self.seg_colour = self.colour_change_points[0][1]
+        if debug:
+            print self.colour_change_points[0][1]
         return sub_plot_tuples
 
     def build_colour_plot_arrays(self, results, interval):

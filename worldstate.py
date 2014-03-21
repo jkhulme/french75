@@ -265,3 +265,8 @@ class WorldState:
         self.push_state(clock)
         self.session_dict = self.undo_stack.reorder()
         self.refresh_plot()
+        self.refresh_animation()
+
+    def refresh_animation(self):
+        for panel in self.panels:
+            panel.Refresh()
