@@ -16,7 +16,7 @@ class French75Server():
     def __init__(self, port):
         print "starting server on port", port
         self.port = port
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         self.server = SimpleXMLRPCServer(("0.0.0.0", port), requestHandler=RequestHandler, allow_none=True)
         self.server.register_introspection_functions()
         self.server.register_function(self.start_client, 'start_client')
@@ -48,32 +48,32 @@ class French75Server():
         return True
 
     def run_client(self, ip):
-        self.world.client = French75Client(ip, 8001)
+        WorldState.Instance().client = French75Client(ip, 8001)
 
     def test(self, clock):
-        self.world.lamport_clock = max(clock, self.world.lamport_clock) + 1
+        WorldState.Instance().lamport_clock = max(clock, WorldState.Instance().lamport_clock) + 1
         print clock
 
     def get_session_dict(self):
-        return self.world.pickle_session()
+        return WorldState.Instance().pickle_session()
 
     def add_annotation(self, clock, annotation):
         """
         Works
         """
         old_clock = clock
-        print "mine: ", self.world.lamport_clock
+        print "mine: ", WorldState.Instance().lamport_clock
         print "incoming: ", clock
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             clock += 1
-        print "mine: ", self.world.lamport_clock
+        print "mine: ", WorldState.Instance().lamport_clock
         print "incoming: ", clock
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.session_dict['annotations'].append(pickle.loads(annotation))
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().session_dict['annotations'].append(pickle.loads(annotation))
+        WorldState.Instance().reorder(clock)
         refresh_plot()
-        print len(self.world.session_dict['annotations'])
+        print len(WorldState.Instance().session_dict['annotations'])
         if old_clock != clock:
             return clock
         else:
@@ -83,17 +83,17 @@ class French75Server():
         """
         works
         """
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         text = pickle.loads(text)
         a_id = pickle.loads(a_id)
-        self.world.update_annotation_text(a_id, text)
-        self.world.reorder(clock)
+        WorldState.Instance().update_annotation_text(a_id, text)
+        WorldState.Instance().reorder(clock)
 
     def launch_large_plot(self):
         """
@@ -113,130 +113,130 @@ class French75Server():
         """
         works
         """
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         line, file_key, species_key = pickle.loads(update_tuple)
-        self.world.session_dict['lines'][file_key][species_key] = line
-        self.world.reorder(clock)
-        self.world.legend.draw_legend()
-        self.world.legend.legend_panel.Refresh()
-        self.world.refresh_plot()
+        WorldState.Instance().session_dict['lines'][file_key][species_key] = line
+        WorldState.Instance().reorder(clock)
+        WorldState.Instance().legend.draw_legend()
+        WorldState.Instance().legend.legend_panel.Refresh()
+        WorldState.Instance().refresh_plot()
 
 
     def reset_session(self):
-        self.world.reset_session()
+        WorldState.Instance().reset_session()
 
     def undo(self):
-        self.world.undo()
+        WorldState.Instance().undo()
 
     def redo(self):
-        self.world.redo()
+        WorldState.Instance().redo()
 
     def delete_anime_annotation(self, clock, a_id):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.delete_anime_annotation(a_id)
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().delete_anime_annotation(a_id)
+        WorldState.Instance().reorder(clock)
 
     def delete_annotation(self, clock, a_id):
         """
         works
         """
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.delete_annotation(pickle.loads(a_id))
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().delete_annotation(pickle.loads(a_id))
+        WorldState.Instance().reorder(clock)
 
     def toggle_param(self, clock, param, value):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.session_dict[param] = value
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().session_dict[param] = value
+        WorldState.Instance().reorder(clock)
         refresh_plot()
 
     def add_anime_annotation(self, clock, annotation_tuple):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
         idx, annotation = pickle.loads(annotation_tuple)
-        self.world.add_anime_annotation(idx, annotation)
-        self.world.reorder(clock)
+        WorldState.Instance().add_anime_annotation(idx, annotation)
+        WorldState.Instance().reorder(clock)
 
     def play_animation(self, clock):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.play_animation()
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().play_animation()
+        WorldState.Instance().reorder(clock)
 
     def set_clock(self, clock, time):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.set_time(pickle.loads(time))
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().set_time(pickle.loads(time))
+        WorldState.Instance().reorder(clock)
 
     def switch_animation(self, clock, n):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.switch_animation(n)
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().switch_animation(n)
+        WorldState.Instance().reorder(clock)
 
     def change_animation_species(self, clock, n):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.create_cell_segments_by_file(n)
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().create_cell_segments_by_file(n)
+        WorldState.Instance().reorder(clock)
 
     def change_animation_file(self, clock, n):
-        if self.world.lamport_clock == clock:
+        if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
-                self.world.lamport_clock += 1
+                WorldState.Instance().lamport_clock += 1
             else:
                 clock += 1
-        self.world.push_state()
-        self.world.lamport_clock = max(self.world.lamport_clock, clock) + 1
-        self.world.create_cell_segments_by_species(n)
-        self.world.reorder(clock)
+        WorldState.Instance().push_state()
+        WorldState.Instance().lamport_clock = max(WorldState.Instance().lamport_clock, clock) + 1
+        WorldState.Instance().create_cell_segments_by_species(n)
+        WorldState.Instance().reorder(clock)

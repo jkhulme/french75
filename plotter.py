@@ -17,7 +17,7 @@ class Plotter(object):
     """
 
     def __init__(self, axes):
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         self.axes = axes
         self.mpl_legend = False
 
@@ -33,39 +33,39 @@ class Plotter(object):
         """
         self.axes.clear()
 
-        for result in self.world.session_dict['lines']:
-            for key in self.world.session_dict['lines'][result]:
-                self.plot_line(self.world.session_dict['lines'][result][key])
+        for result in WorldState.Instance().session_dict['lines']:
+            for key in WorldState.Instance().session_dict['lines'][result]:
+                self.plot_line(WorldState.Instance().session_dict['lines'][result][key])
 
         #my interactive legend
-        if (self.world.session_dict['redraw_legend']):
-            self.world.legend.draw_legend()
+        if (WorldState.Instance().session_dict['redraw_legend']):
+            WorldState.Instance().legend.draw_legend()
 
         #matplotlib legend - for saving with a legend
         if (self.mpl_legend):
             self.axes.legend()
 
-        self.axes.xaxis.set_minor_locator(MultipleLocator(self.world.session_dict['xmax']*1.1/20))
-        if self.world.session_dict['normalised']:
+        self.axes.xaxis.set_minor_locator(MultipleLocator(WorldState.Instance().session_dict['xmax']*1.1/20))
+        if WorldState.Instance().session_dict['normalised']:
             self.axes.yaxis.set_minor_locator(MultipleLocator(1.1/20))
         else:
-            self.axes.yaxis.set_minor_locator(MultipleLocator(self.world.session_dict['ymax']*1.1/20))
+            self.axes.yaxis.set_minor_locator(MultipleLocator(WorldState.Instance().session_dict['ymax']*1.1/20))
 
         self.axes.set_ylabel('Process Count/Variable Value')
         self.axes.set_xlabel('Time')
         self.axes.xaxis.grid(True, 'minor')
         self.axes.yaxis.grid(True, 'minor')
-        self.axes.set_title(self.world.session_dict['title'])
+        self.axes.set_title(WorldState.Instance().session_dict['title'])
 
-        if self.world.session_dict['normalised']:
-            self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], 0, 1.1))
+        if WorldState.Instance().session_dict['normalised']:
+            self.axes.axis((WorldState.Instance().session_dict['xmin'], WorldState.Instance().session_dict['xmax'], 0, 1.1))
         else:
-            self.axes.axis((self.world.session_dict['xmin'], self.world.session_dict['xmax'], self.world.session_dict['ymin'], self.world.session_dict['ymax']*1.1))
+            self.axes.axis((WorldState.Instance().session_dict['xmin'], WorldState.Instance().session_dict['xmax'], WorldState.Instance().session_dict['ymin'], WorldState.Instance().session_dict['ymax']*1.1))
 
-        if self.world.session_dict['draw_annotations']:
+        if WorldState.Instance().session_dict['draw_annotations']:
             self.redraw_annotations()
 
-        #self.world.graph_canvas.draw()
+        #WorldState.Instance().graph_canvas.draw()
 
         self.vertical_line()
 
@@ -73,10 +73,10 @@ class Plotter(object):
         """
         go through the list of annotations and plot them
         """
-        for annotation in self.world.session_dict['annotations']:
+        for annotation in WorldState.Instance().session_dict['annotations']:
             print annotation.normalised
             if annotation.normalised:
-                if self.world.session_dict['normalised']:
+                if WorldState.Instance().session_dict['normalised']:
                     print "A"
                     y1 = annotation.y1
                     try:
@@ -86,87 +86,87 @@ class Plotter(object):
                     width = 0.075
                 else:
                     print "B"
-                    y1 = annotation.y1 * self.world.session_dict['ymax']
+                    y1 = annotation.y1 * WorldState.Instance().session_dict['ymax']
                     try:
-                        y2 = annotation.y2 * self.world.session_dict['ymax']
+                        y2 = annotation.y2 * WorldState.Instance().session_dict['ymax']
                     except:
                         pass
-                    width=0.075*self.world.session_dict['ymax']
+                    width=0.075*WorldState.Instance().session_dict['ymax']
             else:
-                if not self.world.session_dict['normalised']:
+                if not WorldState.Instance().session_dict['normalised']:
                     print "C"
                     y1 = annotation.y1
                     try:
                         y2 = annotation.y2
                     except:
                         pass
-                    width=0.075*self.world.session_dict['ymax']
+                    width=0.075*WorldState.Instance().session_dict['ymax']
                 else:
                     print "D"
-                    y1 = annotation.y1 / self.world.session_dict['ymax']
+                    y1 = annotation.y1 / WorldState.Instance().session_dict['ymax']
                     try:
-                        y2 = annotation.y2 / self.world.session_dict['ymax']
+                        y2 = annotation.y2 / WorldState.Instance().session_dict['ymax']
                     except:
                         pass
                     width = 0.075
-            if annotation.type == self.world._TEXT_ARROW:
+            if annotation.type == WorldState.Instance()._TEXT_ARROW:
                 self.axes.annotate(annotation.text, xy=(annotation.x2, y2), xytext=(annotation.x1, y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
-            elif annotation.type == self.world._ARROW:
+            elif annotation.type == WorldState.Instance()._ARROW:
                 self.axes.annotate("", xy=(annotation.x2, y2), xytext=(annotation.x1, y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
-            elif annotation.type == self.world._CIRCLE:
-                circle1 = Ellipse((annotation.x1, y1), width=width, height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=annotation.colour)
+            elif annotation.type == WorldState.Instance()._CIRCLE:
+                circle1 = Ellipse((annotation.x1, y1), width=width, height=0.075*WorldState.Instance().session_dict['xmax'], angle=90, facecolor='w', edgecolor=annotation.colour)
                 self.axes.add_artist(circle1)
-            elif annotation.type == self.world._TEXT:
+            elif annotation.type == WorldState.Instance()._TEXT:
                 self.axes.text(annotation.x1, y1, annotation.text)
 
         #This is the arrow following mouse annotation thing
-        if self.world.session_dict['temp_annotation'] is not None:
-            annotation = self.world.session_dict['temp_annotation']
+        if WorldState.Instance().session_dict['temp_annotation'] is not None:
+            annotation = WorldState.Instance().session_dict['temp_annotation']
             self.axes.annotate("", xy=(annotation.x2, annotation.y2), xytext=(annotation.x1, annotation.y1), arrowprops=dict(facecolor=annotation.colour, shrink=0.05))
 
     def annotate_arrow(self, (x1, y1), (x2, y2), text="", colour="black"):
         #self.axes.annotate(text, xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(facecolor=colour, shrink=0.05))
-        self.world.session_dict['annotate'] = False
+        WorldState.Instance().session_dict['annotate'] = False
         if text:
-            annotation = Annotation(self.world._TEXT_ARROW, (x1, y1), (x2, y2), text, colour, self.world.session_dict['normalised'])
+            annotation = Annotation(WorldState.Instance()._TEXT_ARROW, (x1, y1), (x2, y2), text, colour, WorldState.Instance().session_dict['normalised'])
         else:
-            annotation = Annotation(self.world._ARROW, (x1, y1), (x2, y2), normalised=self.world.session_dict['normalised'])
+            annotation = Annotation(WorldState.Instance()._ARROW, (x1, y1), (x2, y2), normalised=WorldState.Instance().session_dict['normalised'])
 
-        self.world.session_dict['annotations'].append(annotation)
-        self.world.client.add_annotation(annotation)
-        #self.world.graph_canvas.draw()
+        WorldState.Instance().session_dict['annotations'].append(annotation)
+        WorldState.Instance().client.add_annotation(annotation)
+        #WorldState.Instance().graph_canvas.draw()
         self.plot()
 
     def annotate_text(self, (x, y), text="Annotation"):
         #self.axes.text(x, y, text)
-        annotation = Annotation(self.world._TEXT, (x, y), text=text, normalised=self.world.session_dict['normalised'])
-        self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(annotation)
-        self.world.client.add_annotation(annotation)
-        #self.world.graph_canvas.draw()
+        annotation = Annotation(WorldState.Instance()._TEXT, (x, y), text=text, normalised=WorldState.Instance().session_dict['normalised'])
+        WorldState.Instance().session_dict['annotate'] = False
+        WorldState.Instance().session_dict['annotations'].append(annotation)
+        WorldState.Instance().client.add_annotation(annotation)
+        #WorldState.Instance().graph_canvas.draw()
         self.plot()
 
     def annotate_circle(self, (x, y), colour="black"):
-        #circle1 = Ellipse((x, y), width=0.075*self.world.session_dict['ymax'], height=0.075*self.world.session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
-        annotation = Annotation(self.world._CIRCLE, (x, y), colour=colour, normalised=self.world.session_dict['normalised'])
+        #circle1 = Ellipse((x, y), width=0.075*WorldState.Instance().session_dict['ymax'], height=0.075*WorldState.Instance().session_dict['xmax'], angle=90, facecolor='w', edgecolor=colour)
+        annotation = Annotation(WorldState.Instance()._CIRCLE, (x, y), colour=colour, normalised=WorldState.Instance().session_dict['normalised'])
         #self.axes.add_artist(circle1)
-        self.world.session_dict['annotate'] = False
-        self.world.session_dict['annotations'].append(annotation)
-        self.world.client.add_annotation(annotation)
-        #self.world.graph_canvas.draw()
+        WorldState.Instance().session_dict['annotate'] = False
+        WorldState.Instance().session_dict['annotations'].append(annotation)
+        WorldState.Instance().client.add_annotation(annotation)
+        #WorldState.Instance().graph_canvas.draw()
         self.plot()
 
     def vertical_line(self):
         """
         The sliding bar that follows the clock
         """
-        if self.world.session_dict['normalised']:
+        if WorldState.Instance().session_dict['normalised']:
             height = 1
         else:
-            height = self.world.session_dict['ymax']
+            height = WorldState.Instance().session_dict['ymax']
 
-        self.axes.plot([self.world.session_dict['clock'], self.world.session_dict['clock']], [0, height], label="time_line", color='red', lw=3)
-        self.world.graph_canvas.draw()
+        self.axes.plot([WorldState.Instance().session_dict['clock'], WorldState.Instance().session_dict['clock']], [0, height], label="time_line", color='red', lw=3)
+        WorldState.Instance().graph_canvas.draw()
         self.axes.lines.pop()
 
 
@@ -175,7 +175,7 @@ class Plotter(object):
         Decides, for each line, how we're going to plot, normal or with intensities
         """
         if line.plot_line:
-            if not self.world.session_dict['normalised']:
+            if not WorldState.Instance().session_dict['normalised']:
                 if not line.intense_plot:
                     self.axes.plot(line.original_time, line.original_results, label=line.species, color=rgb_to_hex(line.rgb_tuple), alpha=1, lw=line.thickness)
                 else:

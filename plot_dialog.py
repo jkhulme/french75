@@ -12,7 +12,7 @@ class Plot_Dialog(wx.Dialog):
 
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
 
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -72,7 +72,7 @@ class Plot_Dialog(wx.Dialog):
 
         self.SetSizer(panel_vbox)
         panel_vbox.Fit(self)
-        self.SetSize((self.world.dispW/4, self.world.dispH/2))
+        self.SetSize((WorldState.Instance().dispW/4, WorldState.Instance().dispH/2))
 
         self.Centre()
 
@@ -103,11 +103,11 @@ class Plot_Dialog(wx.Dialog):
         except:
             print "No colour change"
         print self.line.seg_colour
-        self.world.lamport_clock += 1
-        self.world.push_state()
-        self.world.reorder(self.world.lamport_clock)
+        WorldState.Instance().lamport_clock += 1
+        WorldState.Instance().push_state()
+        WorldState.Instance().reorder(WorldState.Instance().lamport_clock)
         print self.line.seg_colour
-        self.world.refresh_animation()
+        WorldState.Instance().refresh_animation()
         self.Close()
 
     def on_cancel(self, e):

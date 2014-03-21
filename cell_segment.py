@@ -10,9 +10,9 @@ class CellSegment(object):
     """
 
     def __init__(self,(tl_x, tl_y), radius, index, file_name, species):
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         self.counter = 0
-        num_of_segments = len(self.world.session_dict['tree_list'])
+        num_of_segments = len(WorldState.Instance().session_dict['tree_list'])
         change = 0
         self.sub_segments = []
 
@@ -25,7 +25,7 @@ class CellSegment(object):
 
 
 
-            self.sub_segments.append((file_name, species, i, self.world.session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
+            self.sub_segments.append((file_name, species, i, WorldState.Instance().session_dict['tree_list'][i], centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2))
 
             change += radius / num_of_segments
 
@@ -33,10 +33,10 @@ class CellSegment(object):
         species_locations = ['whole_cell']
 
         for (file_name, species, i, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
-            line = self.world.session_dict['lines'][file_name].get(species+"@"+self.world.session_dict['tree_list'][i], None)
+            line = WorldState.Instance().session_dict['lines'][file_name].get(species+"@"+WorldState.Instance().session_dict['tree_list'][i], None)
             if line != None:
                 if location in species_locations or species_locations == ['whole_cell']:
-                    line.update_animation_colour(self.world.session_dict['clock'])
+                    line.update_animation_colour(WorldState.Instance().session_dict['clock'])
                     print line.debug_name
                     dc.SetBrush(wx.Brush(line.seg_colour))
             else:
@@ -44,9 +44,9 @@ class CellSegment(object):
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
         dc.SetBrush(wx.Brush('black'))
 
-        for annotation in self.world.session_dict['anime_annotations'].get(p_id,[]):
+        for annotation in WorldState.Instance().session_dict['anime_annotations'].get(p_id,[]):
             #Draw the labels
-            if annotation.in_time(self.world.session_dict['clock']):
+            if annotation.in_time(WorldState.Instance().session_dict['clock']):
                 dc.SetBrush(wx.Brush('white'))
                 dc.DrawCircle(annotation.x, annotation.y, 10)
                 dc.SetBrush(wx.Brush('black'))

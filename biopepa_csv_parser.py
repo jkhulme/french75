@@ -19,7 +19,7 @@ Expected Structure
 class BioPepaCsvParser(object):
 
     def __init__(self):
-        self.world = WorldState.Instance()
+        #WorldState.Instance() = WorldState.Instance()
         self.ymin = 1000000
         self.xmin = 1000000
         self.ymax = 0
@@ -70,13 +70,13 @@ class BioPepaCsvParser(object):
                 self.xmin = min(self.xmin, min(self.results_dict[result]))
                 self.xmax = max(self.xmax, max(self.results_dict[result]))
 
-        self.world.session_dict['max_time'] = self.xmax
-        self.world.session_dict['max_height'] = self.ymax
+        WorldState.Instance().session_dict['max_time'] = self.xmax
+        WorldState.Instance().session_dict['max_height'] = self.ymax
 
-        self.world.session_dict['ymin'] = self.ymin
-        self.world.session_dict['ymax'] = self.ymax
+        WorldState.Instance().session_dict['ymin'] = self.ymin
+        WorldState.Instance().session_dict['ymax'] = self.ymax
 
-        self.world.session_dict['xmin'] = self.xmin
-        self.world.session_dict['xmax'] = self.xmax
+        WorldState.Instance().session_dict['xmin'] = self.xmin
+        WorldState.Instance().session_dict['xmax'] = self.xmax
 
-        self.world.update_clock_increment()
+        WorldState.Instance().update_clock_increment()

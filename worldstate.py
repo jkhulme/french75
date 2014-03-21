@@ -44,9 +44,9 @@ _DICT_ELEMS = [('results', None),
                ('anime_annotations', {}),
                ('cur_annotation_id', 0)]
 
-@Singleton
-class WorldState:
-#class WorldState(SingletonMixin):
+#@Singleton
+#class WorldState:
+class WorldState(SingletonMixin):
 
     """
     Singleton for sharing data between different parts of the program.  Saves having to keep track of where everything has been passed
