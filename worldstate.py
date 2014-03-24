@@ -222,6 +222,7 @@ class WorldState(SingletonMixin):
             panel.Refresh()
 
     def add_anime_annotation(self, idx, annotation):
+        self.set_time(annotation.start)
         if idx not in self.session_dict['anime_annotations'].keys():
             self.session_dict['anime_annotations'][idx] = [annotation]
         else:
@@ -250,6 +251,7 @@ class WorldState(SingletonMixin):
     def set_time(self, time):
         self.session_dict['clock'] = time
         self.time_slider.SetValue(self.session_dict['clock'])
+        self.refresh_plot()
         for panel in self.panels:
                 panel.Refresh()
 
