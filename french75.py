@@ -147,7 +147,7 @@ class French75(wx.Frame):
         self.add_anime_annotation_button = wx.Button(annotation_panel, -1, "Add")
         self.add_anime_annotation_button.Bind(wx.EVT_BUTTON, self.add_anime_annotation)
 
-        self.delete_anime_annotation_button = wx.Button(annotation_panel, -1, "Delete")
+        self.delete_anime_annotation_button = wx.Button(annotation_panel, -1, "Remove")
         self.delete_anime_annotation_button.Bind(wx.EVT_BUTTON, self.remove_anime_annotation)
 
         anime_annotations_toolbar.Add(self.add_anime_annotation_button, 0, wx.ALL, 5)
@@ -361,7 +361,7 @@ class French75(wx.Frame):
                 WorldState.Instance().session_dict['attached_file_locations'].append(path)
                 self.attached_file_list.Append(file_name)
 
-            self.refresh_model_panel()
+            #WorldState.Instance().refresh_model_panel()
         else:
             file_chooser.Destroy()
 
@@ -526,10 +526,10 @@ class French75(wx.Frame):
         file_menu = wx.Menu()
 
         self.filem_new_session = file_menu.Append(wx.ID_NEW, '&New Session')
-        self.filem_save_session = file_menu.Append(wx.ID_ANY, '&Save Session')
-        self.filem_load_session  = file_menu.Append(wx.ID_ANY, '&Load Session')
+        self.filem_save_session = file_menu.Append(wx.ID_SAVE, '&Save Session')
+        self.filem_load_session  = file_menu.Append(wx.ID_OPEN, '&Load Session')
         file_menu.AppendSeparator()
-        self.filem_open_results_save_plot = file_menu.Append(wx.ID_SAVE, 'Export Graph')
+        self.filem_open_results_save_plot = file_menu.Append(wx.ID_ANY, '&Export Graph')
 
         menubar.Append(file_menu, '&File')
 
@@ -817,6 +817,7 @@ class French75(wx.Frame):
                 panel = wx.Panel(self.animation_panel, -1,size=(a_height*0.7,a_height*0.7), name=str(i))
                 panel.SetBackgroundColour('white')
                 panel.Bind(wx.EVT_PAINT, self.animate_cell)
+                panel.Bind(wx.EVT_LEFT_UP, self.annotate_cell)
                 WorldState.Instance().panels.append(panel)
                 small_vbox.Add(panel,0,wx.EXPAND|wx.ALL,border=2)
 
