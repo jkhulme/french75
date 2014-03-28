@@ -13,6 +13,8 @@ class Singleton(object):
 
     Limitations: The decorated class cannot be inherited from.
 
+    http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+
     """
 
     def __init__(self, decorated):
