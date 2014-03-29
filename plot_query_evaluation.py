@@ -16,6 +16,19 @@ def generate_line():
 
     return line
 
+def add_points(line, shift=False):
+    while len(line) < 1000:
+        if shift:
+            a = line[0] * 0.95
+            b = line[0] * 1.05
+            line.insert(0, random.uniform(a, b))
+        else:
+            a = line[-1] * 0.95
+            b = line[-1] * 1.05
+            line.append(random.uniform(a, b))
+
+    return line
+
 def plot_line(line):
     time = range(1, 10000, 10)
     plt.plot(time, line)
@@ -24,7 +37,7 @@ def plot_line(line):
 def build_corpus():
     corpus = {}
     lines = {}
-    while len(corpus.keys()) < 10000:
+    while len(corpus.keys()) < 1:
         line = generate_line()
         lines[len(lines.keys())] = line
         corpus[len(corpus.keys())] = dict(slice_lists(line))
@@ -121,8 +134,46 @@ def document_freq(word, documents):
             dfw += 1
     return dfw
 
+def mutate_line(line):
+    plot_line(line)
+
+    new_line = [point*3 for point in line]
+    #plot_line(new_line)
+
+    new_line_2 = [point*0.5 for point in line]
+    #plot_line(new_line_2)
+
+    new_line_3 = [point*0.1 for point in line]
+    #plot_line(new_line_3)
+
+    new_line_4 = add_points(line[100:])
+    #plot_line(new_line_4)
+
+    new_line_5 = add_points(line[250:])
+    #plot_line(new_line_5)
+
+    new_line_6 = add_points(line[:-100], shift=True)
+    #plot_line(new_line_6)
+
+    new_line_7 = add_points(line[:-250], shift=True)
+    #plot_line(new_line_7)
+
+    new_line_8 = [point*2 for point in add_points(line[:-250], shift=True)]
+    #plot_line(new_line_8)
+
+    new_line_9 = [point*3 for point in add_points(line[100:])]
+    #plot_line(new_line_9)
+
+    new_line_10 = [point*0.2 for point in add_points(line[:-100], shift=True)]
+    plot_line(new_line_10)
+
+    plt.show()
+
 random.seed("french75")
 corpus, lines = build_corpus()
+mutate_line(lines[0])
+
+"""
 print "Built corpus"
 inverted_index = build_inverted_index(corpus)
 print "Built inverted index"
@@ -130,6 +181,7 @@ print "Built inverted index"
 ranking = []
 
 for (doc_id, vector) in corpus.items():
+    print doc_id
     score = tf_weighted_cosine((0, corpus[0]), (doc_id, corpus[doc_id]))
     ranking.append((0, doc_id, score))
 
@@ -148,3 +200,4 @@ for (q_id, d_id, score) in worst:
     plot_line(lines[0])
     plot_line(lines[d_id])
     plt.show()
+"""
