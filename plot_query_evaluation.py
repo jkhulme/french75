@@ -5,7 +5,7 @@ from itertools import groupby
 from collections import Counter
 from math import log, sqrt
 k = 1.6
-_CORPUS_SIZE = 100
+_CORPUS_SIZE = 1000
 
 def generate_line():
     line = []
