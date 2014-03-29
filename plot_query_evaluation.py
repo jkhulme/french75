@@ -100,9 +100,7 @@ def tf_idf(query, document):
 def solo_tf_idf(word, document):
     tfwd = document.get(word, 0)
     kd = k * len(document)
-    avgd = avg_doc_length(corpus.items())
-    c = len(corpus)
-    dfw = document_freq(word, corpus.items())
+    dfw = len(inverted_index[word])
 
     return (tfwd / float(tfwd + float(kd/avgd))) * log(c/float(dfw), 2)
 
@@ -133,14 +131,16 @@ def avg_doc_length(documents):
     total = 0
     for (name, document) in documents:
         total += len(document)
-    return total / len(documents)
+    return total / float(len(documents))
 
+"""
 def document_freq(word, documents):
     dfw = 0
     for (name, document) in documents:
         if word in document:
             dfw += 1
     return dfw
+"""
 
 def mutate_line(line):
     plot_line(line)
@@ -196,7 +196,8 @@ inverted_index = build_inverted_index(corpus)
 print "Built inverted index"
 
 ranking = []
-
+avgd = avg_doc_length(corpus.items())
+c = len(corpus.items())
 for (doc_id, vector) in corpus.items():
     score = tf_weighted_cosine((0, corpus[0]), (doc_id, corpus[doc_id]))
     ranking.append((0, doc_id, score))
