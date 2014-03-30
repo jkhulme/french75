@@ -5,7 +5,7 @@ from itertools import groupby
 from collections import Counter
 from math import log, sqrt
 k = 1.6
-_CORPUS_SIZE = 1000
+_CORPUS_SIZE = 10
 
 def generate_line():
     line = []
@@ -43,11 +43,13 @@ def build_corpus():
         lines[len(lines.keys())] = line
         corpus[len(corpus.keys())] = dict(slice_lists(line))
 
+    """
     max_id = len(corpus.keys())
     mutations = mutate_line(lines[0])
     for i, mutation in enumerate(mutations):
         lines[max_id+i] = mutation
         corpus[max_id+i] = dict(slice_lists(mutation))
+    """
 
     return corpus, lines
 
@@ -189,34 +191,43 @@ def mutate_line(line):
     return mutated_lines
 
 random.seed("french75")
-corpus, lines = build_corpus()
-print len(corpus.keys())
-print "Built corpus"
-inverted_index = build_inverted_index(corpus)
-print "Built inverted index"
+mutant_ids = range(1000, 1010)
+top_20_matches = []
+top_11_matches = []
 
-ranking = []
-avgd = avg_doc_length(corpus.items())
-c = len(corpus.items())
-for (doc_id, vector) in corpus.items():
-    score = tf_weighted_cosine((0, corpus[0]), (doc_id, corpus[doc_id]))
-    ranking.append((0, doc_id, score))
+for i in range(0, 100):
+    corpus, lines = build_corpus()
+    print len(corpus.keys())
+    print "Built corpus"
+    inverted_index = build_inverted_index(corpus)
+    print "Built inverted index"
 
-ranking.sort(key=lambda tup: tup[2])
-ranking = ranking[::-1]
-print ranking
+    ranking = []
+    avgd = avg_doc_length(corpus.items())
+    c = len(corpus.items())
+    for (doc_id, vector) in corpus.items():
+        score = tf_weighted_cosine((0, corpus[0]), (doc_id, corpus[doc_id]))
+        ranking.append((0, doc_id, score))
 
-"""
-best = ranking[1:11]
-worst = ranking[-10:]
+    ranking.sort(key=lambda tup: tup[2])
+    ranking = ranking[::-1]
 
-for (q_id, d_id, score) in best:
-    plot_line(lines[0])
-    plot_line(lines[d_id])
-    plt.show()
+    top_20 = ranking[:20]
+    top_11 = ranking[:11]
 
-for (q_id, d_id, score) in worst:
-    plot_line(lines[0])
-    plot_line(lines[d_id])
-    plt.show()
-"""
+    mutants = 0
+    for (q_id, d_id, score) in top_20:
+        if d_id in mutant_ids:
+            mutants += 1
+    top_20_matches.append((i, mutants))
+
+    mutants = 0
+    for (q_id, d_id, score) in top_11:
+        if d_id in mutant_ids:
+            mutants += 1
+    top_11_matches.append((i, mutants))
+
+print len(top_20_matches), top_20_matches
+print len(top_11_matches), top_11_matches
+
+
