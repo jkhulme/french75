@@ -212,7 +212,7 @@ for i in range(0, 100):
     ranking.sort(key=lambda tup: tup[2])
     ranking = ranking[::-1]
 
-    top_20 = ranking[:20]
+    top_20 = ranking[:21]
     top_11 = ranking[:11]
 
     mutants = 0
