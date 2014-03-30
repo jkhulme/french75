@@ -5,7 +5,7 @@ from itertools import groupby
 from collections import Counter
 from math import log, sqrt
 k = 1.6
-_CORPUS_SIZE = 10
+_CORPUS_SIZE = 100
 
 def generate_line():
     line = []
@@ -43,13 +43,13 @@ def build_corpus():
         lines[len(lines.keys())] = line
         corpus[len(corpus.keys())] = dict(slice_lists(line))
 
-    """
+   
     max_id = len(corpus.keys())
     mutations = mutate_line(lines[0])
     for i, mutation in enumerate(mutations):
         lines[max_id+i] = mutation
         corpus[max_id+i] = dict(slice_lists(mutation))
-    """
+    
 
     return corpus, lines
 
@@ -191,16 +191,15 @@ def mutate_line(line):
     return mutated_lines
 
 random.seed("french75")
-mutant_ids = range(1000, 1010)
+mutant_ids = range(_CORPUS_SIZE, _CORPUS_SIZE+10)
 top_20_matches = []
 top_11_matches = []
 
-for i in range(0, 100):
+experiments = 1000
+for i in range(0, experiments):
+    print str(i) + '/' + str(experiments), str(100*i/float(experiments)) + "%"
     corpus, lines = build_corpus()
-    print len(corpus.keys())
-    print "Built corpus"
     inverted_index = build_inverted_index(corpus)
-    print "Built inverted index"
 
     ranking = []
     avgd = avg_doc_length(corpus.items())
@@ -214,7 +213,6 @@ for i in range(0, 100):
 
     top_20 = ranking[:21]
     top_11 = ranking[:11]
-
     mutants = 0
     for (q_id, d_id, score) in top_20:
         if d_id in mutant_ids:
