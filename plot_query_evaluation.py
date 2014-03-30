@@ -144,46 +144,54 @@ def document_freq(word, documents):
     return dfw
 """
 
+def fuzz_line(line):
+    return [fuzz_point(x) for x in line]
+
+def fuzz_point(point):
+    a = point * 0.95
+    b = point * 1.05
+    return random.uniform(a, b)
+
 def mutate_line(line):
     plot_line(line)
     mutated_lines = []
-    new_line = [point*3 for point in line]
+    new_line = fuzz_line([point*3 for point in line])
     mutated_lines.append(new_line)
     #plot_line(new_line)
 
-    new_line_2 = [point*0.5 for point in line]
+    new_line_2 = fuzz_line([point*0.5 for point in line])
     mutated_lines.append(new_line_2)
     #plot_line(new_line_2)
 
-    new_line_3 = [point*0.1 for point in line]
+    new_line_3 = fuzz_line([point*0.1 for point in line])
     mutated_lines.append(new_line_3)
     #plot_line(new_line_3)
 
-    new_line_4 = add_points(line[100:])
+    new_line_4 = fuzz_line(add_points(line[100:]))
     mutated_lines.append(new_line_4)
     #plot_line(new_line_4)
 
-    new_line_5 = add_points(line[250:])
+    new_line_5 = fuzz_line(add_points(line[250:]))
     mutated_lines.append(new_line_5)
     #plot_line(new_line_5)
 
-    new_line_6 = add_points(line[:-100], shift=True)
+    new_line_6 = fuzz_line(add_points(line[:-100], shift=True))
     mutated_lines.append(new_line_6)
     #plot_line(new_line_6)
 
-    new_line_7 = add_points(line[:-250], shift=True)
+    new_line_7 = fuzz_line(add_points(line[:-250], shift=True))
     mutated_lines.append(new_line_7)
     #plot_line(new_line_7)
 
-    new_line_8 = [point*2 for point in add_points(line[:-250], shift=True)]
+    new_line_8 = fuzz_line([point*2 for point in add_points(line[:-250], shift=True)])
     mutated_lines.append(new_line_8)
     #plot_line(new_line_8)
 
-    new_line_9 = [point*3 for point in add_points(line[100:])]
+    new_line_9 = fuzz_line([point*3 for point in add_points(line[100:])])
     mutated_lines.append(new_line_9)
     #plot_line(new_line_9)
 
-    new_line_10 = [point*0.2 for point in add_points(line[:-100], shift=True)]
+    new_line_10 = fuzz_line([point*0.2 for point in add_points(line[:-100], shift=True)])
     mutated_lines.append(new_line_10)
     #plot_line(new_line_10)
 
