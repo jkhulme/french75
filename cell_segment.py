@@ -6,7 +6,7 @@ class CellSegment(object):
 
     """
     Used for drawing the animations.  There is one segment for each 'ring' in
-    the cell.
+    the cell. -- This is cell segment is for the animation panel.
     """
 
     def __init__(self,(tl_x, tl_y), radius, index, file_name, species):
@@ -16,6 +16,9 @@ class CellSegment(object):
         change = 0
         self.sub_segments = []
 
+        """
+        create each cell segment
+        """
         for i in range(0, num_of_segments):
             centre_x = tl_x
             centre_y = tl_y
@@ -30,6 +33,9 @@ class CellSegment(object):
     def paint(self, dc, p_id):
         species_locations = ['whole_cell']
 
+        """
+        draw the segments
+        """
         for (file_name, species, i, location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             line = WorldState.Instance().session_dict['lines'][file_name].get(species+"@"+WorldState.Instance().session_dict['tree_list'][i], None)
             if line != None:
@@ -41,6 +47,9 @@ class CellSegment(object):
             dc.DrawArc(outer_x1, outer_y1, outer_x2, outer_y2, centre_x, centre_y)
         dc.SetBrush(wx.Brush('black'))
 
+        """
+        Draw the annotations
+        """
         for annotation in WorldState.Instance().session_dict['anime_annotations'].get(p_id,[]):
             #Draw the labels
             if annotation.in_time(WorldState.Instance().session_dict['clock']):

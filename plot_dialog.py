@@ -12,7 +12,6 @@ class Plot_Dialog(wx.Dialog):
 
     def __init__(self, *args, **kw):
         super(Plot_Dialog, self).__init__(*args, **kw)
-        #WorldState.Instance() = WorldState.Instance()
 
         panel_vbox = wx.BoxSizer(wx.VERTICAL)
 

@@ -7,7 +7,16 @@ from math import log, sqrt
 k = 1.6
 _CORPUS_SIZE = 10000
 
+"""
+This was used for plot query and tf.idf evaluation.
+The tf.idf implementation here is more efficient than the one on
+plot_similarity.py
+"""
+
 def generate_line():
+    """
+    Markovian walk
+    """
     line = []
     line.append(10000*random.random())
     while len(line) < 1000:
@@ -20,10 +29,16 @@ def generate_line():
 def add_points(line, shift=False):
     while len(line) < 1000:
         if shift:
+            """
+            IF we shift right then we need to add points to beginning
+            """
             a = line[0] * 0.95
             b = line[0] * 1.05
             line.insert(0, random.uniform(a, b))
         else:
+            """
+            If we shift left then add points to the start
+            """
             a = line[-1] * 0.95
             b = line[-1] * 1.05
             line.append(random.uniform(a, b))
@@ -36,6 +51,10 @@ def plot_line(line):
     plt.draw()
 
 def build_corpus():
+    """
+    Build a number of lines and create two dictionaries
+    one for the line raw data and the other for the structural representation
+    """
     corpus = {}
     lines = {}
     while len(corpus.keys()) < _CORPUS_SIZE:
@@ -56,6 +75,9 @@ def build_corpus():
     return corpus, lines
 
 def slice_lists(l):
+    """
+    Turn the raw data into the structural representation
+    """
     sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
 
     for i, sub_list in enumerate(sub_lists):
@@ -76,6 +98,10 @@ def slice_lists(l):
     return Counter([k for k, g in groupby(sub_lists)])
 
 def build_inverted_index(corpus):
+    """
+    Corpus is document to word dictionary
+    inverted index is word to document dictionary
+    """
     inverted_index = {}
 
     for doc_id, line in corpus.items():
@@ -102,6 +128,9 @@ def tf_idf(query, document):
 """
 
 def solo_tf_idf(word, document):
+    """
+    calculates the tf.idf score of a word in a document
+    """
     tfwd = document.get(word, 0)
     kd = k * len(document)
     dfw = len(inverted_index[word])
@@ -150,12 +179,19 @@ def fuzz_line(line):
     return [fuzz_point(x) for x in line]
 
 def fuzz_point(point):
+    """
+    Was originally going to fuzz the data, but way too much
+    of the original structure was lost
+    """
     a = point * 0.95
     b = point * 1.05
     #return random.uniform(a, b)
     return point
 
 def mutate_line(line):
+    """
+    generates 10 similar lines to the input line
+    """
     mutated_lines = []
     new_line = fuzz_line([point*3 for point in line])
     mutated_lines.append(new_line)
@@ -199,6 +235,11 @@ def mutate_line(line):
 
     #plt.show()
     return mutated_lines
+
+"""
+Runs the experiment, a bit too manual at the moment
+requires some commenting and uncommenting and changing of values
+"""
 
 random.seed("french75")
 mutant_ids = range(_CORPUS_SIZE, _CORPUS_SIZE+10)

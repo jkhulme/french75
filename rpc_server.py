@@ -117,6 +117,9 @@ class French75Server():
         works
         """
         old_clock = clock
+        """
+        Assume that if I am master that I am more right
+        """
         if WorldState.Instance().lamport_clock == clock:
             if self.port == 8000:
                 WorldState.Instance().lamport_clock += 1

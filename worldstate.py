@@ -266,6 +266,10 @@ class WorldState(SingletonMixin):
             self.create_cell_segments_by_file(n)
 
     def reorder(self, clock):
+        """
+        This is used mainly for distributed mode, ensuring that
+        everyone sees in the same order.  Lost in non blocking communication
+        """
         self.push_state(clock)
         self.session_dict = self.undo_stack.reorder()
         self.refresh_plot()

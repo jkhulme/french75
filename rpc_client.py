@@ -92,6 +92,10 @@ class French75Client():
         #self.server.add_anime_annotation(WorldState.Instance().lamport_clock, pickle.dumps((key, annotation)))
 
     def non_blocking(self, *args, **kwargs):
+        """
+        Every thread call comes here.  It is passed the server method to call
+        and the arguments to that function
+        """
         new_clock = kwargs['name'](*args)
         if new_clock is not None:
             WorldState.Instance().lamport_clock = new_clock

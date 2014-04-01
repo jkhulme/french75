@@ -140,9 +140,6 @@ class Legend(object):
 
         self.update(btn_props.GetParent(), file_key, species_key)
 
-        #WorldState.Instance().push_state()
-        #WorldState.Instance().reorder(WorldState.Instance().lamport_clock)
-
         WorldState.Instance().client.update_legend(WorldState.Instance().session_dict['lines'][file_key][species_key], file_key, species_key)
 
     def update(self, csv, file_key, species_key):

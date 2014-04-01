@@ -18,6 +18,9 @@ line_2 = {'ac': 2, 'bb': 1}
 line_3 = {'ac': 1}
 """
 
+"""
+Evaluates tf.idf with data from the Eclipse Plugin
+"""
 
 #aSrc_total_MB@cytoplasm
 line_7 = ("aSrc_total_MB@cytoplasm", {'ccbbaaaa': 2, 'cccccaaa': 2, 'bbbbbbbb': 2, 'bbbbbbbc': 2, 'ccbaaaaa': 2, 'caaaaccc': 1, 'cbccacaa': 1, 'accccaca': 1, 'bcaaaacc': 1, 'cccbaaaa': 1, 'aaabcccc': 1, 'cccacaaa': 1, 'ccccaaaa': 1, 'aaccccac': 1, 'acaabaca': 1, 'aaaabccc': 1, 'cbbaaaaa': 1, 'aaacccca': 1, 'aaaacccc': 1, 'aabccccc': 1, 'bbcaaaac': 1, 'cbaaaaaa': 1, 'aaaaaccc': 1, 'ccccbaaa': 1, 'bbbbbcaa': 1, 'bbbbbbca': 1, 'cacaabac': 1, 'ccacaaba': 1, 'cbbbbbbb': 1, 'abccccaa': 1, 'aaaaaacc': 1, 'aabcccca': 1})

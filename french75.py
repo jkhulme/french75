@@ -473,6 +473,9 @@ class French75(wx.Frame):
             print "Clicked outside of graph"
 
     def annotation_menu(self):
+        """
+        context menu if a annotation was selected
+        """
         annotate_menu = wx.Menu()
 
         m_edit_annotation = annotate_menu.Append(wx.ID_ANY, 'Edit')
@@ -497,9 +500,12 @@ class French75(wx.Frame):
         WorldState.Instance().client.update_annotation(self.selected_annotation.id, self.selected_annotation.text)
 
     def get_label(self):
-         dialog = wx.TextEntryDialog(None, "Please Enter a New Label.","Edit Annotation", "", style=wx.OK|wx.CANCEL)
-         if dialog.ShowModal() == wx.ID_OK:
-             WorldState.Instance().session_dict['annotation_text'] = dialog.GetValue()
+        """
+        When editing menu text
+        """
+        dialog = wx.TextEntryDialog(None, "Please Enter a New Label.","Edit Annotation", "", style=wx.OK|wx.CANCEL)
+        if dialog.ShowModal() == wx.ID_OK:
+            WorldState.Instance().session_dict['annotation_text'] = dialog.GetValue()
 
     def delete_annotation(self, event):
         WorldState.Instance().delete_annotation(self.selected_annotation.id)
@@ -673,6 +679,9 @@ class French75(wx.Frame):
         WorldState.Instance().client.redo()
 
     def toggle_xkcd(self, event):
+        """
+        basically deprecated.  Mac couldn't do it (I think)
+        """
         self.toggle_param('xkcd')
         matplotlib.pyplot.xkcd()
 
@@ -711,6 +720,10 @@ class French75(wx.Frame):
             WorldState.Instance().temp_session_dict = None
 
     def sessiony_stuff(self):
+        """
+        Each of the routes into a new session come here.
+        It handles all the initial drawing of session state
+        """
         WorldState.Instance().draw_plot = Plotter(self.graph_axes)
         WorldState.Instance().draw_plot.plot()
 
@@ -743,6 +756,12 @@ class French75(wx.Frame):
         WorldState.Instance().client.change_animation_file(n)
 
     def create_cell_segments_by_file(self, n):
+        """
+        Used when switching species.  Draws a cell cross-section for
+        each file that contains that species
+
+        Should integrate this with create...by_species
+        """
         self.drop_down_species.SetSelection(n)
         (a_width, a_height) = self.animation_panel.GetSize()
 
@@ -788,6 +807,12 @@ class French75(wx.Frame):
             panel.Refresh()
 
     def create_cell_segments_by_species(self, n):
+        """
+        Used when switching file.  Draws a cell cross-section for
+        each species in the file
+
+        Should integrate this with create...by_file
+        """
         self.drop_down_files.SetSelection(n)
 
         (a_width, a_height) = self.animation_panel.GetSize()

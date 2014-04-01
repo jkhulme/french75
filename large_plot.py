@@ -14,6 +14,10 @@ _PHI = 1.618
 
 class LargePlotDialog(wx.Dialog):
 
+    """
+    Creates a larger version of the plot as a separate window
+    """
+
     def __init__(self, *args, **kw):
         super(LargePlotDialog, self).__init__(*args, **kw)
         #WorldState.Instance() = WorldState.Instance()

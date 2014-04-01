@@ -1,14 +1,15 @@
 class LocationTree:
 
+    """
+    Gives the location hierarchy for animation and model visualisation
+    """
+
     def __init__(self, location_data):
         self.loc_data = location_data
         self.tree = {}
         self.queue = []
         self.circles = {}
 
-    """
-    Last paragraph needs to be done in model reader probably
-    """
     def build_tree(self):
         self.tree = {}
         for loc in self.loc_data:

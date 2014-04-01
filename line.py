@@ -45,6 +45,9 @@ class Line(object):
         self.debug_name = "Begin"
 
     def slice_lists(self, l):
+        """
+        Creates the string representation used for plots as queries
+        """
         sub_lists = zip(l, l[1:], l[2:], l[3:], l[4:], l[5:], l[6:], l[7:])
 
         for i, sub_list in enumerate(sub_lists):
@@ -65,6 +68,10 @@ class Line(object):
         return Counter([k for k, g in groupby(sub_lists)])
 
     def calc_line_length(self, results, time):
+        """
+        Need to know total length of the line for interpolation purposes
+        Have to scale it from data space to visual space
+        """
         data_time_points = zip(results, time)
         point_pairs = zip(data_time_points, data_time_points[1:])
         total_dist = 0
@@ -76,6 +83,9 @@ class Line(object):
         return total_dist
 
     def scale(self, (x, y)):
+        """
+        convert from data space to visual space
+        """
         return ((self.horizontal_scale*x, self.vertical_scale*y))
 
     def interpolate(self, results, time):
@@ -151,6 +161,9 @@ class Line(object):
         return plot_arrays
 
     def update_animation_colour(self, world_clock):
+        """
+        Traverse the list of time, colour tuples and the find which one is most current
+        """
         max_time = False
         for i, (time, colour) in enumerate(self.colour_change_points[self.counter:]):
             if world_clock < self.interpolated_time[time]:
@@ -170,6 +183,9 @@ class Line(object):
                 randrange(0, 200, 1))
 
     def normalise(self):
+        """
+        zero to one normalisation based on the max species in the session
+        """
         d_max = max(self.results)
         d_min = min(self.results)
         for result in self.results:
@@ -184,6 +200,9 @@ class Line(object):
             self.normalised_sub_plots.append((new_sub_plot, colour))
 
     def __copy__(self):
+        """
+        This is needed for deepcopy and copy stuff I think
+        """
         cls = self.__class__
         result = cls.__new__(cls)
         result.__dict__.update(self.__dict__)

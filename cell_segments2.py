@@ -4,6 +4,11 @@ from worldstate import WorldState
 
 class CellSegments2(object):
 
+    """
+    This cell segment is for the session wizard.  Future work
+    would be performed to integrate it with the other cell segment
+    """
+
     def __init__(self, tree, (width, height)):
         #WorldState.Instance() = WorldState.Instance()
         tree_list = self.tree_to_list(tree)
@@ -11,6 +16,9 @@ class CellSegments2(object):
         radius = height - 20
         change = 0
         self.sub_segments = []
+        """
+        draw each segment
+        """
         for i in range(0, num_of_segments):
             centre_x = (width-height)/2
             centre_y = height - 10
@@ -21,6 +29,9 @@ class CellSegments2(object):
 
     def paint(self, dc, species_locations):
         #Draws CCW
+        """
+        draw the segment and its location label
+        """
         for (location, centre_x, centre_y, outer_x1, outer_y1, outer_x2, outer_y2) in self.sub_segments:
             if location in species_locations or species_locations == ['whole_cell']:
                 dc.SetBrush(wx.Brush('green'))

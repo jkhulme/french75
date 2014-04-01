@@ -5,6 +5,11 @@ import sys
 
 class SpoofClient():
 
+    """
+    Was used to provide a testing client on systems where I couldn't run
+    the program
+    """
+
     def __init__(self, ip, port):
         print "ip", ip
         print "port", port

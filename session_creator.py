@@ -257,6 +257,9 @@ class SessionWizard(wx.wizard.Wizard):
 
 
 class wizard_page(wizmod.PyWizardPage):
+    """
+    Taken from wxPython documentation
+    """
     ''' An extended panel obj with a few methods to keep track of its siblings.
         This should be modified and added to the wizard.  Season to taste.'''
     def __init__(self, parent, title):

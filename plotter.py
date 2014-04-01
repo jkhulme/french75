@@ -74,7 +74,6 @@ class Plotter(object):
         go through the list of annotations and plot them
         """
         for annotation in WorldState.Instance().session_dict['annotations']:
-            print annotation.normalised
             if annotation.normalised:
                 if WorldState.Instance().session_dict['normalised']:
                     y1 = annotation.y1
